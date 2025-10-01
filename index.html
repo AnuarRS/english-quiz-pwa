@@ -438,7 +438,7 @@
 
         async function loadQuestions() {
             try {
-                const response = await fetch('/english-quiz-pwa/questions.txt');
+                const response = await fetch('https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions%20.txt');
                 if (!response.ok) throw new Error('Файл не найден');
                 
                 const content = await response.text();
