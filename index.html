@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EnglishBoost - Адаптивті оқыту әдісі</title>
+    <title>EnglishBoost - Игра с падающими словами</title>
     <meta name="theme-color" content="#58cc02">
     <style>
         * {
@@ -320,6 +320,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Game area - падающие слова */
         .game-area {
             position: relative;
             height: 400px;
@@ -328,6 +329,11 @@
             margin-bottom: 20px;
             overflow: hidden;
             border: 3px solid #e8e8e8;
+            display: none;
+        }
+
+        .question-container.game-mode .game-area {
+            display: block;
         }
 
         .falling-word {
@@ -341,17 +347,22 @@
             padding: 20px 40px;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            transition: top 0.05s linear;
             z-index: 10;
+            white-space: nowrap;
         }
 
         .falling-word.correct-hit {
-            animation: explode 0.5s ease-out;
+            animation: explode 0.5s ease-out forwards;
         }
 
         @keyframes explode {
             0% { transform: translateX(-50%) scale(1); opacity: 1; }
-            100% { transform: translateX(-50%) scale(2); opacity: 0; }
+            100% { transform: translateX(-50%) scale(2.5); opacity: 0; }
+        }
+
+        /* Скрываем обычное отображение в игровом режиме */
+        .question-container.game-mode .word-display {
+            display: none;
         }
 
         .word-display {
@@ -366,22 +377,9 @@
             border: 3px solid #e8e8e8;
         }
 
-        .input-mode .word-display {
-            background: white;
-            color: #2d3436;
-            border-color: #0984e3;
-        }
-
-        .game-mode .word-display {
-            display: none;
-        }
-
-        .game-mode .game-area {
+        .question-container.input-mode .word-display {
             display: block;
-        }
-
-        .normal-mode .game-area {
-            display: none;
+            border-color: #0984e3;
         }
 
         .options-grid {
@@ -440,15 +438,15 @@
             margin-bottom: 30px;
         }
 
-        .input-mode .input-container {
+        .question-container.input-mode .input-container {
             display: block;
         }
 
-        .input-mode .options-grid {
+        .question-container.input-mode .options-grid {
             display: none;
         }
 
-        .input-mode .game-area {
+        .question-container.input-mode .game-area {
             display: none;
         }
 
@@ -588,69 +586,6 @@
         }
 
         @media (max-width: 600px) {
-            body {
-                padding: 8px;
-                align-items: flex-start;
-                padding-top: 10px;
-            }
-
-            .header {
-                padding: 12px 15px 15px;
-            }
-
-            .header-top {
-                margin-bottom: 12px;
-            }
-
-            .back-btn, .help-btn {
-                padding: 6px 12px;
-                font-size: 0.85em;
-            }
-
-            .score {
-                font-size: 14px;
-            }
-
-            .progress-container {
-                height: 14px;
-            }
-
-            .main-content {
-                padding: 15px;
-            }
-
-            .menu-title {
-                font-size: 1.6em;
-            }
-
-            .menu-subtitle {
-                font-size: 0.85em;
-            }
-
-            .total-progress {
-                padding: 15px;
-            }
-
-            .total-progress-bar-container {
-                height: 20px;
-            }
-
-            .levels-grid {
-                gap: 10px;
-            }
-
-            .level-card {
-                padding: 25px 12px;
-            }
-
-            .level-name {
-                font-size: 2em;
-            }
-
-            .level-description {
-                font-size: 0.95em;
-            }
-
             .game-area {
                 height: 300px;
             }
@@ -658,11 +593,6 @@
             .falling-word {
                 font-size: 1.5em;
                 padding: 15px 30px;
-            }
-
-            .word-display {
-                font-size: 1.8em;
-                padding: 20px;
             }
 
             .options-grid {
@@ -688,7 +618,6 @@
         </div>
 
         <div class="main-content">
-            <!-- Main Menu -->
             <div class="main-menu" id="mainMenu">
                 <div class="menu-title">EnglishBoost</div>
                 <div class="menu-subtitle">Адаптивті жаңа әдіспен ағылшын тілін үйреніңіз</div>
@@ -704,7 +633,6 @@
                 <div class="levels-grid" id="levelsGrid"></div>
             </div>
 
-            <!-- Help Screen -->
             <div class="help-screen" id="helpScreen">
                 <div class="help-content">
                     <h3>📚 Деңгейлердің сипаттамасы</h3>
@@ -754,21 +682,18 @@
                 <button class="btn-primary" style="margin-top: 20px;" onclick="hideHelp()">Жабу</button>
             </div>
 
-            <!-- Loading Screen -->
             <div class="loading-screen" id="loadingScreen">
                 <div class="spinner"></div>
                 <p style="color: #2d3436; font-size: 1.2em;">Сұрақтар жүктелуде...</p>
             </div>
 
-            <!-- Error Screen -->
             <div class="error-screen" id="errorScreen">
                 <h2>⚠️ Жүктеу қатесі</h2>
                 <p id="errorMessage">Сұрақтарды жүктеу мүмкін болмады</p>
                 <button class="btn-primary" onclick="goToMainMenu()">Мәзірге оралу</button>
             </div>
 
-            <!-- Question Screen -->
-            <div class="question-container normal-mode" id="questionScreen">
+            <div class="question-container" id="questionScreen">
                 <div class="word-display" id="wordDisplay">Жүктелуде...</div>
                 
                 <div class="game-area" id="gameArea"></div>
@@ -783,7 +708,6 @@
                 <div class="feedback" id="feedback"></div>
             </div>
 
-            <!-- Results Screen -->
             <div class="results-screen" id="resultsScreen">
                 <div style="font-size: 4em;">🎉</div>
                 <div class="results-score" id="finalScore">0/0</div>
@@ -825,7 +749,7 @@
         let fallingWordElement = null;
         let wordTop = -100;
         let gameInterval = null;
-        let fallSpeed = 2;
+        let fallSpeed = 2.5;
         const GAME_HEIGHT = 400;
 
         const LEVEL_FILES = {
@@ -846,7 +770,6 @@
             'C2': 'Кәсіби'
         };
 
-        let allLevelQuestions = {};
         let questionsCache = {};
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1059,9 +982,11 @@
             const container = document.getElementById('questionScreen');
             const answerInput = document.getElementById('answerInput');
             
+            // Удаляем все режимы
+            container.classList.remove('game-mode', 'input-mode');
+            
             if (isAdvanced) {
-                // Input mode for advanced words
-                container.classList.remove('game-mode');
+                // Input mode
                 container.classList.add('input-mode');
                 document.getElementById('wordDisplay').textContent = question.options[question.correct];
                 answerInput.value = '';
@@ -1069,11 +994,9 @@
                 setTimeout(() => answerInput.focus(), 100);
                 clearGameInterval();
             } else {
-                // Game mode for beginner words
-                container.classList.remove('input-mode');
+                // Game mode
                 container.classList.add('game-mode');
                 
-                // Create options grid
                 const optionsGrid = document.getElementById('optionsGrid');
                 optionsGrid.innerHTML = '';
                 
@@ -1085,7 +1008,6 @@
                     optionsGrid.appendChild(btn);
                 });
                 
-                // Start falling word game
                 startFallingWord(question.question);
             }
         }
@@ -1102,9 +1024,8 @@
             
             gameArea.appendChild(fallingWordElement);
             
-            // Start game loop
             clearGameInterval();
-            gameInterval = setInterval(updateFallingWord, 50);
+            gameInterval = setInterval(updateFallingWord, 30);
         }
 
         function updateFallingWord() {
@@ -1113,11 +1034,17 @@
             wordTop += fallSpeed;
             fallingWordElement.style.top = wordTop + 'px';
             
-            // Check if word reached bottom
             if (wordTop >= GAME_HEIGHT - 80) {
                 clearGameInterval();
                 if (!answered) {
                     answered = true;
+                    const buttons = document.querySelectorAll('.option-btn');
+                    buttons.forEach((btn, index) => {
+                        btn.disabled = true;
+                        if (index === shuffledQuestions[currentQuestion].correct) {
+                            btn.classList.add('correct');
+                        }
+                    });
                     processAnswer(false);
                 }
             }
@@ -1139,7 +1066,6 @@
             const question = shuffledQuestions[currentQuestion];
             const isCorrect = selectedIndex === question.correct;
             
-            // Visual feedback
             const buttons = document.querySelectorAll('.option-btn');
             buttons.forEach((btn, index) => {
                 btn.disabled = true;
@@ -1147,7 +1073,6 @@
                 else if (index === selectedIndex && !isCorrect) btn.classList.add('incorrect');
             });
             
-            // Animate word
             if (isCorrect && fallingWordElement) {
                 fallingWordElement.classList.add('correct-hit');
             }
