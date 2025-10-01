@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EnglishBoost - Адаптивті оқыту әдісі</title>
     <meta name="theme-color" content="#58cc02">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * {
             margin: 0;
@@ -25,7 +22,6 @@
             align-items: center;
             padding: 15px;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         .quiz-container {
@@ -35,7 +31,6 @@
             width: 100%;
             max-width: 600px;
             overflow: hidden;
-            position: relative;
         }
 
         .header {
@@ -46,9 +41,8 @@
             position: relative;
         }
 
-        .back-btn {
+        .back-btn, .help-btn {
             position: absolute;
-            left: 20px;
             top: 50%;
             transform: translateY(-50%);
             background: rgba(255,255,255,0.2);
@@ -61,13 +55,17 @@
             transition: all 0.3s ease;
         }
 
-        .back-btn:hover {
-            background: white;
-            color: #58cc02;
+        .back-btn {
+            left: 20px;
         }
 
-        .back-btn:active {
-            transform: translateY(calc(-50% + 2px)) scale(0.95);
+        .help-btn {
+            right: 20px;
+        }
+
+        .back-btn:hover, .help-btn:hover {
+            background: white;
+            color: #667eea;
         }
 
         .progress-container {
@@ -100,7 +98,6 @@
             justify-content: center;
         }
 
-        /* Main Menu Styles */
         .main-menu {
             display: block;
         }
@@ -118,19 +115,76 @@
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
             animation: gradientShift 3s ease infinite;
             font-weight: 600;
             margin-bottom: 25px;
         }
 
         @keyframes gradientShift {
-            0%, 100% {
-                background-position: 0% center;
-            }
-            50% {
-                background-position: 100% center;
-            }
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .total-progress {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid #e3e8ff;
+        }
+
+        .total-progress-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+
+        .total-progress-bar-container {
+            background: #e3e8ff;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .total-progress-bar {
+            height: 100%;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: burning 2s linear infinite;
+            position: relative;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .total-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes burning {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        .total-progress-text {
+            margin-top: 8px;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.95em;
         }
 
         .levels-grid {
@@ -141,13 +195,12 @@
         }
 
         .level-card {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
             border: none;
             border-radius: 15px;
-            padding: 20px 15px;
+            padding: 30px 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             color: white;
             position: relative;
             overflow: hidden;
@@ -155,12 +208,7 @@
 
         .level-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(9, 132, 227, 0.4);
-        }
-
-        .level-card:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         .level-card.a1 { background: linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%); }
@@ -171,66 +219,48 @@
         .level-card.c2 { background: linear-gradient(135deg, #9575cd 0%, #673ab7 100%); }
 
         .level-name {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .level-description {
-            font-size: 0.8em;
-            opacity: 0.9;
-            margin-bottom: 6px;
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 500;
         }
 
-        .level-progress {
-            font-size: 0.7em;
-            opacity: 0.85;
-            margin-top: 6px;
+        .help-screen {
+            display: none;
         }
 
-        .level-progress-bar-container {
-            background: rgba(255,255,255,0.3);
-            border-radius: 10px;
-            height: 5px;
-            margin-top: 6px;
-            overflow: hidden;
+        .help-content {
+            text-align: left;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
-        .level-progress-bar {
-            background: white;
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            box-shadow: 0 2px 5px rgba(255,255,255,0.3);
-        }
-
-        .level-info {
-            background: #f8f9ff;
-            border-radius: 15px;
-            padding: 15px;
-            margin-top: 20px;
-            border: 2px solid #e3e8ff;
-        }
-
-        .level-info h3 {
+        .help-content h3 {
             color: #2d3436;
-            margin-bottom: 12px;
-            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-align: center;
         }
 
         .level-detail {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 10px;
-            padding: 8px;
-            background: white;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9ff;
             border-radius: 10px;
         }
 
         .level-detail-badge {
-            font-size: 1.3em;
+            font-size: 1.5em;
             font-weight: bold;
-            min-width: 45px;
+            min-width: 50px;
             margin-right: 12px;
         }
 
@@ -241,12 +271,12 @@
         .level-detail-title {
             font-weight: bold;
             color: #2d3436;
-            margin-bottom: 2px;
-            font-size: 0.9em;
+            margin-bottom: 4px;
+            font-size: 1em;
         }
 
         .level-detail-desc {
-            font-size: 0.8em;
+            font-size: 0.9em;
             color: #636e72;
         }
 
@@ -336,11 +366,6 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
             border-color: #d63031;
-        }
-
-        .option-btn:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(225, 112, 85, 0.2);
         }
 
         .option-btn.correct {
@@ -459,11 +484,6 @@
             box-shadow: 0 7px 20px rgba(88, 204, 2, 0.4);
         }
 
-        .btn-primary:active {
-            transform: translateY(0);
-            box-shadow: 0 3px 10px rgba(88, 204, 2, 0.3);
-        }
-
         .btn-secondary {
             background: transparent;
             color: #74b9ff;
@@ -480,10 +500,6 @@
         .btn-secondary:hover {
             background: #74b9ff;
             color: white;
-        }
-
-        .btn-secondary:active {
-            transform: scale(0.98);
         }
 
         .results-screen {
@@ -532,335 +548,66 @@
                 padding-top: 10px;
             }
 
-            .quiz-container {
-                border-radius: 15px;
-                max-width: 100%;
-            }
-
             .header {
                 padding: 12px;
             }
 
-            .back-btn {
-                left: 10px;
+            .back-btn, .help-btn {
                 padding: 5px 10px;
                 font-size: 0.85em;
             }
 
-            .score {
-                font-size: 0.9em;
+            .back-btn {
+                left: 10px;
+            }
+
+            .help-btn {
+                right: 10px;
             }
 
             .main-content {
-                padding: 15px 15px;
-                min-height: auto;
+                padding: 15px;
             }
 
             .menu-title {
                 font-size: 1.6em;
-                margin-bottom: 5px;
             }
 
             .menu-subtitle {
                 font-size: 0.85em;
-                margin-bottom: 15px;
+            }
+
+            .total-progress {
+                padding: 15px;
+            }
+
+            .total-progress-bar-container {
+                height: 20px;
             }
 
             .levels-grid {
-                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
-                margin-bottom: 15px;
             }
 
             .level-card {
-                padding: 12px 10px;
-                min-height: auto;
+                padding: 25px 12px;
             }
 
             .level-name {
-                font-size: 1.6em;
-                margin-bottom: 2px;
+                font-size: 2em;
             }
 
             .level-description {
-                font-size: 0.7em;
-                margin-bottom: 4px;
-            }
-
-            .level-progress {
-                font-size: 0.65em;
-                margin-top: 4px;
-            }
-
-            .level-progress-bar-container {
-                height: 4px;
-                margin-top: 4px;
-            }
-
-            .level-info {
-                padding: 12px;
-                margin-top: 15px;
-            }
-
-            .level-info h3 {
-                font-size: 1em;
-                margin-bottom: 10px;
-            }
-
-            .level-detail {
-                padding: 6px;
-                margin-bottom: 8px;
-            }
-
-            .level-detail-badge {
-                font-size: 1.1em;
-                min-width: 40px;
-                margin-right: 10px;
-            }
-
-            .level-detail-title {
-                font-size: 0.85em;
-            }
-
-            .level-detail-desc {
-                font-size: 0.75em;
+                font-size: 0.95em;
             }
 
             .word-display {
                 font-size: 1.8em;
-                padding: 20px 15px;
-                margin-bottom: 25px;
+                padding: 20px;
             }
 
             .options-grid {
                 grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .option-btn {
-                padding: 18px 15px;
-                font-size: 1em;
-            }
-
-            .answer-input {
-                font-size: 1.2em;
-                padding: 18px;
-            }
-
-            .question-number {
-                font-size: 1em;
-            }
-
-            .word-level {
-                font-size: 0.9em;
-                padding: 8px 16px;
-                margin-bottom: 15px;
-            }
-
-            .feedback {
-                padding: 15px;
-                margin: 15px 0;
-                font-size: 0.95em;
-            }
-
-            .btn-primary {
-                padding: 14px 35px;
-                font-size: 1.1em;
-            }
-
-            .btn-secondary {
-                padding: 10px 25px;
-                font-size: 0.95em;
-                margin: 8px;
-            }
-
-            .results-score {
-                font-size: 2.5em;
-            }
-
-            .results-message {
-                font-size: 1.3em;
-            }
-
-            .stats-box {
-                padding: 15px;
-            }
-
-            .stat-item {
-                font-size: 0.95em;
-                margin: 8px 0;
-            }
-        }
-
-        /* Оптимизация для очень маленьких экранов */
-        @media (max-width: 380px) {
-            .menu-title {
-                font-size: 1.4em;
-            }
-
-            .menu-subtitle {
-                font-size: 0.8em;
-            }
-
-            .level-name {
-                font-size: 1.4em;
-            }
-
-            .level-description {
-                font-size: 0.65em;
-            }
-
-            .level-card {
-                padding: 10px 8px;
-            }
-
-            .word-display {
-                font-size: 1.5em;
-                padding: 18px 12px;
-            }
-
-            .option-btn {
-                padding: 16px 12px;
-                font-size: 0.95em;
-            }
-
-            .results-score {
-                font-size: 2em;
-            }
-        }
-
-        /* Оптимизация для iPhone и устройств с высотой до 750px */
-        @media (max-width: 600px) and (max-height: 750px) {
-            .main-content {
-                padding: 12px 12px;
-            }
-
-            .menu-title {
-                font-size: 1.5em;
-                margin-bottom: 4px;
-            }
-
-            .menu-subtitle {
-                font-size: 0.8em;
-                margin-bottom: 12px;
-            }
-
-            .levels-grid {
-                gap: 8px;
-                margin-bottom: 12px;
-            }
-
-            .level-card {
-                padding: 10px 8px;
-            }
-
-            .level-name {
-                font-size: 1.5em;
-            }
-
-            .level-info {
-                padding: 10px;
-                margin-top: 12px;
-            }
-
-            .level-detail {
-                padding: 5px;
-                margin-bottom: 6px;
-            }
-        }
-
-        /* Специальная оптимизация для iPhone SE и маленьких экранов */
-        @media (max-width: 400px) and (max-height: 680px) {
-            body {
-                padding: 5px;
-                padding-top: 8px;
-            }
-
-            .header {
-                padding: 10px;
-            }
-
-            .main-content {
-                padding: 10px;
-            }
-
-            .menu-title {
-                font-size: 1.4em;
-                margin-bottom: 3px;
-            }
-
-            .menu-subtitle {
-                font-size: 0.75em;
-                margin-bottom: 10px;
-            }
-
-            .levels-grid {
-                gap: 8px;
-                margin-bottom: 10px;
-            }
-
-            .level-card {
-                padding: 10px 6px;
-            }
-
-            .level-name {
-                font-size: 1.4em;
-            }
-
-            .level-description {
-                font-size: 0.65em;
-            }
-
-            .level-progress {
-                font-size: 0.6em;
-            }
-
-            .level-info {
-                padding: 8px;
-                margin-top: 10px;
-            }
-
-            .level-info h3 {
-                font-size: 0.9em;
-                margin-bottom: 8px;
-            }
-
-            .level-detail {
-                padding: 4px;
-                margin-bottom: 5px;
-            }
-
-            .level-detail-badge {
-                font-size: 1em;
-                min-width: 35px;
-                margin-right: 8px;
-            }
-
-            .level-detail-title {
-                font-size: 0.8em;
-            }
-
-            .level-detail-desc {
-                font-size: 0.7em;
-            }
-        }
-
-        /* Улучшения для сенсорных экранов */
-        @media (hover: none) and (pointer: coarse) {
-            .option-btn {
-                min-height: 50px;
-            }
-
-            .btn-primary {
-                min-height: 50px;
-            }
-
-            .btn-secondary {
-                min-height: 45px;
-            }
-
-            .level-card {
-                min-height: 90px;
             }
         }
     </style>
@@ -869,6 +616,7 @@
     <div class="quiz-container">
         <div class="header">
             <button class="back-btn" id="backBtn" style="display: none;" onclick="goToMainMenu()">← Артқа</button>
+            <button class="help-btn" id="helpBtn" onclick="showHelp()">❓</button>
             <div class="score">
                 <span id="currentLevel"></span>
                 <span id="scoreDisplay">Ұпай: <span id="score">0</span></span>
@@ -884,11 +632,20 @@
                 <div class="menu-title">EnglishBoost</div>
                 <div class="menu-subtitle">Адаптивті жаңа әдіспен ағылшын тілін үйреніңіз</div>
                 
-                <div class="levels-grid" id="levelsGrid">
-                    <!-- Уровни будут загружены динамически -->
+                <div class="total-progress">
+                    <div class="total-progress-title">📊 Жалпы прогресс</div>
+                    <div class="total-progress-bar-container">
+                        <div class="total-progress-bar" id="totalProgressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="total-progress-text" id="totalProgressText">0 / 0 сөз үйренілді</div>
                 </div>
+                
+                <div class="levels-grid" id="levelsGrid"></div>
+            </div>
 
-                <div class="level-info">
+            <!-- Help Screen -->
+            <div class="help-screen" id="helpScreen">
+                <div class="help-content">
                     <h3>📚 Деңгейлердің сипаттамасы</h3>
                     <div class="level-detail">
                         <div class="level-detail-badge" style="color: #56ab91;">A1</div>
@@ -933,6 +690,7 @@
                         </div>
                     </div>
                 </div>
+                <button class="btn-primary" style="margin-top: 20px;" onclick="hideHelp()">Жабу</button>
             </div>
 
             <!-- Loading Screen -->
@@ -1000,7 +758,6 @@
         let shuffledQuestions = [];
         let wordProgress = {};
         let currentLevel = '';
-
         const LEVEL_THRESHOLD = 5;
 
         const LEVEL_FILES = {
@@ -1022,23 +779,52 @@
         };
 
         let allLevelQuestions = {};
+        let questionsCache = {};
 
-        // Инициализация при загрузке страницы
         window.addEventListener('DOMContentLoaded', () => {
             loadAllLevelProgress();
+            updateTotalProgress();
         });
+
+        function showScreen(screenId) {
+            const screens = ['mainMenu', 'loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen', 'helpScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = id === screenId ? 'block' : 'none';
+            });
+        }
+
+        function showHelp() {
+            document.getElementById('backBtn').style.display = 'block';
+            showScreen('helpScreen');
+        }
+
+        function hideHelp() {
+            document.getElementById('backBtn').style.display = 'none';
+            showScreen('mainMenu');
+        }
+
+        function goToMainMenu() {
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('scoreDisplay').style.display = 'none';
+            document.getElementById('currentLevel').textContent = '';
+            document.getElementById('helpBtn').style.display = 'block';
+            updateTotalProgress();
+            showScreen('mainMenu');
+        }
 
         async function loadAllLevelProgress() {
             const levelsGrid = document.getElementById('levelsGrid');
             levelsGrid.innerHTML = '';
 
             for (const level of Object.keys(LEVEL_FILES)) {
-                const card = await createLevelCard(level);
+                const card = createLevelCard(level);
                 levelsGrid.appendChild(card);
             }
         }
 
-        async function createLevelCard(level) {
+        function createLevelCard(level) {
             const button = document.createElement('button');
             button.className = `level-card ${level.toLowerCase()}`;
             button.onclick = () => selectLevel(level);
@@ -1053,84 +839,36 @@
 
             button.appendChild(levelName);
             button.appendChild(description);
-
-            // Загружаем прогресс для этого уровня
-            try {
-                const progress = await getLevelProgress(level);
-                
-                const progressText = document.createElement('div');
-                progressText.className = 'level-progress';
-                progressText.textContent = `📖 ${progress.learned}/${progress.total} үйренілді`;
-                
-                const progressBarContainer = document.createElement('div');
-                progressBarContainer.className = 'level-progress-bar-container';
-                
-                const progressBar = document.createElement('div');
-                progressBar.className = 'level-progress-bar';
-                progressBar.style.width = `${progress.percentage}%`;
-                
-                progressBarContainer.appendChild(progressBar);
-                button.appendChild(progressText);
-                button.appendChild(progressBarContainer);
-            } catch (e) {
-                const progressText = document.createElement('div');
-                progressText.className = 'level-progress';
-                progressText.textContent = '📖 0/0 үйренілді';
-                button.appendChild(progressText);
-            }
-
             return button;
         }
 
-        async function getLevelProgress(level) {
-            try {
-                // Загружаем прогресс из localStorage
-                const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
-                const progress = saved ? JSON.parse(saved) : {};
+        async function updateTotalProgress() {
+            let totalWords = 0;
+            let learnedWords = 0;
 
-                // Загружаем вопросы для этого уровня (если еще не загружены)
-                if (!allLevelQuestions[level]) {
-                    const response = await fetch(LEVEL_FILES[level]);
-                    if (!response.ok) throw new Error('File not found');
-                    const content = await response.text();
-                    allLevelQuestions[level] = parseQuestionFile(content);
-                }
+            for (const level of Object.keys(LEVEL_FILES)) {
+                try {
+                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+                    const progress = saved ? JSON.parse(saved) : {};
 
-                const totalWords = allLevelQuestions[level].length;
-                const learnedWords = Object.values(progress).filter(p => p >= 10).length;
-                const percentage = totalWords > 0 ? Math.round((learnedWords / totalWords) * 100) : 0;
+                    if (!questionsCache[level]) {
+                        const response = await fetch(LEVEL_FILES[level]);
+                        if (response.ok) {
+                            const content = await response.text();
+                            questionsCache[level] = parseQuestionFile(content);
+                        }
+                    }
 
-                return {
-                    learned: learnedWords,
-                    total: totalWords,
-                    percentage: percentage
-                };
-            } catch (e) {
-                return {
-                    learned: 0,
-                    total: 0,
-                    percentage: 0
-                };
+                    if (questionsCache[level]) {
+                        totalWords += questionsCache[level].length;
+                        learnedWords += Object.values(progress).filter(p => p >= 10).length;
+                    }
+                } catch (e) {}
             }
-        }
 
-        function showScreen(screenId) {
-            const screens = ['mainMenu', 'loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen'];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-            const target = document.getElementById(screenId);
-            if (target) target.style.display = 'block';
-        }
-
-        function goToMainMenu() {
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('progressContainer').style.display = 'none';
-            document.getElementById('scoreDisplay').style.display = 'none';
-            document.getElementById('currentLevel').textContent = '';
-            showScreen('mainMenu');
-            loadAllLevelProgress(); // Обновляем прогресс при возврате
+            const percentage = totalWords > 0 ? Math.round((learnedWords / totalWords) * 100) : 0;
+            document.getElementById('totalProgressBar').style.width = percentage + '%';
+            document.getElementById('totalProgressText').textContent = `${learnedWords} / ${totalWords} сөз үйренілді (${percentage}%)`;
         }
 
         function selectLevel(level) {
@@ -1138,6 +876,7 @@
             document.getElementById('currentLevel').textContent = `${level} деңгейі | `;
             document.getElementById('scoreDisplay').style.display = 'inline';
             document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('helpBtn').style.display = 'none';
             loadQuestions(level);
         }
 
@@ -1150,13 +889,18 @@
             showScreen('loadingScreen');
             
             try {
-                const fileUrl = LEVEL_FILES[level];
-                const response = await fetch(fileUrl);
-                
-                if (!response.ok) throw new Error(`${level} деңгейі үшін файл табылмады`);
-                
-                const content = await response.text();
-                questions = parseQuestionFile(content);
+                if (questionsCache[level]) {
+                    questions = questionsCache[level];
+                } else {
+                    const fileUrl = LEVEL_FILES[level];
+                    const response = await fetch(fileUrl);
+                    
+                    if (!response.ok) throw new Error(`${level} деңгейі үшін файл табылмады`);
+                    
+                    const content = await response.text();
+                    questions = parseQuestionFile(content);
+                    questionsCache[level] = questions;
+                }
                 
                 if (questions.length === 0) {
                     throw new Error('Файлда сұрақтар табылмады');
@@ -1167,72 +911,46 @@
                 startQuiz();
             } catch (error) {
                 console.error('Error loading questions:', error);
-                showError(`Қате: ${error.message}\n\nquestions_${level.toLowerCase()}.txt файлының репозиторийде бар екеніне көз жеткізіңіз.`);
+                showError(`Қате: ${error.message}`);
             }
         }
 
         function parseQuestionFile(content) {
             const parsedQuestions = [];
-            const blocks = content.split('---').map(b => b.trim()).filter(b => b);
+            const blocks = content.split('---').filter(b => b.trim());
             
             for (const block of blocks) {
-                const lines = block.split('\n').map(l => l.trim()).filter(l => l);
-                
-                let question = '';
-                let options = [];
-                let correctAnswer = '';
+                const lines = block.split('\n').filter(l => l.trim());
+                let question = '', options = [], correctAnswer = '';
                 
                 for (const line of lines) {
-                    if (line.startsWith('Q:')) {
-                        question = line.substring(2).trim();
-                    } else if (line.match(/^[A-D]:/)) {
-                        options.push(line.substring(2).trim());
-                    } else if (line.startsWith('CORRECT:')) {
-                        correctAnswer = line.substring(8).trim().toUpperCase();
-                    }
+                    if (line.startsWith('Q:')) question = line.substring(2).trim();
+                    else if (line.match(/^[A-D]:/)) options.push(line.substring(2).trim());
+                    else if (line.startsWith('CORRECT:')) correctAnswer = line.substring(8).trim().toUpperCase();
                 }
                 
                 if (question && options.length === 4 && correctAnswer) {
                     const correctIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
                     if (correctIndex >= 0 && correctIndex < 4) {
-                        parsedQuestions.push({
-                            question: question,
-                            options: options,
-                            correct: correctIndex
-                        });
+                        parsedQuestions.push({ question, options, correct: correctIndex });
                     }
                 }
             }
-            
             return parsedQuestions;
         }
 
         function loadProgress(level) {
-            try {
-                const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
-                if (saved) {
-                    wordProgress = JSON.parse(saved);
-                } else {
-                    wordProgress = {};
-                }
-            } catch (e) {
-                wordProgress = {};
-            }
+            const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+            wordProgress = saved ? JSON.parse(saved) : {};
         }
 
         function saveProgress() {
-            try {
-                localStorage.setItem(`englishQuizProgress_${currentLevel}_v2`, JSON.stringify(wordProgress));
-            } catch (e) {
-                console.log('Error saving progress');
-            }
+            localStorage.setItem(`englishQuizProgress_${currentLevel}_v2`, JSON.stringify(wordProgress));
         }
 
         function initializeProgress() {
             questions.forEach(q => {
-                if (!wordProgress[q.question]) {
-                    wordProgress[q.question] = 0;
-                }
+                if (!wordProgress[q.question]) wordProgress[q.question] = 0;
             });
         }
 
@@ -1283,7 +1001,7 @@
                 document.getElementById('wordDisplay').textContent = question.options[question.correct];
                 answerInput.value = '';
                 answerInput.className = 'answer-input';
-                answerInput.focus();
+                setTimeout(() => answerInput.focus(), 100);
             } else {
                 container.classList.remove('input-mode');
                 document.getElementById('wordDisplay').textContent = question.question;
@@ -1303,7 +1021,6 @@
 
         function selectAnswer(selectedIndex) {
             if (answered) return;
-            
             answered = true;
             const question = shuffledQuestions[currentQuestion];
             const isCorrect = selectedIndex === question.correct;
@@ -1311,11 +1028,8 @@
             const buttons = document.querySelectorAll('.option-btn');
             buttons.forEach((btn, index) => {
                 btn.disabled = true;
-                if (index === question.correct) {
-                    btn.classList.add('correct');
-                } else if (index === selectedIndex && !isCorrect) {
-                    btn.classList.add('incorrect');
-                }
+                if (index === question.correct) btn.classList.add('correct');
+                else if (index === selectedIndex && !isCorrect) btn.classList.add('incorrect');
             });
             
             processAnswer(isCorrect);
@@ -1323,17 +1037,14 @@
 
         function checkTextAnswer() {
             if (answered) return;
-            
             answered = true;
             const question = shuffledQuestions[currentQuestion];
             const input = document.getElementById('answerInput');
             const userAnswer = input.value.trim().toLowerCase();
             const correctAnswer = question.question.toLowerCase();
-            
             const isCorrect = userAnswer === correctAnswer;
             
             input.className = 'answer-input ' + (isCorrect ? 'correct' : 'incorrect');
-            
             processAnswer(isCorrect);
         }
 
@@ -1389,12 +1100,11 @@
             document.getElementById('statsLevel1').textContent = level1;
             document.getElementById('statsLevel2').textContent = level2;
             
-            let message;
-            if (percentage >= 90) message = "Керемет! Сіз шебер боп шықтыңыз! 🌟";
-            else if (percentage >= 80) message = "Тамаша! Жалғастыра беріңіз! 👏";
-            else if (percentage >= 70) message = "Жақсы! Өсуге орын бар! 💪";
-            else if (percentage >= 60) message = "Жаман емес! Көбірек жаттығыңыз! 📖";
-            else message = "Көңіліңіз қалмасын! Тағы көріңіз! 💪";
+            let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз! 🌟" :
+                         percentage >= 80 ? "Тамаша! Жалғастыра беріңіз! 👏" :
+                         percentage >= 70 ? "Жақсы! Өсуге орын бар! 💪" :
+                         percentage >= 60 ? "Жаман емес! Көбірек жаттығыңыз! 📖" :
+                         "Көңіліңіз қалмасын! Тағы көріңіз! 💪";
             
             document.getElementById('resultsMessage').textContent = message;
             showScreen('resultsScreen');
@@ -1405,7 +1115,7 @@
         }
 
         function resetProgress() {
-            if (confirm(`${currentLevel} деңгейі үшін барлық прогрессті тастау керек пе? Барлық сөздер бастапқы деңгейге оралады.`)) {
+            if (confirm(`${currentLevel} деңгейі үшін барлық прогрессті тастау керек пе?`)) {
                 wordProgress = {};
                 initializeProgress();
                 saveProgress();
@@ -1415,9 +1125,7 @@
         }
 
         document.getElementById('answerInput')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !answered) {
-                checkTextAnswer();
-            }
+            if (e.key === 'Enter' && !answered) checkTextAnswer();
         });
     </script>
 </body>
