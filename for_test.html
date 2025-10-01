@@ -438,7 +438,7 @@
 
         async function loadQuestions() {
             try {
-                const response = await fetch('questions.txt');
+                const response = await fetch('/english-quiz-pwa/questions.txt');
                 if (!response.ok) throw new Error('Файл не найден');
                 
                 const content = await response.text();
@@ -707,3 +707,4 @@
     </script>
 </body>
 </html>
+
