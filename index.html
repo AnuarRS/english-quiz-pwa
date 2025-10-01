@@ -35,16 +35,19 @@
 
         .header {
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            padding: 15px 20px 20px;
             color: white;
-            text-align: center;
             position: relative;
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
         .back-btn, .help-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
             background: rgba(255,255,255,0.2);
             border: 2px solid white;
             color: white;
@@ -53,14 +56,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
-        }
-
-        .back-btn {
-            left: 20px;
-        }
-
-        .help-btn {
-            right: 20px;
+            font-size: 0.9em;
         }
 
         .back-btn:hover, .help-btn:hover {
@@ -70,23 +66,36 @@
 
         .progress-container {
             background: rgba(255,255,255,0.3);
-            border-radius: 15px;
-            height: 12px;
-            margin: 15px 0;
+            border-radius: 10px;
+            height: 16px;
             overflow: hidden;
+            position: relative;
         }
 
         .progress-bar {
-            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            background: #58cc02;
             height: 100%;
-            border-radius: 15px;
+            border-radius: 10px;
             transition: width 0.5s ease;
-            box-shadow: 0 2px 10px rgba(255,215,0,0.3);
+            box-shadow: 0 2px 10px rgba(88, 204, 2, 0.4);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            border-radius: 10px 10px 0 0;
         }
 
         .score {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
+            text-align: center;
         }
 
         .main-content {
@@ -311,61 +320,48 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .question-number {
-            color: #58cc02;
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-
-        .word-level {
-            background: linear-gradient(90deg, #ffd700, #ffed4e);
-            color: #2d3436;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
         .word-display {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            color: white;
-            font-size: 2.5em;
+            background: white;
+            color: #2d3436;
+            font-size: 2.2em;
             font-weight: bold;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(116, 185, 255, 0.3);
+            padding: 40px 30px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 3px solid #e8e8e8;
         }
 
         .input-mode .word-display {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            background: white;
+            color: #2d3436;
+            border-color: #0984e3;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 30px;
         }
 
         .option-btn {
             background: white;
-            border: 3px solid #e17055;
+            border: 3px solid #e8e8e8;
             color: #2d3436;
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
+            padding: 22px 15px;
+            border-radius: 16px;
+            font-size: 1.05em;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
         }
 
         .option-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
-            border-color: #d63031;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+            border-color: #d0d0d0;
         }
 
         .option-btn.correct {
@@ -549,20 +545,24 @@
             }
 
             .header {
-                padding: 12px;
+                padding: 12px 15px 15px;
+            }
+
+            .header-top {
+                margin-bottom: 12px;
             }
 
             .back-btn, .help-btn {
-                padding: 5px 10px;
+                padding: 6px 12px;
                 font-size: 0.85em;
             }
 
-            .back-btn {
-                left: 10px;
+            .score {
+                font-size: 14px;
             }
 
-            .help-btn {
-                right: 10px;
+            .progress-container {
+                height: 14px;
             }
 
             .main-content {
@@ -615,11 +615,13 @@
 <body>
     <div class="quiz-container">
         <div class="header">
-            <button class="back-btn" id="backBtn" style="display: none;" onclick="goToMainMenu()">← Артқа</button>
-            <button class="help-btn" id="helpBtn" onclick="showHelp()">❓</button>
-            <div class="score">
-                <span id="currentLevel"></span>
-                <span id="scoreDisplay">Ұпай: <span id="score">0</span></span>
+            <div class="header-top">
+                <button class="back-btn" id="backBtn" style="display: none;" onclick="goToMainMenu()">✕</button>
+                <div class="score">
+                    <span id="currentLevel"></span>
+                    <span id="scoreDisplay" style="display: none;">💎 <span id="score">0</span></span>
+                </div>
+                <button class="help-btn" id="helpBtn" onclick="showHelp()">❓</button>
             </div>
             <div class="progress-container" id="progressContainer" style="display: none;">
                 <div class="progress-bar" id="progressBar"></div>
@@ -708,8 +710,6 @@
 
             <!-- Question Screen -->
             <div class="question-container" id="questionScreen">
-                <div class="question-number" id="questionNumber">1-сұрақ, барлығы 10</div>
-                <div class="word-level" id="wordLevel">Деңгей: Жаңадан бастаушы</div>
                 <div class="word-display" id="wordDisplay">Жүктелуде...</div>
                 
                 <div class="options-grid" id="optionsGrid"></div>
@@ -983,12 +983,6 @@
             const isAdvanced = progress >= LEVEL_THRESHOLD;
             
             answered = false;
-            
-            document.getElementById('questionNumber').textContent = 
-                `${currentQuestion + 1}-сұрақ, барлығы ${shuffledQuestions.length}`;
-            
-            document.getElementById('wordLevel').textContent = 
-                isAdvanced ? `⭐ Жетілдірілген: ${progress}/10` : `🎯 Жаңадан бастаушы: ${progress}/${LEVEL_THRESHOLD}`;
             
             const feedback = document.getElementById('feedback');
             feedback.classList.remove('show', 'correct', 'incorrect', 'level-up');
