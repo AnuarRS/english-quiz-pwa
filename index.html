@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EnglishBoost - Игра с падающими словами</title>
+    <title>EnglishBoost - Карта мира</title>
     <meta name="theme-color" content="#58cc02">
     <style>
         * {
@@ -320,7 +320,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Game area - падающие слова */
         .game-area {
             position: relative;
             height: 400px;
@@ -360,7 +359,6 @@
             100% { transform: translateX(-50%) scale(2.5); opacity: 0; }
         }
 
-        /* Скрываем обычное отображение в игровом режиме */
         .question-container.game-mode .word-display {
             display: none;
         }
@@ -382,24 +380,25 @@
             border-color: #0984e3;
         }
 
+        /* MAP STYLE OPTIONS */
         .options-grid {
             position: relative;
             width: 100%;
-            height: 300px;
+            height: 320px;
             margin-bottom: 30px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
             border-radius: 20px;
             overflow: hidden;
-            border: 3px solid #dfe6e9;
+            border: 3px solid #95a5a6;
         }
 
         .option-btn {
             position: absolute;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 2px solid #b2bec3;
+            background: linear-gradient(135deg, #ffffff 0%, #ecf0f1 100%);
+            border: 3px solid #7f8c8d;
             color: #2d3436;
             padding: 20px 15px;
-            font-size: 1.05em;
+            font-size: 1em;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -407,85 +406,84 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            user-select: none;
         }
 
         .option-btn:nth-child(1) {
             top: 0;
             left: 0;
-            width: 55%;
-            height: 52%;
-            clip-path: polygon(0 0, 100% 0, 85% 45%, 92% 100%, 45% 95%, 0 70%);
-            border-right-color: #95a5a6;
-            border-bottom-color: #95a5a6;
+            width: 58%;
+            height: 54%;
+            clip-path: polygon(0 0, 100% 0, 88% 42%, 95% 100%, 42% 98%, 0 72%);
         }
 
         .option-btn:nth-child(2) {
             top: 0;
             right: 0;
-            width: 48%;
-            height: 55%;
-            clip-path: polygon(15% 0, 100% 0, 100% 100%, 5% 90%, 8% 50%);
-            border-left-color: #95a5a6;
-            border-bottom-color: #95a5a6;
+            width: 45%;
+            height: 58%;
+            clip-path: polygon(12% 0, 100% 0, 100% 100%, 3% 92%, 5% 45%);
         }
 
         .option-btn:nth-child(3) {
             bottom: 0;
             left: 0;
-            width: 52%;
-            height: 53%;
-            clip-path: polygon(0 5%, 48% 0, 95% 12%, 100% 100%, 0 100%);
-            border-right-color: #95a5a6;
-            border-top-color: #95a5a6;
+            width: 48%;
+            height: 50%;
+            clip-path: polygon(0 2%, 45% 0, 98% 8%, 100% 100%, 0 100%);
         }
 
         .option-btn:nth-child(4) {
             bottom: 0;
             right: 0;
-            width: 53%;
-            height: 48%;
-            clip-path: polygon(0 15%, 12% 0, 100% 0, 100% 100%, 5% 100%);
-            border-left-color: #95a5a6;
-            border-top-color: #95a5a6;
+            width: 55%;
+            height: 45%;
+            clip-path: polygon(0 12%, 8% 0, 100% 0, 100% 100%, 2% 100%);
         }
 
         .option-btn:hover:not(:disabled) {
             background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
             color: white;
             border-color: #667eea;
-            transform: scale(1.02);
+            transform: scale(1.03);
             z-index: 10;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4), inset 0 1px 3px rgba(255,255,255,0.3);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5), inset 0 2px 8px rgba(255,255,255,0.4);
         }
 
         .option-btn.correct {
             background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
             border-color: #00a085;
             color: white;
-            animation: correctPulse 0.6s ease;
+            animation: correctGlow 0.8s ease;
             z-index: 15;
-            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.5), inset 0 1px 3px rgba(255,255,255,0.4);
+            box-shadow: 0 10px 35px rgba(0, 184, 148, 0.6), inset 0 2px 8px rgba(255,255,255,0.5);
         }
 
         .option-btn.incorrect {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            border-color: #c0392b;
+            border-color: #a93226;
             color: white;
             animation: shake 0.5s ease;
             z-index: 15;
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+            box-shadow: 0 10px 35px rgba(231, 76, 60, 0.6);
         }
 
-        @keyframes correctPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @keyframes correctGlow {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 10px 35px rgba(0, 184, 148, 0.6), inset 0 2px 8px rgba(255,255,255,0.5);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 15px 45px rgba(0, 184, 148, 0.9), inset 0 2px 8px rgba(255,255,255,0.7);
+            }
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
 
         .input-container {
@@ -651,7 +649,12 @@
             }
 
             .options-grid {
-                grid-template-columns: 1fr;
+                height: 280px;
+            }
+
+            .option-btn {
+                font-size: 0.9em;
+                padding: 15px 10px;
             }
         }
     </style>
@@ -800,7 +803,6 @@
         let currentLevel = '';
         const LEVEL_THRESHOLD = 5;
         
-        // Game mechanics
         let fallingWordElement = null;
         let wordTop = -100;
         let gameInterval = null;
@@ -1037,11 +1039,9 @@
             const container = document.getElementById('questionScreen');
             const answerInput = document.getElementById('answerInput');
             
-            // Удаляем все режимы
             container.classList.remove('game-mode', 'input-mode');
             
             if (isAdvanced) {
-                // Input mode
                 container.classList.add('input-mode');
                 document.getElementById('wordDisplay').textContent = question.options[question.correct];
                 answerInput.value = '';
@@ -1049,7 +1049,6 @@
                 setTimeout(() => answerInput.focus(), 100);
                 clearGameInterval();
             } else {
-                // Game mode
                 container.classList.add('game-mode');
                 
                 const optionsGrid = document.getElementById('optionsGrid');
