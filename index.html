@@ -2,14 +2,18 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EnglishBoost - Адаптивті оқыту әдісі</title>
     <meta name="theme-color" content="#58cc02">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -20,6 +24,8 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .quiz-container {
@@ -29,6 +35,7 @@
             width: 100%;
             max-width: 600px;
             overflow: hidden;
+            position: relative;
         }
 
         .header {
@@ -57,6 +64,10 @@
         .back-btn:hover {
             background: white;
             color: #58cc02;
+        }
+
+        .back-btn:active {
+            transform: translateY(calc(-50% + 2px)) scale(0.95);
         }
 
         .progress-container {
@@ -145,6 +156,11 @@
         .level-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(9, 132, 227, 0.4);
+        }
+
+        .level-card:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
         }
 
         .level-card.a1 { background: linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%); }
@@ -321,6 +337,11 @@
             border-color: #d63031;
         }
 
+        .option-btn:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(225, 112, 85, 0.2);
+        }
+
         .option-btn.correct {
             background: #00b894;
             border-color: #00a085;
@@ -437,6 +458,11 @@
             box-shadow: 0 7px 20px rgba(88, 204, 2, 0.4);
         }
 
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(88, 204, 2, 0.3);
+        }
+
         .btn-secondary {
             background: transparent;
             color: #74b9ff;
@@ -453,6 +479,10 @@
         .btn-secondary:hover {
             background: #74b9ff;
             color: white;
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
         }
 
         .results-screen {
@@ -495,21 +525,205 @@
         }
 
         @media (max-width: 600px) {
-            .levels-grid {
-                grid-template-columns: 1fr;
+            body {
+                padding: 10px;
             }
-            .options-grid {
-                grid-template-columns: 1fr;
+
+            .quiz-container {
+                border-radius: 15px;
+                max-width: 100%;
             }
-            .word-display {
-                font-size: 2em;
-                padding: 20px;
+
+            .header {
+                padding: 15px;
             }
-            .answer-input {
-                font-size: 1.2em;
+
+            .back-btn {
+                left: 10px;
+                padding: 6px 12px;
+                font-size: 0.9em;
             }
+
+            .score {
+                font-size: 0.95em;
+            }
+
+            .main-content {
+                padding: 25px 20px;
+                min-height: 350px;
+            }
+
             .menu-title {
                 font-size: 2em;
+                margin-bottom: 8px;
+            }
+
+            .menu-subtitle {
+                font-size: 1em;
+                margin-bottom: 30px;
+            }
+
+            .levels-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .level-card {
+                padding: 20px 15px;
+            }
+
+            .level-name {
+                font-size: 2em;
+            }
+
+            .level-description {
+                font-size: 0.9em;
+            }
+
+            .level-progress {
+                font-size: 0.8em;
+            }
+
+            .level-info {
+                padding: 15px;
+                margin-top: 25px;
+            }
+
+            .level-info h3 {
+                font-size: 1.1em;
+                margin-bottom: 12px;
+            }
+
+            .level-detail {
+                padding: 8px;
+                margin-bottom: 10px;
+            }
+
+            .level-detail-badge {
+                font-size: 1.3em;
+                min-width: 45px;
+                margin-right: 12px;
+            }
+
+            .level-detail-title {
+                font-size: 0.95em;
+            }
+
+            .level-detail-desc {
+                font-size: 0.85em;
+            }
+
+            .word-display {
+                font-size: 1.8em;
+                padding: 20px 15px;
+                margin-bottom: 25px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .option-btn {
+                padding: 18px 15px;
+                font-size: 1em;
+            }
+
+            .answer-input {
+                font-size: 1.2em;
+                padding: 18px;
+            }
+
+            .question-number {
+                font-size: 1em;
+            }
+
+            .word-level {
+                font-size: 0.9em;
+                padding: 8px 16px;
+                margin-bottom: 15px;
+            }
+
+            .feedback {
+                padding: 15px;
+                margin: 15px 0;
+                font-size: 0.95em;
+            }
+
+            .btn-primary {
+                padding: 14px 35px;
+                font-size: 1.1em;
+            }
+
+            .btn-secondary {
+                padding: 10px 25px;
+                font-size: 0.95em;
+                margin: 8px;
+            }
+
+            .results-score {
+                font-size: 2.5em;
+            }
+
+            .results-message {
+                font-size: 1.3em;
+            }
+
+            .stats-box {
+                padding: 15px;
+            }
+
+            .stat-item {
+                font-size: 0.95em;
+                margin: 8px 0;
+            }
+        }
+
+        /* Оптимизация для очень маленьких экранов */
+        @media (max-width: 380px) {
+            .menu-title {
+                font-size: 1.7em;
+            }
+
+            .menu-subtitle {
+                font-size: 0.9em;
+            }
+
+            .word-display {
+                font-size: 1.5em;
+                padding: 18px 12px;
+            }
+
+            .level-name {
+                font-size: 1.8em;
+            }
+
+            .option-btn {
+                padding: 16px 12px;
+                font-size: 0.95em;
+            }
+
+            .results-score {
+                font-size: 2em;
+            }
+        }
+
+        /* Улучшения для сенсорных экранов */
+        @media (hover: none) and (pointer: coarse) {
+            .option-btn {
+                min-height: 50px;
+            }
+
+            .btn-primary {
+                min-height: 50px;
+            }
+
+            .btn-secondary {
+                min-height: 45px;
+            }
+
+            .level-card {
+                min-height: 120px;
             }
         }
     </style>
