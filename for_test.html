@@ -3,20 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English Quiz - Learn Words!</title>
-    
-    <!-- PWA Meta Tags -->
+    <title>English Quiz - Adaptive Learning</title>
     <meta name="theme-color" content="#58cc02">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="English Quiz">
-    <meta name="description" content="Изучайте английские слова весело и эффективно!">
-    
-    <!-- PWA Links -->
-    <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22English%20Quiz%20-%20Learn%20Words%22%2C%22short_name%22%3A%22English%20Quiz%22%2C%22description%22%3A%22%D0%98%D0%B7%D1%83%D1%87%D0%B0%D0%B9%D1%82%D0%B5%20%D0%B0%D0%BD%D0%B3%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B5%20%D1%81%D0%BB%D0%BE%D0%B2%D0%B0%20%D0%B2%D0%B5%D1%81%D0%B5%D0%BB%D0%BE%20%D0%B8%20%D1%8D%D1%84%D1%84%D0%B5%D0%BA%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%21%22%2C%22theme_color%22%3A%22%2358cc02%22%2C%22background_color%22%3A%22%23667eea%22%2C%22display%22%3A%22standalone%22%2C%22start_url%22%3A%22./%22%2C%22scope%22%3A%22./%22%2C%22orientation%22%3A%22portrait%22%2C%22lang%22%3A%22ru%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage/svg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A//www.w3.org/2000/svg%27%2520viewBox%3D%270%25200%2520192%2520192%27%253E%253Crect%2520width%3D%27192%27%2520height%3D%27192%27%2520rx%3D%2740%27%2520fill%3D%27%252358cc02%27/%253E%253Ctext%2520x%3D%2796%27%2520y%3D%27120%27%2520text-anchor%3D%27middle%27%2520fill%3D%27white%27%2520font-size%3D%2780%27%2520font-family%3D%27Arial%27%253E%F0%9F%8E%AF%253C/text%253E%253C/svg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image/svg%2Bxml%22%7D%2C%7B%22src%22%3A%22data%3Aimage/svg%2Bxml%2C%253Csvg%2520xmlns%3D%27http%3A//www.w3.org/2000/svg%27%2520viewBox%3D%270%25200%2520512%2520512%27%253E%253Crect%2520width%3D%27512%27%2520height%3D%27512%27%2520rx%3D%2780%27%2520fill%3D%27%252358cc02%27/%253E%253Ctext%2520x%3D%27256%27%2520y%3D%27320%27%2520text-anchor%3D%27middle%27%2520fill%3D%27white%27%2520font-size%3D%27200%27%2520font-family%3D%27Arial%27%253E%F0%9F%8E%AF%253C/text%253E%253C/svg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/svg%2Bxml%22%7D%5D%2C%22categories%22%3A%5B%22education%22%2C%22games%22%5D%7D">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2358cc02'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='40' font-family='Arial'%3E🎯%3C/text%3E%3C/svg%3E">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2358cc02'/%3E%3Ctext x='90' y='110' text-anchor='middle' fill='white' font-size='80' font-family='Arial'%3E🎯%3C/text%3E%3C/svg%3E">
-
     <style>
         * {
             margin: 0;
@@ -41,7 +29,6 @@
             width: 100%;
             max-width: 600px;
             overflow: hidden;
-            position: relative;
         }
 
         .header {
@@ -49,26 +36,6 @@
             padding: 20px;
             color: white;
             text-align: center;
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .main-btn {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.5);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .main-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-1px);
         }
 
         .progress-container {
@@ -90,44 +57,6 @@
         .score {
             font-size: 18px;
             font-weight: bold;
-            text-align: center;
-        }
-
-        .settings-panel {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border: 2px solid #e3e8ff;
-        }
-
-        .settings-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0;
-            flex-wrap: wrap;
-        }
-
-        .settings-label {
-            font-weight: bold;
-            color: #2d3436;
-            margin-bottom: 5px;
-        }
-
-        .settings-select {
-            padding: 8px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            font-size: 14px;
-            cursor: pointer;
-            transition: border-color 0.3s ease;
-        }
-
-        .settings-select:focus {
-            outline: none;
-            border-color: #74b9ff;
         }
 
         .main-content {
@@ -139,29 +68,51 @@
             justify-content: center;
         }
 
-        .welcome-screen h1 {
-            color: #2d3436;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            animation: fadeInUp 0.8s ease;
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
 
-        .welcome-screen p {
-            color: #636e72;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            animation: fadeInUp 0.8s ease 0.2s both;
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e17055;
+            border-top: 5px solid #58cc02;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .question-container {
             display: none;
-            animation: slideIn 0.5s ease;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .question-number {
             color: #58cc02;
             font-weight: bold;
             font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .word-level {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            color: #2d3436;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
             margin-bottom: 20px;
         }
 
@@ -174,7 +125,10 @@
             border-radius: 15px;
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(116, 185, 255, 0.3);
-            animation: pulse 2s infinite;
+        }
+
+        .input-mode .word-display {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
         }
 
         .options-grid {
@@ -194,11 +148,9 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .option-btn:hover {
+        .option-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(225, 112, 85, 0.3);
             border-color: #d63031;
@@ -218,8 +170,55 @@
             animation: shake 0.5s ease;
         }
 
-        .option-btn:disabled {
-            cursor: not-allowed;
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .input-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .input-mode .input-container {
+            display: block;
+        }
+
+        .input-mode .options-grid {
+            display: none;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5em;
+            border: 3px solid #74b9ff;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #0984e3;
+            box-shadow: 0 0 20px rgba(9, 132, 227, 0.3);
+        }
+
+        .answer-input.correct {
+            border-color: #00b894;
+            background: #d4edda;
+        }
+
+        .answer-input.incorrect {
+            border-color: #e74c3c;
+            background: #f8d7da;
         }
 
         .feedback {
@@ -229,13 +228,11 @@
             font-weight: bold;
             text-align: center;
             opacity: 0;
-            transform: translateY(20px);
             transition: all 0.3s ease;
         }
 
         .feedback.show {
             opacity: 1;
-            transform: translateY(0);
         }
 
         .feedback.correct {
@@ -248,6 +245,13 @@
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
+        }
+
+        .feedback.level-up {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            color: #2d3436;
+            border: 2px solid #f39c12;
+            font-size: 1.2em;
         }
 
         .btn-primary {
@@ -288,8 +292,7 @@
 
         .results-screen {
             display: none;
-            text-align: center;
-            animation: fadeInUp 0.8s ease;
+            animation: fadeIn 0.8s ease;
         }
 
         .results-score {
@@ -305,143 +308,25 @@
             color: #2d3436;
         }
 
-        .streak-counter {
-            background: #ff6b6b;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-
-        .celebration {
-            font-size: 4em;
-            animation: bounce 1s infinite;
-        }
-
-        .pwa-install-prompt {
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
-            color: #1976d2;
-            padding: 15px;
-            border-radius: 10px;
+        .stats-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
             margin: 20px 0;
+            border: 2px solid #e3e8ff;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .error-screen {
             display: none;
             text-align: center;
-        }
-
-        .pwa-install-btn {
-            background: #2196f3;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .pwa-install-btn:hover {
-            background: #1976d2;
-        }
-
-        .offline-indicator {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: #ff6b6b;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            display: none;
-            z-index: 1000;
-        }
-
-        .offline-indicator.online {
-            background: #58cc02;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes correctPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-30px); }
-            60% { transform: translateY(-15px); }
-        }
-
-        @keyframes learnedWordGlow {
-            0%, 100% { 
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-                transform: scale(1);
-            }
-            50% { 
-                box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-                transform: scale(1.02);
-            }
-        }
-
-        .learned-word {
-            animation: learnedWordGlow 2s ease-in-out;
-        }
-
-        .loading {
-            display: none;
-            justify-content: center;
-            align-items: center;
-            height: 200px;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #e17055;
-            border-top: 5px solid #58cc02;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            color: #e74c3c;
         }
 
         @media (max-width: 600px) {
@@ -452,413 +337,132 @@
                 font-size: 2em;
                 padding: 20px;
             }
-            .settings-row {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: left;
-            }
-            .settings-label {
-                margin-bottom: 8px;
-            }
-            .settings-select {
-                margin-bottom: 10px;
-            }
-            .header {
-                padding: 15px;
-            }
-            .main-btn {
-                font-size: 12px;
-                padding: 6px 12px;
+            .answer-input {
+                font-size: 1.2em;
             }
         }
     </style>
 </head>
 <body>
-    <div class="offline-indicator" id="offlineIndicator">
-        📶 Онлайн
-    </div>
-
     <div class="quiz-container">
         <div class="header">
-            <button class="main-btn" onclick="goToMain()">🏠 Main</button>
-            <div style="flex: 1;">
-                <div class="score">
-                    <span id="score">0</span> очков
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
+            <div class="score">
+                Очки: <span id="score">0</span>
             </div>
-            <div style="width: 80px;"></div> <!-- Spacer для симметрии -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
         </div>
 
         <div class="main-content">
-            <!-- Welcome Screen -->
-            <div class="welcome-screen" id="welcomeScreen">
-                <h1>🎯 English Quiz</h1>
-                <p>Изучайте английские слова весело и эффективно!</p>
-                <div class="streak-counter">
-                    Готовы начать? 🚀
-                </div>
-
-                <!-- PWA Install Prompt -->
-                <div class="pwa-install-prompt" id="pwaInstallPrompt">
-                    <strong>📱 Установите приложение!</strong><br>
-                    Добавьте English Quiz на домашний экран для удобного доступа
-                    <button class="pwa-install-btn" id="pwaInstallBtn">Установить</button>
-                </div>
-
-                <!-- Настройки теста -->
-                <div class="settings-panel">
-                    <h3 style="margin-top: 0; color: #2d3436;">⚙️ Настройки теста</h3>
-                    
-                    <div class="settings-row">
-                        <div class="settings-label">📊 Количество вопросов:</div>
-                        <select id="questionCount" class="settings-select">
-                            <option value="5">5 вопросов</option>
-                            <option value="10" selected>10 вопросов</option>
-                            <option value="15">15 вопросов</option>
-                            <option value="20">20 вопросов</option>
-                            <option value="all">Все вопросы</option>
-                        </select>
-                    </div>
-                    
-                    <div class="settings-row">
-                        <div class="settings-label">🔀 Порядок вопросов:</div>
-                        <select id="questionOrder" class="settings-select">
-                            <option value="random" selected>🎲 Случайный</option>
-                            <option value="alphabet">🔤 По алфавиту</option>
-                            <option value="reverse">🔤 Обратный алфавит</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="startQuiz()">Начать тест</button>
-                <button class="btn-secondary" onclick="showFileLoader()">📁 Загрузить свой файл</button>
-                
-                <!-- Скрытый загрузчик файлов -->
-                <div id="fileLoader" style="display: none; margin-top: 20px; padding: 20px; border: 2px dashed #74b9ff; border-radius: 10px; background: #f8f9ff;">
-                    <h3>📄 Загрузите файл с вопросами</h3>
-                    <p style="color: #636e72; margin: 10px 0;">Формат файла: questions.txt (как в примере)</p>
-                    <input type="file" id="questionFile" accept=".txt" style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-                    <br>
-                    <button class="btn-primary" onclick="loadQuestionFile()">📝 Загрузить и начать</button>
-                    <button class="btn-secondary" onclick="hideFileLoader()">❌ Отмена</button>
-                    
-                    <!-- Пример формата -->
-                    <details style="margin-top: 15px;">
-                        <summary style="cursor: pointer; color: #74b9ff; font-weight: bold;">📋 Показать пример формата файла</summary>
-                        <pre style="background: #f1f2f6; padding: 15px; border-radius: 8px; font-size: 12px; margin-top: 10px; text-align: left;">Q: Apple
-A: Яблоко
-B: Апельсин
-C: Банан
-D: Груша
-CORRECT: A
----
-
-Q: House
-A: Дом  
-B: Машина
-C: Дерево
-D: Окно
-CORRECT: A
----</pre>
-                    </details>
-                </div>
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loadingScreen">
+                <div class="spinner"></div>
+                <p style="color: #2d3436; font-size: 1.2em;">Загрузка вопросов...</p>
             </div>
 
-            <!-- Loading Screen -->
-            <div class="loading" id="loadingScreen">
-                <div class="spinner"></div>
+            <!-- Error Screen -->
+            <div class="error-screen" id="errorScreen">
+                <h2>⚠️ Ошибка загрузки</h2>
+                <p id="errorMessage">Не удалось загрузить вопросы</p>
+                <button class="btn-primary" onclick="location.reload()">Попробовать снова</button>
             </div>
 
             <!-- Question Screen -->
             <div class="question-container" id="questionScreen">
                 <div class="question-number" id="questionNumber">Вопрос 1 из 10</div>
+                <div class="word-level" id="wordLevel">Уровень: Новичок</div>
                 <div class="word-display" id="wordDisplay">Loading...</div>
-                <div class="options-grid" id="optionsGrid">
-                    <!-- Options will be populated here -->
+                
+                <div class="options-grid" id="optionsGrid"></div>
+                
+                <div class="input-container">
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Введите перевод...">
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="checkTextAnswer()">Проверить</button>
                 </div>
+                
                 <div class="feedback" id="feedback"></div>
             </div>
 
             <!-- Results Screen -->
             <div class="results-screen" id="resultsScreen">
-                <div class="celebration" id="celebration">🎉</div>
+                <div style="font-size: 4em;">🎉</div>
                 <div class="results-score" id="finalScore">0/0</div>
                 <div class="results-message" id="resultsMessage">Отлично!</div>
-                <div class="streak-counter" id="streakInfo">
-                    Процент правильных ответов: <span id="percentage">0</span>%
+                
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span>📊 Правильных ответов:</span>
+                        <span id="statsCorrect">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎯 Новички:</span>
+                        <span id="statsLevel1">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⭐ Продвинутые:</span>
+                        <span id="statsLevel2">0</span>
+                    </div>
                 </div>
+                
                 <button class="btn-primary" onclick="restartQuiz()">Пройти еще раз</button>
-                <button class="btn-secondary" onclick="showWelcomeScreen()">В главное меню</button>
-                <button class="btn-secondary" onclick="resetAndRestart()" style="background: #ff6b6b; color: white; border-color: #ff6b6b;">🔄 Сбросить прогресс</button>
-                <button class="btn-secondary" onclick="resetToDefault()" style="background: #2d3436; color: white; border-color: #2d3436;">📝 Встроенные вопросы</button>
+                <button class="btn-secondary" onclick="resetProgress()">Сбросить прогресс</button>
             </div>
         </div>
     </div>
 
     <script>
-        // PWA Service Worker (только для реального хостинга)
-        if ('serviceWorker' in navigator && location.protocol !== 'https://www.claudeusercontent.com') {
-            window.addEventListener('load', () => {
-                // Пытаемся зарегистрировать service-worker.js файл (если он есть)
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then((registration) => {
-                        console.log('✅ Service Worker зарегистрирован:', registration);
-                        const indicator = document.getElementById('offlineIndicator');
-                        if (indicator) {
-                            indicator.textContent = '🛠 PWA активно!';
-                            indicator.classList.add('online');
-                            indicator.style.display = 'block';
-                            setTimeout(() => indicator.style.display = 'none', 3000);
-                        }
-                    })
-                    .catch(() => {
-                        console.log('ℹ️ Service Worker не найден (это нормально для демо)');
-                    });
-            });
-        } else {
-            console.log('ℹ️ Service Worker отключен в демо-режиме');
-        }
-
-        // PWA Install Prompt
-        let deferredPrompt;
-        const pwaInstallPrompt = document.getElementById('pwaInstallPrompt');
-        const pwaInstallBtn = document.getElementById('pwaInstallBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            pwaInstallPrompt.style.display = 'block';
-        });
-
-        pwaInstallBtn.addEventListener('click', (e) => {
-            pwaInstallPrompt.style.display = 'none';
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the A2HS prompt');
-                        alert('🎉 Приложение устанавливается!');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                // Для Safari и других браузеров
-                alert('📱 Инструкция для Safari:\n1. Нажмите кнопку "Поделиться" ⬆️\n2. Выберите "На экран «Домой»"\n3. Нажмите "Добавить"');
-            }
-        });
-
-        // Показываем промпт установки сразу для демонстрации
-        setTimeout(() => {
-            if (!deferredPrompt) {
-                pwaInstallPrompt.style.display = 'block';
-            }
-        }, 3000);
-
-        // Online/Offline Status
-        const offlineIndicator = document.getElementById('offlineIndicator');
-        
-        function updateOnlineStatus() {
-            if (navigator.onLine) {
-                offlineIndicator.textContent = '📶 Онлайн';
-                offlineIndicator.classList.add('online');
-                offlineIndicator.style.display = 'none';
-            } else {
-                offlineIndicator.textContent = '📴 Оффлайн';
-                offlineIndicator.classList.remove('online');
-                offlineIndicator.style.display = 'block';
-            }
-        }
-
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-        updateOnlineStatus();
-
-        // Quiz data and state - ВСТРОЕННЫЕ ВОПРОСЫ
-        let defaultQuestions = [
-            {question: "Apple", options: ["Яблоко", "Апельсин", "Банан", "Груша"], correct: 0},
-            {question: "House", options: ["Дом", "Машина", "Дерево", "Окно"], correct: 0},
-            {question: "Cat", options: ["Собака", "Кот", "Птица", "Рыба"], correct: 1},
-            {question: "Water", options: ["Огонь", "Земля", "Вода", "Воздух"], correct: 2},
-            {question: "Book", options: ["Ручка", "Книга", "Стол", "Стул"], correct: 1},
-            {question: "Beautiful", options: ["Уродливый", "Высокий", "Красивый", "Быстрый"], correct: 2},
-            {question: "Run", options: ["Идти", "Стоять", "Сидеть", "Бежать"], correct: 3},
-            {question: "Happy", options: ["Грустный", "Счастливый", "Злой", "Усталый"], correct: 1},
-            {question: "School", options: ["Больница", "Магазин", "Школа", "Ресторан"], correct: 2},
-            {question: "Red", options: ["Синий", "Зеленый", "Красный", "Желтый"], correct: 2},
-            {question: "Car", options: ["Самолет", "Поезд", "Автобус", "Машина"], correct: 3},
-            {question: "Friend", options: ["Враг", "Друг", "Учитель", "Родитель"], correct: 1},
-            {question: "Big", options: ["Маленький", "Средний", "Большой", "Узкий"], correct: 2},
-            {question: "Cold", options: ["Горячий", "Теплый", "Прохладный", "Холодный"], correct: 3},
-            {question: "Moon", options: ["Солнце", "Звезда", "Луна", "Планета"], correct: 2},
-            {question: "Green", options: ["Красный", "Зеленый", "Синий", "Черный"], correct: 1},
-            {question: "Dog", options: ["Кот", "Собака", "Мышь", "Кролик"], correct: 1},
-            {question: "Love", options: ["Ненависть", "Равнодушие", "Любовь", "Страх"], correct: 2},
-            {question: "Strong", options: ["Слабый", "Сильный", "Высокий", "Низкий"], correct: 1},
-            {question: "Tree", options: ["Цветок", "Трава", "Дерево", "Куст"], correct: 2},
-        ];
-        
-        // Активные вопросы (сначала встроенные, потом могут быть заменены загруженными)
-        let questions = [...defaultQuestions];
-
+        let questions = [];
         let currentQuestion = 0;
         let score = 0;
         let answered = false;
         let shuffledQuestions = [];
-        let wordProgress = {}; // Отслеживание прогресса изучения слов
-        let learnedWords = new Set(); // Изученные слова
+        let wordProgress = {};
 
-        // Load progress from localStorage
-        function loadProgress() {
-            try {
-                const savedProgress = localStorage.getItem('englishQuizProgress');
-                const savedLearned = localStorage.getItem('englishQuizLearned');
-                
-                if (savedProgress) {
-                    wordProgress = JSON.parse(savedProgress);
-                }
-                
-                if (savedLearned) {
-                    learnedWords = new Set(JSON.parse(savedLearned));
-                }
-            } catch (e) {
-                console.log('Error loading progress:', e);
-                wordProgress = {};
-                learnedWords = new Set();
-            }
-        }
+        const LEVEL_THRESHOLD = 5;
 
-        // Save progress to localStorage
-        function saveProgress() {
-            try {
-                localStorage.setItem('englishQuizProgress', JSON.stringify(wordProgress));
-                localStorage.setItem('englishQuizLearned', JSON.stringify([...learnedWords]));
-            } catch (e) {
-                console.log('Error saving progress:', e);
-            }
-        }
-
-        // Initialize quiz
-        function startQuiz() {
-            // Инициализируем прогресс для всех слов, если еще не сделано
-            questions.forEach(question => {
-                if (!wordProgress[question.question]) {
-                    wordProgress[question.question] = 0;
-                }
+        function showScreen(screenId) {
+            const screens = ['loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
             });
+            const target = document.getElementById(screenId);
+            if (target) target.style.display = 'block';
+        }
 
-            // Фильтруем неизученные слова
-            const availableQuestions = questions.filter(question => 
-                !learnedWords.has(question.question)
-            );
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            showScreen('errorScreen');
+        }
 
-            if (availableQuestions.length === 0) {
-                alert('🎉 Поздравляем! Вы изучили все слова! Сбросим прогресс для продолжения обучения.');
-                resetProgress();
-                return startQuiz();
-            }
-
-            // Получаем настройки
-            const questionCountSelect = document.getElementById('questionCount');
-            const questionOrderSelect = document.getElementById('questionOrder');
-            
-            let questionCount = questionCountSelect ? questionCountSelect.value : '10';
-            let questionOrder = questionOrderSelect ? questionOrderSelect.value : 'random';
-
-            // Определяем количество вопросов
-            let maxQuestions;
-            if (questionCount === 'all') {
-                maxQuestions = availableQuestions.length;
-            } else {
-                maxQuestions = Math.min(parseInt(questionCount), availableQuestions.length);
-            }
-
-            // Сортируем вопросы по настройкам
-            let sortedQuestions = [...availableQuestions];
-            if (questionOrder === 'alphabet') {
-                sortedQuestions.sort((a, b) => a.question.toLowerCase().localeCompare(b.question.toLowerCase()));
-            } else if (questionOrder === 'reverse') {
-                sortedQuestions.sort((a, b) => b.question.toLowerCase().localeCompare(a.question.toLowerCase()));
-            } else {
-                // random
-                sortedQuestions = sortedQuestions.sort(() => Math.random() - 0.5);
-            }
-
-            // Берем нужное количество вопросов
-            shuffledQuestions = sortedQuestions.slice(0, maxQuestions);
+        async function loadQuestions() {
+            try {
+                const response = await fetch('questions.txt');
+                if (!response.ok) throw new Error('Файл не найден');
                 
-            currentQuestion = 0;
-            score = 0;
-            answered = false;
-            
-            showScreen('questionScreen');
-            updateUI();
-            displayQuestion();
-        }
-
-        function loadCustomQuestions() {
-            showFileLoader();
-        }
-
-        function showFileLoader() {
-            document.getElementById('fileLoader').style.display = 'block';
-        }
-
-        function hideFileLoader() {
-            document.getElementById('fileLoader').style.display = 'none';
-            document.getElementById('questionFile').value = '';
-        }
-
-        function loadQuestionFile() {
-            const fileInput = document.getElementById('questionFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('⚠️ Пожалуйста, выберите файл!');
-                return;
-            }
-            
-            if (!file.name.endsWith('.txt')) {
-                alert('⚠️ Пожалуйста, выберите файл с расширением .txt');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const content = e.target.result;
-                const parsedQuestions = parseQuestionFile(content);
+                const content = await response.text();
+                questions = parseQuestionFile(content);
                 
-                if (parsedQuestions.length === 0) {
-                    alert('❌ Не удалось найти вопросы в файле. Проверьте формат!');
-                    return;
+                if (questions.length === 0) {
+                    throw new Error('Не удалось найти вопросы в файле');
                 }
                 
-                // Заменяем вопросы на загруженные
-                questions = parsedQuestions;
-                
-                // Сбрасываем прогресс для новых вопросов
-                resetProgress();
-                
-                alert(`✅ Успешно загружено ${questions.length} вопросов! Начинаем тест.`);
-                hideFileLoader();
+                loadProgress();
+                initializeProgress();
                 startQuiz();
-            };
-            
-            reader.onerror = function() {
-                alert('❌ Ошибка при чтении файла!');
-            };
-            
-            reader.readAsText(file, 'UTF-8');
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                showError(`Ошибка: ${error.message}\nУбедитесь, что файл questions.txt находится рядом с index.html`);
+            }
         }
 
         function parseQuestionFile(content) {
-            const questions = [];
-            const blocks = content.split('---').map(block => block.trim()).filter(block => block);
+            const parsedQuestions = [];
+            const blocks = content.split('---').map(b => b.trim()).filter(b => b);
             
             for (const block of blocks) {
-                const lines = block.split('\n').map(line => line.trim()).filter(line => line);
+                const lines = block.split('\n').map(l => l.trim()).filter(l => l);
                 
                 let question = '';
                 let options = [];
@@ -877,7 +481,7 @@ CORRECT: A
                 if (question && options.length === 4 && correctAnswer) {
                     const correctIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
                     if (correctIndex >= 0 && correctIndex < 4) {
-                        questions.push({
+                        parsedQuestions.push({
                             question: question,
                             options: options,
                             correct: correctIndex
@@ -886,34 +490,51 @@ CORRECT: A
                 }
             }
             
-            return questions;
+            return parsedQuestions;
         }
 
-        function resetToDefault() {
-            questions = [...defaultQuestions];
-            resetProgress();
-            alert('🔄 Восстановлены встроенные вопросы!');
+        function loadProgress() {
+            try {
+                const saved = localStorage.getItem('englishQuizProgress_v2');
+                if (saved) {
+                    wordProgress = JSON.parse(saved);
+                }
+            } catch (e) {
+                wordProgress = {};
+            }
         }
 
-        function showScreen(screenId) {
-            const screens = ['welcomeScreen', 'loadingScreen', 'questionScreen', 'resultsScreen'];
-            screens.forEach(id => {
-                document.getElementById(id).style.display = 'none';
+        function saveProgress() {
+            try {
+                localStorage.setItem('englishQuizProgress_v2', JSON.stringify(wordProgress));
+            } catch (e) {
+                console.log('Error saving progress');
+            }
+        }
+
+        function initializeProgress() {
+            questions.forEach(q => {
+                if (!wordProgress[q.question]) {
+                    wordProgress[q.question] = 0;
+                }
             });
-            document.getElementById(screenId).style.display = 'block';
+        }
+
+        function startQuiz() {
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            
+            showScreen('questionScreen');
+            updateUI();
+            displayQuestion();
         }
 
         function updateUI() {
-            const scoreElement = document.getElementById('score');
-            if (scoreElement) {
-                scoreElement.textContent = score;
-            }
-            
-            const progressBar = document.getElementById('progressBar');
-            if (progressBar) {
-                const progress = ((currentQuestion) / shuffledQuestions.length) * 100;
-                progressBar.style.width = progress + '%';
-            }
+            document.getElementById('score').textContent = score;
+            const progress = (currentQuestion / shuffledQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
         }
 
         function displayQuestion() {
@@ -923,33 +544,34 @@ CORRECT: A
             }
 
             const question = shuffledQuestions[currentQuestion];
+            const progress = wordProgress[question.question] || 0;
+            const isAdvanced = progress >= LEVEL_THRESHOLD;
+            
             answered = false;
             
-            const progress = wordProgress[question.question] || 0;
-            const progressText = progress > 0 ? ` (${progress}/10 изучено)` : '';
+            document.getElementById('questionNumber').textContent = 
+                `Вопрос ${currentQuestion + 1} из ${shuffledQuestions.length}`;
             
-            const questionNumberElement = document.getElementById('questionNumber');
-            if (questionNumberElement) {
-                questionNumberElement.textContent = `Вопрос ${currentQuestion + 1} из ${shuffledQuestions.length}${progressText}`;
-            }
-
-            const wordDisplayElement = document.getElementById('wordDisplay');
-            if (wordDisplayElement) {
-                wordDisplayElement.textContent = question.question;
-            }
+            document.getElementById('wordLevel').textContent = 
+                isAdvanced ? `⭐ Продвинутый: ${progress}/10` : `🎯 Новичок: ${progress}/${LEVEL_THRESHOLD}`;
             
             const feedback = document.getElementById('feedback');
-            if (feedback) {
-                feedback.classList.remove('show', 'correct', 'incorrect');
-                feedback.style.background = '';
-                feedback.style.color = '';
-                feedback.style.border = '';
-                feedback.style.fontWeight = '';
-            }
+            feedback.classList.remove('show', 'correct', 'incorrect', 'level-up');
             
-            // Create options
-            const optionsGrid = document.getElementById('optionsGrid');
-            if (optionsGrid) {
+            const container = document.getElementById('questionScreen');
+            const answerInput = document.getElementById('answerInput');
+            
+            if (isAdvanced) {
+                container.classList.add('input-mode');
+                document.getElementById('wordDisplay').textContent = question.options[question.correct];
+                answerInput.value = '';
+                answerInput.className = 'answer-input';
+                answerInput.focus();
+            } else {
+                container.classList.remove('input-mode');
+                document.getElementById('wordDisplay').textContent = question.question;
+                
+                const optionsGrid = document.getElementById('optionsGrid');
                 optionsGrid.innerHTML = '';
                 
                 question.options.forEach((option, index) => {
@@ -979,172 +601,109 @@ CORRECT: A
                 }
             });
             
+            processAnswer(isCorrect);
+        }
+
+        function checkTextAnswer() {
+            if (answered) return;
+            
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            const input = document.getElementById('answerInput');
+            const userAnswer = input.value.trim().toLowerCase();
+            const correctAnswer = question.question.toLowerCase();
+            
+            const isCorrect = userAnswer === correctAnswer;
+            
+            input.className = 'answer-input ' + (isCorrect ? 'correct' : 'incorrect');
+            
+            processAnswer(isCorrect);
+        }
+
+        function processAnswer(isCorrect) {
+            const question = shuffledQuestions[currentQuestion];
             const feedback = document.getElementById('feedback');
             
             if (isCorrect) {
                 score += 10;
-                // Увеличиваем счетчик правильных ответов для этого слова
                 wordProgress[question.question]++;
+                const newProgress = wordProgress[question.question];
                 
-                // Проверяем, изучено ли слово (10 правильных ответов подряд)
-                if (wordProgress[question.question] >= 10) {
-                    learnedWords.add(question.question);
-                    feedback.textContent = `🎉 ИЗУЧЕНО! Слово "${question.question}" теперь в вашем словаре! ⭐`;
-                    feedback.style.background = 'linear-gradient(90deg, #ffd700, #ffed4e)';
-                    feedback.style.color = '#2d3436';
-                    feedback.style.border = '2px solid #f39c12';
-                    feedback.style.fontWeight = 'bold';
+                if (newProgress === LEVEL_THRESHOLD) {
+                    feedback.textContent = `🎊 УРОВЕНЬ ПОВЫШЕН! Теперь вводите перевод сами!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress === 10) {
+                    feedback.textContent = `🏆 СЛОВО ИЗУЧЕНО! "${question.question}" освоено полностью!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress < LEVEL_THRESHOLD) {
+                    feedback.textContent = `✅ Правильно! Еще ${LEVEL_THRESHOLD - newProgress} до повышения уровня!`;
+                    feedback.classList.add('correct');
                 } else {
-                    const remaining = 10 - wordProgress[question.question];
-                    feedback.textContent = `🎯 Правильно! Еще ${remaining} раз до изучения!`;
+                    feedback.textContent = `✅ Отлично! Прогресс: ${newProgress}/10`;
                     feedback.classList.add('correct');
                 }
             } else {
-                // Сбрасываем прогресс для этого слова при ошибке
-                wordProgress[question.question] = 0;
-                feedback.textContent = `❌ Неправильно. Правильный ответ: ${question.options[question.correct]}`;
+                wordProgress[question.question] = Math.max(0, wordProgress[question.question] - 1);
+                feedback.textContent = `❌ Неправильно. Правильный ответ: ${question.question} = ${question.options[question.correct]}`;
                 feedback.classList.add('incorrect');
             }
             
             feedback.classList.add('show');
             updateUI();
-            saveProgress(); // Сохраняем прогресс после каждого ответа
+            saveProgress();
             
-            // Автоматически переходим к следующему вопросу через 2 секунды
             setTimeout(() => {
                 currentQuestion++;
-                nextQuestion();
-            }, 2000);
-        }
-
-        function nextQuestion() {
-            if (currentQuestion >= shuffledQuestions.length) {
-                showResults();
-                return;
-            }
-            updateUI();
-            displayQuestion();
+                displayQuestion();
+            }, 2500);
         }
 
         function showResults() {
-            const totalQuestions = Math.min(currentQuestion, shuffledQuestions.length);
+            const totalQuestions = shuffledQuestions.length;
             const correctAnswers = Math.floor(score / 10);
-            const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
             
-            const finalScoreElement = document.getElementById('finalScore');
-            if (finalScoreElement) {
-                finalScoreElement.textContent = `${correctAnswers}/${totalQuestions}`;
-            }
-
-            const percentageElement = document.getElementById('percentage');
-            if (percentageElement) {
-                percentageElement.textContent = percentage;
-            }
+            document.getElementById('finalScore').textContent = `${correctAnswers}/${totalQuestions}`;
+            document.getElementById('statsCorrect').textContent = `${percentage}%`;
             
-            // Показываем статистику изученных слов
-            const learnedCount = learnedWords.size;
-            const totalWords = questions.length;
-            const streakInfo = document.getElementById('streakInfo');
-            if (streakInfo) {
-                streakInfo.innerHTML = `
-                    Правильных ответов: ${percentage}%<br>
-                    📚 Изучено слов: ${learnedCount}/${totalWords}
-                `;
-            }
+            const level1 = questions.filter(q => (wordProgress[q.question] || 0) < LEVEL_THRESHOLD).length;
+            const level2 = questions.filter(q => (wordProgress[q.question] || 0) >= LEVEL_THRESHOLD).length;
             
-            let message, celebration;
-            if (percentage >= 90) {
-                message = "Невероятно! Вы мастер английского! 🌟";
-                celebration = "🎊🏆🎊";
-            } else if (percentage >= 80) {
-                message = "Отлично! Продолжайте в том же духе! 👏";
-                celebration = "🎉🎯🎉";
-            } else if (percentage >= 70) {
-                message = "Хорошо! Есть куда расти! 💪";
-                celebration = "👍📚👍";
-            } else if (percentage >= 60) {
-                message = "Неплохо, но нужно больше практики 📖";
-                celebration = "🤔💭🤔";
-            } else {
-                message = "Не расстраивайтесь! Попробуйте еще раз! 💪";
-                celebration = "😅📝😅";
-            }
+            document.getElementById('statsLevel1').textContent = level1;
+            document.getElementById('statsLevel2').textContent = level2;
             
-            // Специальное сообщение если изучили новые слова
-            if (learnedCount > 0) {
-                message += ` Отлично изучили ${learnedCount} слов!`;
-            }
+            let message;
+            if (percentage >= 90) message = "Невероятно! Вы мастер! 🌟";
+            else if (percentage >= 80) message = "Отлично! Продолжайте! 👏";
+            else if (percentage >= 70) message = "Хорошо! Есть куда расти! 💪";
+            else if (percentage >= 60) message = "Неплохо! Больше практики! 📖";
+            else message = "Не расстраивайтесь! Попробуйте еще! 💪";
             
-            const resultsMessageElement = document.getElementById('resultsMessage');
-            if (resultsMessageElement) {
-                resultsMessageElement.textContent = message;
-            }
-
-            const celebrationElement = document.getElementById('celebration');
-            if (celebrationElement) {
-                celebrationElement.textContent = celebration;
-            }
-            
+            document.getElementById('resultsMessage').textContent = message;
             showScreen('resultsScreen');
-        }
-
-        function resetProgress() {
-            wordProgress = {};
-            learnedWords.clear();
-            questions.forEach(question => {
-                wordProgress[question.question] = 0;
-            });
-            saveProgress();
         }
 
         function restartQuiz() {
             startQuiz();
         }
 
-        function goToMain() {
-            if (confirm('Прервать тест и вернуться в главное меню?')) {
-                showWelcomeScreen();
+        function resetProgress() {
+            if (confirm('Сбросить весь прогресс? Все слова вернутся на начальный уровень.')) {
+                wordProgress = {};
+                initializeProgress();
+                saveProgress();
+                alert('Прогресс сброшен!');
+                startQuiz();
             }
         }
 
-        function resetAndRestart() {
-            if (confirm('Вы уверены, что хотите сбросить весь прогресс изучения? Все изученные слова снова станут неизученными.')) {
-                resetProgress();
-                alert('Прогресс сброшен! Теперь все слова снова доступны для изучения.');
-                showWelcomeScreen();
-            }
-        }
-
-        function showWelcomeScreen() {
-            updateWelcomeStats();
-            showScreen('welcomeScreen');
-        }
-
-        function updateWelcomeStats() {
-            const learnedCount = learnedWords.size;
-            const totalWords = questions.length;
-            const streakCounter = document.querySelector('.welcome-screen .streak-counter');
-            
-            if (streakCounter) {
-                if (learnedCount > 0) {
-                    streakCounter.textContent = `📚 Изучено: ${learnedCount}/${totalWords} слов | Готовы продолжить? 🚀`;
-                } else {
-                    streakCounter.textContent = `Готовы начать? 🚀`;
-                }
-            }
-        }
-
-        // Initialize
-        loadProgress();
-        
-        // Инициализируем прогресс для встроенных вопросов
-        questions.forEach(question => {
-            if (!wordProgress[question.question]) {
-                wordProgress[question.question] = 0;
+        document.getElementById('answerInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !answered) {
+                checkTextAnswer();
             }
         });
-        
-        showWelcomeScreen();
+
+        loadQuestions();
     </script>
 </body>
 </html>
