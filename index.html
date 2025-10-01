@@ -1,50 +1,1254 @@
-.game-area {
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EnglishBoost - Адаптивті оқыту әдісі</title>
+    <meta name="theme-color" content="#58cc02">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px 20px;
+            color: white;
             position: relative;
-            height: 350px;
-            background: linear-gradient(180deg, #f0f3ff 0%, #fff 100%);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .back-btn, .help-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .back-btn:hover, .help-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: #58cc02;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 2px 10px rgba(88, 204, 2, 0.4);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .score {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .main-content {
+            padding: 30px 25px;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .main-menu {
+            display: block;
+        }
+
+        .menu-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+
+        .menu-subtitle {
+            font-size: 1em;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe, #667eea);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .total-progress {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid #e3e8ff;
+        }
+
+        .total-progress-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+
+        .total-progress-bar-container {
+            background: #e3e8ff;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .total-progress-bar {
+            height: 100%;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: burning 2s linear infinite;
+            position: relative;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .total-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes burning {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        .total-progress-text {
+            margin-top: 8px;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.95em;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .level-card {
+            border: none;
+            border-radius: 15px;
+            padding: 30px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .level-card.a1 { background: linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%); }
+        .level-card.a2 { background: linear-gradient(135deg, #81c784 0%, #4caf50 100%); }
+        .level-card.b1 { background: linear-gradient(135deg, #ffd54f 0%, #ffa726 100%); }
+        .level-card.b2 { background: linear-gradient(135deg, #ff8a65 0%, #f4511e 100%); }
+        .level-card.c1 { background: linear-gradient(135deg, #e57373 0%, #d32f2f 100%); }
+        .level-card.c2 { background: linear-gradient(135deg, #9575cd 0%, #673ab7 100%); }
+
+        .level-name {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .level-description {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .help-screen {
+            display: none;
+        }
+
+        .help-content {
+            text-align: left;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .help-content h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .level-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        .level-detail-badge {
+            font-size: 1.5em;
+            font-weight: bold;
+            min-width: 50px;
+            margin-right: 12px;
+        }
+
+        .level-detail-text {
+            flex: 1;
+        }
+
+        .level-detail-title {
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 4px;
+            font-size: 1em;
+        }
+
+        .level-detail-desc {
+            font-size: 0.9em;
+            color: #636e72;
+        }
+
+        .loading-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e17055;
+            border-top: 5px solid #58cc02;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-area {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(180deg, #e8f5e9 0%, #fff 100%);
             border-radius: 20px;
             margin-bottom: 20px;
             overflow: hidden;
-            border: 3px solid #e3e8ff;
+            border: 3px solid #e8e8e8;
         }
 
-        .word-display {
+        .falling-word {
             position: absolute;
-            top: -100px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             font-size: 2em;
             font-weight: bold;
-            padding: 20px 35px;
-            border-radius: 20px;
+            padding: 20px 40px;
+            border-radius: 15px;
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-            border: 3px solid white;
-            white-space: nowrap;
+            transition: top 0.05s linear;
             z-index: 10;
         }
 
-        .word-display.falling {
-            animation: fall linear forwards;
+        .falling-word.correct-hit {
+            animation: explode 0.5s ease-out;
         }
 
-        @keyframes fall {
-            0% { top: -100px; }
-            100% { top: calc(100% + 50px); }
+        @keyframes explode {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(2); opacity: 0; }
+        }
+
+        .word-display {
+            background: white;
+            color: #2d3436;
+            font-size: 2.2em;
+            font-weight: bold;
+            padding: 40px 30px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 3px solid #e8e8e8;
         }
 
         .input-mode .word-display {
-            background: linear-gradient(135deg, #0984e3 0%, #00b894 100%);
+            background: white;
+            color: #2d3436;
+            border-color: #0984e3;
         }
 
-        .danger-zone {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to top, rgba(231, 76, 60, 0.2), transparent);
-            pointer-events: none;
-            border-top: 2px dashed #e74c3c;
+        .game-mode .word-display {
+            display: none;
         }
+
+        .game-mode .game-area {
+            display: block;
+        }
+
+        .normal-mode .game-area {
+            display: none;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #e8e8e8;
+            color: #2d3436;
+            padding: 22px 15px;
+            border-radius: 16px;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+            border-color: #d0d0d0;
+        }
+
+        .option-btn.correct {
+            background: #00b894;
+            border-color: #00a085;
+            color: white;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .option-btn.incorrect {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .input-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .input-mode .input-container {
+            display: block;
+        }
+
+        .input-mode .options-grid {
+            display: none;
+        }
+
+        .input-mode .game-area {
+            display: none;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5em;
+            border: 3px solid #74b9ff;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #0984e3;
+            box-shadow: 0 0 20px rgba(9, 132, 227, 0.3);
+        }
+
+        .answer-input.correct {
+            border-color: #00b894;
+            background: #d4edda;
+        }
+
+        .answer-input.incorrect {
+            border-color: #e74c3c;
+            background: #f8d7da;
+        }
+
+        .feedback {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .feedback.level-up {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            color: #2d3436;
+            border: 2px solid #f39c12;
+            font-size: 1.2em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #58cc02, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(88, 204, 2, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(88, 204, 2, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #74b9ff;
+            border: 2px solid #74b9ff;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .results-screen {
+            display: none;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .results-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #58cc02;
+            margin-bottom: 20px;
+        }
+
+        .results-message {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            color: #2d3436;
+        }
+
+        .stats-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #e3e8ff;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .error-screen {
+            display: none;
+            text-align: center;
+            color: #e74c3c;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 8px;
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+
+            .header {
+                padding: 12px 15px 15px;
+            }
+
+            .header-top {
+                margin-bottom: 12px;
+            }
+
+            .back-btn, .help-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .score {
+                font-size: 14px;
+            }
+
+            .progress-container {
+                height: 14px;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .menu-title {
+                font-size: 1.6em;
+            }
+
+            .menu-subtitle {
+                font-size: 0.85em;
+            }
+
+            .total-progress {
+                padding: 15px;
+            }
+
+            .total-progress-bar-container {
+                height: 20px;
+            }
+
+            .levels-grid {
+                gap: 10px;
+            }
+
+            .level-card {
+                padding: 25px 12px;
+            }
+
+            .level-name {
+                font-size: 2em;
+            }
+
+            .level-description {
+                font-size: 0.95em;
+            }
+
+            .game-area {
+                height: 300px;
+            }
+
+            .falling-word {
+                font-size: 1.5em;
+                padding: 15px 30px;
+            }
+
+            .word-display {
+                font-size: 1.8em;
+                padding: 20px;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header">
+            <div class="header-top">
+                <button class="back-btn" id="backBtn" style="display: none;" onclick="goToMainMenu()">✕</button>
+                <div class="score">
+                    <span id="currentLevel"></span>
+                    <span id="scoreDisplay" style="display: none;">💎 <span id="score">0</span></span>
+                </div>
+                <button class="help-btn" id="helpBtn" onclick="showHelp()">❓</button>
+            </div>
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Main Menu -->
+            <div class="main-menu" id="mainMenu">
+                <div class="menu-title">EnglishBoost</div>
+                <div class="menu-subtitle">Адаптивті жаңа әдіспен ағылшын тілін үйреніңіз</div>
+                
+                <div class="total-progress">
+                    <div class="total-progress-title">📊 Жалпы прогресс</div>
+                    <div class="total-progress-bar-container">
+                        <div class="total-progress-bar" id="totalProgressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="total-progress-text" id="totalProgressText">0 / 0 сөз үйренілді</div>
+                </div>
+                
+                <div class="levels-grid" id="levelsGrid"></div>
+            </div>
+
+            <!-- Help Screen -->
+            <div class="help-screen" id="helpScreen">
+                <div class="help-content">
+                    <h3>📚 Деңгейлердің сипаттамасы</h3>
+                    <div class="level-detail">
+                        <div class="level-detail-badge" style="color: #56ab91;">A1</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Бастауыш (Beginner)</div>
+                            <div class="level-detail-desc">Күнделікті қарым-қатынас үшін базалық сөздер мен сөз тіркестері</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge" style="color: #4caf50;">A2</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Элементарлық (Elementary)</div>
+                            <div class="level-detail-desc">Отбасы, жұмыс және хобби туралы қарапайым әңгімелер</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge" style="color: #ffa726;">B1</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Орташа (Intermediate)</div>
+                            <div class="level-detail-desc">Оқиғаларды, арман мен болашақ жоспарларды талқылау</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge" style="color: #f4511e;">B2</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Орташадан жоғары (Upper-Intermediate)</div>
+                            <div class="level-detail-desc">Күрделі тақырыптар, абстрактілі ұғымдар және пікірталастар</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge" style="color: #d32f2f;">C1</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Жетілдірілген (Advanced)</div>
+                            <div class="level-detail-desc">Кез келген жағдайда тілді еркін меңгеру</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge" style="color: #673ab7;">C2</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Кәсіби (Proficiency)</div>
+                            <div class="level-detail-desc">Ана тілі деңгейі, академиялық ағылшын тілі</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-primary" style="margin-top: 20px;" onclick="hideHelp()">Жабу</button>
+            </div>
+
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loadingScreen">
+                <div class="spinner"></div>
+                <p style="color: #2d3436; font-size: 1.2em;">Сұрақтар жүктелуде...</p>
+            </div>
+
+            <!-- Error Screen -->
+            <div class="error-screen" id="errorScreen">
+                <h2>⚠️ Жүктеу қатесі</h2>
+                <p id="errorMessage">Сұрақтарды жүктеу мүмкін болмады</p>
+                <button class="btn-primary" onclick="goToMainMenu()">Мәзірге оралу</button>
+            </div>
+
+            <!-- Question Screen -->
+            <div class="question-container normal-mode" id="questionScreen">
+                <div class="word-display" id="wordDisplay">Жүктелуде...</div>
+                
+                <div class="game-area" id="gameArea"></div>
+                
+                <div class="options-grid" id="optionsGrid"></div>
+                
+                <div class="input-container">
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Аударманы енгізіңіз...">
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="checkTextAnswer()">Тексеру</button>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <!-- Results Screen -->
+            <div class="results-screen" id="resultsScreen">
+                <div style="font-size: 4em;">🎉</div>
+                <div class="results-score" id="finalScore">0/0</div>
+                <div class="results-message" id="resultsMessage">Тамаша!</div>
+                
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span>📊 Дұрыс жауаптар:</span>
+                        <span id="statsCorrect">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎯 Жаңадан бастаушылар:</span>
+                        <span id="statsLevel1">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⭐ Жетілдірілгендер:</span>
+                        <span id="statsLevel2">0</span>
+                    </div>
+                </div>
+                
+                <button class="btn-primary" onclick="restartQuiz()">Тағы өту</button>
+                <button class="btn-secondary" onclick="resetProgress()">Прогрессті тастау</button>
+                <button class="btn-secondary" onclick="goToMainMenu()">Басты мәзір</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let shuffledQuestions = [];
+        let wordProgress = {};
+        let currentLevel = '';
+        const LEVEL_THRESHOLD = 5;
+        
+        // Game mechanics
+        let fallingWordElement = null;
+        let wordTop = -100;
+        let gameInterval = null;
+        let fallSpeed = 2;
+        const GAME_HEIGHT = 400;
+
+        const LEVEL_FILES = {
+            'A1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a1.txt',
+            'A2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a2.txt',
+            'B1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_b1.txt',
+            'B2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_b2.txt',
+            'C1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_c1.txt',
+            'C2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_c2.txt'
+        };
+
+        const LEVEL_DESCRIPTIONS = {
+            'A1': 'Бастауыш',
+            'A2': 'Элементарлық',
+            'B1': 'Орташа',
+            'B2': 'Орташадан жоғары',
+            'C1': 'Жетілдірілген',
+            'C2': 'Кәсіби'
+        };
+
+        let allLevelQuestions = {};
+        let questionsCache = {};
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAllLevelProgress();
+            updateTotalProgress();
+        });
+
+        function showScreen(screenId) {
+            const screens = ['mainMenu', 'loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen', 'helpScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = id === screenId ? 'block' : 'none';
+            });
+        }
+
+        function showHelp() {
+            document.getElementById('backBtn').style.display = 'block';
+            showScreen('helpScreen');
+        }
+
+        function hideHelp() {
+            document.getElementById('backBtn').style.display = 'none';
+            showScreen('mainMenu');
+        }
+
+        function goToMainMenu() {
+            clearGameInterval();
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('scoreDisplay').style.display = 'none';
+            document.getElementById('currentLevel').textContent = '';
+            document.getElementById('helpBtn').style.display = 'block';
+            updateTotalProgress();
+            showScreen('mainMenu');
+        }
+
+        async function loadAllLevelProgress() {
+            const levelsGrid = document.getElementById('levelsGrid');
+            levelsGrid.innerHTML = '';
+
+            for (const level of Object.keys(LEVEL_FILES)) {
+                const card = createLevelCard(level);
+                levelsGrid.appendChild(card);
+            }
+        }
+
+        function createLevelCard(level) {
+            const button = document.createElement('button');
+            button.className = `level-card ${level.toLowerCase()}`;
+            button.onclick = () => selectLevel(level);
+
+            const levelName = document.createElement('div');
+            levelName.className = 'level-name';
+            levelName.textContent = level;
+
+            const description = document.createElement('div');
+            description.className = 'level-description';
+            description.textContent = LEVEL_DESCRIPTIONS[level];
+
+            button.appendChild(levelName);
+            button.appendChild(description);
+            return button;
+        }
+
+        async function updateTotalProgress() {
+            let totalWords = 0;
+            let learnedWords = 0;
+
+            for (const level of Object.keys(LEVEL_FILES)) {
+                try {
+                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+                    const progress = saved ? JSON.parse(saved) : {};
+
+                    if (!questionsCache[level]) {
+                        const response = await fetch(LEVEL_FILES[level]);
+                        if (response.ok) {
+                            const content = await response.text();
+                            questionsCache[level] = parseQuestionFile(content);
+                        }
+                    }
+
+                    if (questionsCache[level]) {
+                        totalWords += questionsCache[level].length;
+                        learnedWords += Object.values(progress).filter(p => p >= 10).length;
+                    }
+                } catch (e) {}
+            }
+
+            const percentage = totalWords > 0 ? Math.round((learnedWords / totalWords) * 100) : 0;
+            document.getElementById('totalProgressBar').style.width = percentage + '%';
+            document.getElementById('totalProgressText').textContent = `${learnedWords} / ${totalWords} сөз үйренілді (${percentage}%)`;
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            document.getElementById('currentLevel').textContent = `${level} деңгейі | `;
+            document.getElementById('scoreDisplay').style.display = 'inline';
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('helpBtn').style.display = 'none';
+            loadQuestions(level);
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            showScreen('errorScreen');
+        }
+
+        async function loadQuestions(level) {
+            showScreen('loadingScreen');
+            
+            try {
+                if (questionsCache[level]) {
+                    questions = questionsCache[level];
+                } else {
+                    const fileUrl = LEVEL_FILES[level];
+                    const response = await fetch(fileUrl);
+                    
+                    if (!response.ok) throw new Error(`${level} деңгейі үшін файл табылмады`);
+                    
+                    const content = await response.text();
+                    questions = parseQuestionFile(content);
+                    questionsCache[level] = questions;
+                }
+                
+                if (questions.length === 0) {
+                    throw new Error('Файлда сұрақтар табылмады');
+                }
+                
+                loadProgress(level);
+                initializeProgress();
+                startQuiz();
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                showError(`Қате: ${error.message}`);
+            }
+        }
+
+        function parseQuestionFile(content) {
+            const parsedQuestions = [];
+            const blocks = content.split('---').filter(b => b.trim());
+            
+            for (const block of blocks) {
+                const lines = block.split('\n').filter(l => l.trim());
+                let question = '', options = [], correctAnswer = '';
+                
+                for (const line of lines) {
+                    if (line.startsWith('Q:')) question = line.substring(2).trim();
+                    else if (line.match(/^[A-D]:/)) options.push(line.substring(2).trim());
+                    else if (line.startsWith('CORRECT:')) correctAnswer = line.substring(8).trim().toUpperCase();
+                }
+                
+                if (question && options.length === 4 && correctAnswer) {
+                    const correctIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+                    if (correctIndex >= 0 && correctIndex < 4) {
+                        parsedQuestions.push({ question, options, correct: correctIndex });
+                    }
+                }
+            }
+            return parsedQuestions;
+        }
+
+        function loadProgress(level) {
+            const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+            wordProgress = saved ? JSON.parse(saved) : {};
+        }
+
+        function saveProgress() {
+            localStorage.setItem(`englishQuizProgress_${currentLevel}_v2`, JSON.stringify(wordProgress));
+        }
+
+        function initializeProgress() {
+            questions.forEach(q => {
+                if (!wordProgress[q.question]) wordProgress[q.question] = 0;
+            });
+        }
+
+        function startQuiz() {
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            
+            document.getElementById('progressContainer').style.display = 'block';
+            showScreen('questionScreen');
+            updateUI();
+            displayQuestion();
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            const progress = (currentQuestion / shuffledQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function displayQuestion() {
+            if (currentQuestion >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = shuffledQuestions[currentQuestion];
+            const progress = wordProgress[question.question] || 0;
+            const isAdvanced = progress >= LEVEL_THRESHOLD;
+            
+            answered = false;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('show', 'correct', 'incorrect', 'level-up');
+            
+            const container = document.getElementById('questionScreen');
+            const answerInput = document.getElementById('answerInput');
+            
+            if (isAdvanced) {
+                // Input mode for advanced words
+                container.classList.remove('game-mode');
+                container.classList.add('input-mode');
+                document.getElementById('wordDisplay').textContent = question.options[question.correct];
+                answerInput.value = '';
+                answerInput.className = 'answer-input';
+                setTimeout(() => answerInput.focus(), 100);
+                clearGameInterval();
+            } else {
+                // Game mode for beginner words
+                container.classList.remove('input-mode');
+                container.classList.add('game-mode');
+                
+                // Create options grid
+                const optionsGrid = document.getElementById('optionsGrid');
+                optionsGrid.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = option;
+                    btn.onclick = () => selectAnswerGame(index);
+                    optionsGrid.appendChild(btn);
+                });
+                
+                // Start falling word game
+                startFallingWord(question.question);
+            }
+        }
+
+        function startFallingWord(word) {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+            
+            fallingWordElement = document.createElement('div');
+            fallingWordElement.className = 'falling-word';
+            fallingWordElement.textContent = word;
+            wordTop = -100;
+            fallingWordElement.style.top = wordTop + 'px';
+            
+            gameArea.appendChild(fallingWordElement);
+            
+            // Start game loop
+            clearGameInterval();
+            gameInterval = setInterval(updateFallingWord, 50);
+        }
+
+        function updateFallingWord() {
+            if (!fallingWordElement || answered) return;
+            
+            wordTop += fallSpeed;
+            fallingWordElement.style.top = wordTop + 'px';
+            
+            // Check if word reached bottom
+            if (wordTop >= GAME_HEIGHT - 80) {
+                clearGameInterval();
+                if (!answered) {
+                    answered = true;
+                    processAnswer(false);
+                }
+            }
+        }
+
+        function clearGameInterval() {
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+        }
+
+        function selectAnswerGame(selectedIndex) {
+            if (answered) return;
+            answered = true;
+            
+            clearGameInterval();
+            
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = selectedIndex === question.correct;
+            
+            // Visual feedback
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn, index) => {
+                btn.disabled = true;
+                if (index === question.correct) btn.classList.add('correct');
+                else if (index === selectedIndex && !isCorrect) btn.classList.add('incorrect');
+            });
+            
+            // Animate word
+            if (isCorrect && fallingWordElement) {
+                fallingWordElement.classList.add('correct-hit');
+            }
+            
+            processAnswer(isCorrect);
+        }
+
+        function checkTextAnswer() {
+            if (answered) return;
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            const input = document.getElementById('answerInput');
+            const userAnswer = input.value.trim().toLowerCase();
+            const correctAnswer = question.question.toLowerCase();
+            const isCorrect = userAnswer === correctAnswer;
+            
+            input.className = 'answer-input ' + (isCorrect ? 'correct' : 'incorrect');
+            processAnswer(isCorrect);
+        }
+
+        function processAnswer(isCorrect) {
+            const question = shuffledQuestions[currentQuestion];
+            const feedback = document.getElementById('feedback');
+            
+            if (isCorrect) {
+                score += 10;
+                wordProgress[question.question]++;
+                const newProgress = wordProgress[question.question];
+                
+                if (newProgress === LEVEL_THRESHOLD) {
+                    feedback.textContent = `🎊 ДЕҢГЕЙ КӨТЕРІЛДІ! Енді аударманы өзіңіз енгізіңіз!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress === 10) {
+                    feedback.textContent = `🏆 СӨЗ ҮЙРЕНІЛДІ! "${question.question}" толық меңгерілді!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress < LEVEL_THRESHOLD) {
+                    feedback.textContent = `✅ Дұрыс! Деңгей көтерілуге дейін ${LEVEL_THRESHOLD - newProgress} қалды!`;
+                    feedback.classList.add('correct');
+                } else {
+                    feedback.textContent = `✅ Тамаша! Прогресс: ${newProgress}/10`;
+                    feedback.classList.add('correct');
+                }
+            } else {
+                wordProgress[question.question] = Math.max(0, wordProgress[question.question] - 1);
+                feedback.textContent = `❌ Қате. Дұрыс жауап: ${question.question} = ${question.options[question.correct]}`;
+                feedback.classList.add('incorrect');
+            }
+            
+            feedback.classList.add('show');
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                clearGameInterval();
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
+        }
+
+        function showResults() {
+            clearGameInterval();
+            const totalQuestions = shuffledQuestions.length;
+            const correctAnswers = Math.floor(score / 10);
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            document.getElementById('finalScore').textContent = `${correctAnswers}/${totalQuestions}`;
+            document.getElementById('statsCorrect').textContent = `${percentage}%`;
+            
+            const level1 = questions.filter(q => (wordProgress[q.question] || 0) < LEVEL_THRESHOLD).length;
+            const level2 = questions.filter(q => (wordProgress[q.question] || 0) >= LEVEL_THRESHOLD).length;
+            
+            document.getElementById('statsLevel1').textContent = level1;
+            document.getElementById('statsLevel2').textContent = level2;
+            
+            let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз! 🌟" :
+                         percentage >= 80 ? "Тамаша! Жалғастыра беріңіз! 👏" :
+                         percentage >= 70 ? "Жақсы! Өсуге орын бар! 💪" :
+                         percentage >= 60 ? "Жаман емес! Көбірек жаттығыңыз! 📖" :
+                         "Көңіліңіз қалмасын! Тағы көріңіз! 💪";
+            
+            document.getElementById('resultsMessage').textContent = message;
+            showScreen('resultsScreen');
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        function resetProgress() {
+            if (confirm(`${currentLevel} деңгейі үшін барлық прогрессті тастау керек пе?`)) {
+                wordProgress = {};
+                initializeProgress();
+                saveProgress();
+                alert('Прогресс тасталды!');
+                startQuiz();
+            }
+        }
+
+        document.getElementById('answerInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !answered) checkTextAnswer();
+        });
+    </script>
+</body>
+</html>
