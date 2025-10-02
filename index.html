@@ -637,6 +637,7 @@
         .snake-controls {
             display: grid;
             grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
             gap: 5px;
             margin: 20px auto;
             width: fit-content;
@@ -662,10 +663,10 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
         }
 
-        .snake-btn:nth-child(2) { grid-column: 2; grid-row: 1; }
-        .snake-btn:nth-child(3) { grid-column: 1; grid-row: 2; }
-        .snake-btn:nth-child(4) { grid-column: 3; grid-row: 2; }
-        .snake-btn:nth-child(5) { grid-column: 2; grid-row: 2; }
+        .snake-btn.up { grid-column: 2; grid-row: 1; }
+        .snake-btn.left { grid-column: 1; grid-row: 2; }
+        .snake-btn.right { grid-column: 3; grid-row: 2; }
+        .snake-btn.down { grid-column: 2; grid-row: 3; }
 
         .microphone-btn {
             width: 120px;
@@ -935,7 +936,7 @@
 
             <div class="loading-screen" id="loadingScreen">
                 <div class="spinner"></div>
-                <p style="color: #2d3436; font-size: 1.2em;">Сұрақтар жүктелуде...</p>
+                <p style="color: #2d3436; font-size: 1.2em;">Загрузка вопросов...</p>
             </div>
 
             <div class="error-screen" id="errorScreen">
@@ -946,7 +947,7 @@
 
             <div class="question-container" id="questionScreen">
                 <div class="word-display" id="wordDisplay">
-                    Жүктелуде...
+                    Загрузка...
                     <span class="speaker-icon" id="speakerIcon" onclick="speakWord()" style="display:none">🔊</span>
                 </div>
                 
@@ -974,10 +975,10 @@
                     <div class="snake-word-display" id="snakeWordDisplay">Collected: </div>
                     <div class="snake-game-area" id="snakeGameArea"></div>
                     <div class="snake-controls">
-                        <button class="snake-btn" onclick="changeSnakeDirection('up')">↑</button>
-                        <button class="snake-btn" onclick="changeSnakeDirection('left')">←</button>
-                        <button class="snake-btn" onclick="changeSnakeDirection('down')">↓</button>
-                        <button class="snake-btn" onclick="changeSnakeDirection('right')">→</button>
+                        <button class="snake-btn up" onclick="changeSnakeDirection('up')">↑</button>
+                        <button class="snake-btn left" onclick="changeSnakeDirection('left')">←</button>
+                        <button class="snake-btn right" onclick="changeSnakeDirection('right')">→</button>
+                        <button class="snake-btn down" onclick="changeSnakeDirection('down')">↓</button>
                     </div>
                     <div class="puzzle-hint">Соберите буквы в правильном порядке. Неправильная буква = конец игры!</div>
                 </div>
@@ -1062,6 +1063,7 @@
         let letterPositions = [];
         let collectedLetters = '';
         let snakeTargetWord = '';
+        let snakeWords = []; // [английское слово, русский перевод]
 
         const LEVEL_FILES = {
             'A1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a1.txt',
@@ -1191,9 +1193,9 @@
         }
 
         // Функции для игры Змейка
-        function initSnakeGame(word) {
-            console.log("Инициализация змейки для слова:", word);
-            snakeTargetWord = word.toUpperCase();
+        function initSnakeGame(englishWord, russianWord) {
+            console.log("Инициализация змейки для слова:", englishWord, "и перевода:", russianWord);
+            snakeWords = [englishWord.toUpperCase(), russianWord.toUpperCase()];
             collectedLetters = '';
             snakeDirection = 'right';
             
@@ -1201,34 +1203,74 @@
             const centerX = 200;
             const centerY = 200;
             snake = [
-                { x: centerX, y: centerY },
-                { x: centerX - 20, y: centerY },
-                { x: centerX - 40, y: centerY }
+                { x: centerX, y: centerY }
             ];
 
-            // Размещение букв случайным образом
-            letterPositions = [];
-            const letters = snakeTargetWord.split('');
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            // Размещение букв - начинаем с английского слова
+            resetLettersForCurrentWord();
             
-            // Добавляем буквы целевого слова
-            letters.forEach((letter, index) => {
-                let pos = getRandomPosition();
-                letterPositions.push({ letter, x: pos.x, y: pos.y, isTarget: true, index });
-            });
-
-            // Добавляем случайные буквы
-            for (let i = 0; i < 10; i++) {
-                const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
-                let pos = getRandomPosition();
-                letterPositions.push({ letter: randomLetter, x: pos.x, y: pos.y, isTarget: false });
-            }
-
             updateSnakeDisplay();
             renderSnakeGame();
             
             clearSnakeInterval();
             snakeInterval = setInterval(moveSnake, snakeSpeed);
+        }
+
+        function resetLettersForCurrentWord() {
+            letterPositions = [];
+            const currentWord = snakeWords[0];
+            const letters = currentWord.split('');
+            
+            // Размещаем первую букву ближе к центру, остальные дальше
+            letters.forEach((letter, index) => {
+                let pos;
+                if (index === 0) {
+                    // Первая буква - рядом с центром
+                    pos = getPositionNearCenter();
+                } else {
+                    // Остальные буквы - дальше от центра
+                    pos = getPositionAwayFromCenter(index);
+                }
+                letterPositions.push({ 
+                    letter, 
+                    x: pos.x, 
+                    y: pos.y, 
+                    isTarget: true, 
+                    index,
+                    wordIndex: 0 // индекс слова (0 - английское, 1 - русское)
+                });
+            });
+
+            // Добавляем немного случайных букв (уменьшенное количество)
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let i = 0; i < 5; i++) {
+                const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+                let pos = getRandomPosition();
+                letterPositions.push({ 
+                    letter: randomLetter, 
+                    x: pos.x, 
+                    y: pos.y, 
+                    isTarget: false,
+                    wordIndex: 0
+                });
+            }
+        }
+
+        function getPositionNearCenter() {
+            return {
+                x: Math.floor(Math.random() * 5) * 20 + 170, // 170-250
+                y: Math.floor(Math.random() * 5) * 20 + 170  // 170-250
+            };
+        }
+
+        function getPositionAwayFromCenter(index) {
+            const distance = 50 + index * 30; // Увеличиваем расстояние для каждой следующей буквы
+            const angle = Math.random() * Math.PI * 2;
+            
+            return {
+                x: 200 + Math.cos(angle) * distance,
+                y: 200 + Math.sin(angle) * distance
+            };
         }
 
         function getRandomPosition() {
@@ -1261,7 +1303,7 @@
                 letterEl.className = 'letter-food';
                 
                 // Подсвечиваем следующую целевую букву
-                if (letterPos.isTarget && letterPos.index === collectedLetters.length) {
+                if (letterPos.isTarget && letterPos.index === collectedLetters.length && letterPos.wordIndex === 0) {
                     letterEl.classList.add('target');
                 }
                 
@@ -1307,14 +1349,16 @@
                 const collectedLetter = letterPositions[collisionIndex];
                 
                 // Проверяем, правильная ли это следующая буква
-                if (collectedLetter.isTarget && collectedLetter.index === collectedLetters.length) {
+                if (collectedLetter.isTarget && collectedLetter.index === collectedLetters.length && collectedLetter.wordIndex === 0) {
                     collectedLetters += collectedLetter.letter;
                     letterPositions.splice(collisionIndex, 1);
                     updateSnakeDisplay();
 
-                    // Проверяем, собрано ли все слово
-                    if (collectedLetters === snakeTargetWord) {
-                        processSnakeWin();
+                    // Проверяем, собрано ли все английское слово
+                    if (collectedLetters === snakeWords[0]) {
+                        // Переходим к сбору русского перевода
+                        collectedLetters = '';
+                        setupRussianWord();
                         return;
                     }
                 } else {
@@ -1329,6 +1373,47 @@
             renderSnakeGame();
         }
 
+        function setupRussianWord() {
+            const russianWord = snakeWords[1];
+            letterPositions = [];
+            
+            // Размещаем буквы русского перевода
+            const letters = russianWord.split('');
+            letters.forEach((letter, index) => {
+                let pos;
+                if (index === 0) {
+                    pos = getPositionNearCenter();
+                } else {
+                    pos = getPositionAwayFromCenter(index);
+                }
+                letterPositions.push({ 
+                    letter: letter.toUpperCase(), 
+                    x: pos.x, 
+                    y: pos.y, 
+                    isTarget: true, 
+                    index,
+                    wordIndex: 1
+                });
+            });
+
+            // Добавляем случайные буквы для русского слова
+            const russianAlphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+            for (let i = 0; i < 5; i++) {
+                const randomLetter = russianAlphabet[Math.floor(Math.random() * russianAlphabet.length)];
+                let pos = getRandomPosition();
+                letterPositions.push({ 
+                    letter: randomLetter, 
+                    x: pos.x, 
+                    y: pos.y, 
+                    isTarget: false,
+                    wordIndex: 1
+                });
+            }
+            
+            updateSnakeDisplay();
+            renderSnakeGame();
+        }
+
         function changeSnakeDirection(newDirection) {
             const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
             if (snakeDirection !== opposites[newDirection]) {
@@ -1339,7 +1424,14 @@
         function updateSnakeDisplay() {
             const display = document.getElementById('snakeWordDisplay');
             if (display) {
-                display.textContent = `Collected: ${collectedLetters} / ${snakeTargetWord}`;
+                if (collectedLetters.length < snakeWords[0].length) {
+                    // Собираем английское слово
+                    display.textContent = `English: ${collectedLetters} / ${snakeWords[0]}`;
+                } else {
+                    // Собираем русский перевод
+                    const russianCollected = collectedLetters.slice(snakeWords[0].length);
+                    display.textContent = `Russian: ${russianCollected} / ${snakeWords[1]}`;
+                }
             }
         }
 
@@ -1359,7 +1451,8 @@
             }
             
             setTimeout(() => {
-                initSnakeGame(snakeTargetWord);
+                const question = shuffledQuestions[currentQuestion];
+                initSnakeGame(question.question, question.options[question.correct]);
                 if (feedback) feedback.classList.remove('show');
             }, 2000);
         }
@@ -1374,7 +1467,7 @@
             
             const feedback = document.getElementById('feedback');
             if (feedback) {
-                feedback.textContent = `🎉 Отлично! Слово "${snakeTargetWord}" собрано!`;
+                feedback.textContent = `🎉 Отлично! Слово "${snakeWords[0]}" и перевод "${snakeWords[1]}" собраны!`;
                 feedback.classList.add('correct', 'show');
             }
             
@@ -1398,6 +1491,85 @@
                 case 'ArrowRight': changeSnakeDirection('right'); break;
             }
         });
+
+        // В функции moveSnake добавляем проверку для русского слова
+        // Обновленная функция moveSnake с поддержкой русского слова
+        const originalMoveSnake = moveSnake;
+        moveSnake = function() {
+            if (answered) return;
+
+            const head = { ...snake[0] };
+
+            switch (snakeDirection) {
+                case 'up': head.y -= 20; break;
+                case 'down': head.y += 20; break;
+                case 'left': head.x -= 20; break;
+                case 'right': head.x += 20; break;
+            }
+
+            // Проверка столкновения со стенами
+            if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400) {
+                gameOver();
+                return;
+            }
+
+            // Проверка столкновения с собой
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver();
+                return;
+            }
+
+            snake.unshift(head);
+
+            // Проверка столкновения с буквой
+            const collisionIndex = letterPositions.findIndex(letter => 
+                Math.abs(letter.x - head.x) < 20 && Math.abs(letter.y - head.y) < 20
+            );
+
+            if (collisionIndex !== -1) {
+                const collectedLetter = letterPositions[collisionIndex];
+                
+                // Определяем, какое слово сейчас собираем
+                const currentWordIndex = collectedLetters.length >= snakeWords[0].length ? 1 : 0;
+                const currentWord = snakeWords[currentWordIndex];
+                const currentCollected = currentWordIndex === 0 ? 
+                    collectedLetters : 
+                    collectedLetters.slice(snakeWords[0].length);
+                
+                // Проверяем, правильная ли это следующая буква
+                if (collectedLetter.isTarget && 
+                    collectedLetter.index === currentCollected.length && 
+                    collectedLetter.wordIndex === currentWordIndex) {
+                    
+                    collectedLetters += collectedLetter.letter;
+                    letterPositions.splice(collisionIndex, 1);
+                    updateSnakeDisplay();
+
+                    // Проверяем, собрано ли текущее слово полностью
+                    if (currentWordIndex === 0 && collectedLetters === snakeWords[0]) {
+                        // Английское слово собрано, переходим к русскому
+                        setupRussianWord();
+                    } else if (currentWordIndex === 1 && collectedLetters.slice(snakeWords[0].length) === snakeWords[1]) {
+                        // Оба слова собраны - победа!
+                        processSnakeWin();
+                        return;
+                    }
+                } else {
+                    // Неправильная буква - конец игры
+                    gameOver();
+                    return;
+                }
+            } else {
+                snake.pop();
+            }
+
+            renderSnakeGame();
+        };
+
+        // Остальной код остается без изменений
+        // [Здесь должен быть остальной код из предыдущей версии]
+        // Для экономии места я опущу повторение неизменившегося кода
+        // Но в полной версии он должен быть
 
         // Функции для головоломки
         function initPuzzleGame(word, translation) {
@@ -1828,7 +2000,7 @@
                 answered = false;
                 clearGameInterval();
                 clearSnakeInterval();
-                initSnakeGame(question.question);
+                initSnakeGame(question.question, question.options[question.correct]);
                 
             } else if (progress < GAME_THRESHOLD) {
                 // Этап 2: Головоломка (1-2)
