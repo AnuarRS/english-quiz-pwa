@@ -488,6 +488,84 @@
             display: none;
         }
 
+        .puzzle-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.puzzle-mode .puzzle-container {
+            display: block;
+        }
+
+        .question-container.puzzle-mode .options-grid,
+        .question-container.puzzle-mode .game-area,
+        .question-container.puzzle-mode .input-container,
+        .question-container.puzzle-mode .voice-container {
+            display: none;
+        }
+
+        .puzzle-target-word {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            max-width: 360px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 15px;
+        }
+
+        .puzzle-cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #5568d3;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .puzzle-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .puzzle-cell.selected {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            border-color: #ff8c00;
+            transform: scale(1.1);
+        }
+
+        .puzzle-cell.correct {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            border-color: #00a085;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .puzzle-hint {
+            text-align: center;
+            color: #636e72;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
         .microphone-btn {
             width: 120px;
             height: 120px;
@@ -736,6 +814,13 @@
                             <div class="level-detail-desc">Произнесите слово в микрофон</div>
                         </div>
                     </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">4️⃣</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Головоломка (2 раза)</div>
+                            <div class="level-detail-desc">Составьте слово из букв на поле 6×6</div>
+                        </div>
+                    </div>
                 </div>
                 <button class="btn-primary" style="margin-top: 20px;" onclick="hideHelp()">Жабу</button>
             </div>
@@ -770,6 +855,12 @@
                     <div class="voice-status" id="voiceStatus">Нажмите на микрофон и произнесите слово</div>
                     <button class="microphone-btn" id="microphoneBtn" onclick="startVoiceRecognition()">🎤</button>
                 </div>
+
+                <div class="puzzle-container">
+                    <div class="puzzle-target-word" id="puzzleTargetWord">Загрузка...</div>
+                    <div class="puzzle-grid" id="puzzleGrid"></div>
+                    <div class="puzzle-hint">Передвигайте буквы, чтобы составить слово по вертикали или горизонтали</div>
+                </div>
                 
                 <div class="feedback" id="feedback"></div>
             </div>
@@ -796,6 +887,10 @@
                         <span>🎤 Произношение:</span>
                         <span id="statsLevel3">0</span>
                     </div>
+                    <div class="stat-item">
+                        <span>🧩 Головоломки:</span>
+                        <span id="statsLevel4">0</span>
+                    </div>
                 </div>
                 
                 <button class="btn-primary" onclick="restartQuiz()">Тағы өту</button>
@@ -816,6 +911,7 @@
         const GAME_THRESHOLD = 5;
         const TEXT_THRESHOLD = 8;
         const VOICE_THRESHOLD = 10;
+        const PUZZLE_THRESHOLD = 12;
         
         let fallingWordElement = null;
         let wordTop = -100;
@@ -940,6 +1036,180 @@
             }
 
             processAnswer(isCorrect);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+            for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+            for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+            for (let j = 1; j <= len2; j++) {
+                for (let i = 1; i <= len1; i++) {
+                    const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                    matrix[j][i] = Math.min(
+                        matrix[j][i - 1] + 1,
+                        matrix[j - 1][i] + 1,
+                        matrix[j - 1][i - 1] + indicator
+                    );
+                }
+            }
+
+            const distance = matrix[len2][len1];
+            const maxLen = Math.max(len1, len2);
+            return 1 - distance / maxLen;
+        }
+
+        // Puzzle game functions
+        function initPuzzleGame(word, translation) {
+            targetWord = word.toUpperCase();
+            puzzleGrid = [];
+            selectedCell = null;
+
+            document.getElementById('puzzleTargetWord').textContent = translation;
+
+            const gridSize = 6;
+            const wordLetters = targetWord.split('');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            
+            // Fill grid with random letters and word letters
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                if (i < wordLetters.length) {
+                    puzzleGrid.push(wordLetters[i]);
+                } else {
+                    puzzleGrid.push(alphabet[Math.floor(Math.random() * alphabet.length)]);
+                }
+            }
+
+            // Shuffle the grid
+            for (let i = puzzleGrid.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [puzzleGrid[i], puzzleGrid[j]] = [puzzleGrid[j], puzzleGrid[i]];
+            }
+
+            renderPuzzleGrid();
+        }
+
+        function renderPuzzleGrid() {
+            const gridElement = document.getElementById('puzzleGrid');
+            gridElement.innerHTML = '';
+
+            puzzleGrid.forEach((letter, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                cell.textContent = letter;
+                cell.dataset.index = index;
+                cell.onclick = () => selectPuzzleCell(index);
+                gridElement.appendChild(cell);
+            });
+        }
+
+        function selectPuzzleCell(index) {
+            if (answered) return;
+
+            const cells = document.querySelectorAll('.puzzle-cell');
+            
+            if (selectedCell === null) {
+                selectedCell = index;
+                cells[index].classList.add('selected');
+            } else {
+                if (isAdjacent(selectedCell, index)) {
+                    swapCells(selectedCell, index);
+                    cells[selectedCell].classList.remove('selected');
+                    selectedCell = null;
+                    checkPuzzleWord();
+                } else {
+                    cells[selectedCell].classList.remove('selected');
+                    selectedCell = index;
+                    cells[index].classList.add('selected');
+                }
+            }
+        }
+
+        function isAdjacent(index1, index2) {
+            const gridSize = 6;
+            const row1 = Math.floor(index1 / gridSize);
+            const col1 = index1 % gridSize;
+            const row2 = Math.floor(index2 / gridSize);
+            const col2 = index2 % gridSize;
+
+            return (Math.abs(row1 - row2) === 1 && col1 === col2) ||
+                   (Math.abs(col1 - col2) === 1 && row1 === row2);
+        }
+
+        function swapCells(index1, index2) {
+            [puzzleGrid[index1], puzzleGrid[index2]] = [puzzleGrid[index2], puzzleGrid[index1]];
+            renderPuzzleGrid();
+        }
+
+        function checkPuzzleWord() {
+            const gridSize = 6;
+            
+            // Check horizontal
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col <= gridSize - targetWord.length; col++) {
+                    let word = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        word += puzzleGrid[row * gridSize + col + i];
+                    }
+                    if (word === targetWord) {
+                        markCorrectCells(row, col, 'horizontal');
+                        processPuzzleWin();
+                        return;
+                    }
+                }
+            }
+
+            // Check vertical
+            for (let col = 0; col < gridSize; col++) {
+                for (let row = 0; row <= gridSize - targetWord.length; row++) {
+                    let word = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        word += puzzleGrid[(row + i) * gridSize + col];
+                    }
+                    if (word === targetWord) {
+                        markCorrectCells(row, col, 'vertical');
+                        processPuzzleWin();
+                        return;
+                    }
+                }
+            }
+        }
+
+        function markCorrectCells(row, col, direction) {
+            const gridSize = 6;
+            const cells = document.querySelectorAll('.puzzle-cell');
+            
+            for (let i = 0; i < targetWord.length; i++) {
+                let index;
+                if (direction === 'horizontal') {
+                    index = row * gridSize + col + i;
+                } else {
+                    index = (row + i) * gridSize + col;
+                }
+                cells[index].classList.add('correct');
+            }
+        }
+
+        function processPuzzleWin() {
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            score += 10;
+            wordProgress[question.question]++;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = `🎉 Отлично! Слово "${targetWord}" составлено правильно!`;
+            feedback.classList.add('correct', 'show');
+            
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
         }
 
         function calculateSimilarity(str1, str2) {
@@ -1276,6 +1546,11 @@
                     clearGameInterval();
                     setTimeout(() => speakWord(), 500);
                 }
+            } else if (progress < PUZZLE_THRESHOLD) {
+                container.classList.add('puzzle-mode');
+                answered = false;
+                initPuzzleGame(question.question, question.options[question.correct]);
+                clearGameInterval();
             } else {
                 currentQuestion++;
                 displayQuestion();
@@ -1381,6 +1656,9 @@
                     feedback.textContent = `✍️ ОТЛИЧНО! Теперь произнесите слово!`;
                     feedback.classList.add('level-up');
                 } else if (newProgress === VOICE_THRESHOLD) {
+                    feedback.textContent = `🎤 СУПЕР! Теперь составьте слово из букв!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress === PUZZLE_THRESHOLD) {
                     feedback.textContent = `🏆 СЛОВО ВЫУЧЕНО! "${question.question}" полностью освоено!`;
                     feedback.classList.add('level-up');
                 } else if (newProgress < GAME_THRESHOLD) {
@@ -1389,8 +1667,11 @@
                 } else if (newProgress < TEXT_THRESHOLD) {
                     feedback.textContent = `✅ Отлично! Прогресс: ${newProgress}/${TEXT_THRESHOLD}`;
                     feedback.classList.add('correct');
-                } else {
+                } else if (newProgress < VOICE_THRESHOLD) {
                     feedback.textContent = `✅ Великолепно! Прогресс: ${newProgress}/${VOICE_THRESHOLD}`;
+                    feedback.classList.add('correct');
+                } else {
+                    feedback.textContent = `✅ Превосходно! Прогресс: ${newProgress}/${PUZZLE_THRESHOLD}`;
                     feedback.classList.add('correct');
                 }
             } else {
@@ -1431,10 +1712,17 @@
                 const p = wordProgress[q.question] || 0;
                 return p >= TEXT_THRESHOLD && p < VOICE_THRESHOLD;
             }).length;
+            const level4 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= VOICE_THRESHOLD && p < PUZZLE_THRESHOLD;
+            }).length;
             
             document.getElementById('statsLevel1').textContent = level1;
             document.getElementById('statsLevel2').textContent = level2;
             document.getElementById('statsLevel3').textContent = level3;
+            if (document.getElementById('statsLevel4')) {
+                document.getElementById('statsLevel4').textContent = level4;
+            }
             
             let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз!" :
                          percentage >= 80 ? "Тамаша! Жалғастыра беріңіз!" :
