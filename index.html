@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EnglishBoost - Обучение английскому</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EnglishBoost - Полное обучение</title>
+    <meta name="theme-color" content="#58cc02">
     <style>
-        /* Базовые стили */
         * {
             margin: 0;
             padding: 0;
@@ -21,6 +21,7 @@
             justify-content: center;
             align-items: center;
             padding: 15px;
+            -webkit-font-smoothing: antialiased;
         }
 
         .quiz-container {
@@ -32,21 +33,21 @@
             overflow: hidden;
         }
 
-        /* Стили заголовка */
         .header {
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            padding: 15px 20px;
+            padding: 15px 20px 20px;
             color: white;
+            position: relative;
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        .btn {
+        .back-btn, .help-btn {
             background: rgba(255,255,255,0.2);
             border: 2px solid white;
             color: white;
@@ -55,9 +56,10 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s ease;
+            font-size: 0.9em;
         }
 
-        .btn:hover {
+        .back-btn:hover, .help-btn:hover {
             background: white;
             color: #667eea;
         }
@@ -67,6 +69,7 @@
             border-radius: 10px;
             height: 16px;
             overflow: hidden;
+            position: relative;
         }
 
         .progress-bar {
@@ -74,16 +77,29 @@
             height: 100%;
             border-radius: 10px;
             transition: width 0.5s ease;
+            box-shadow: 0 2px 10px rgba(88, 204, 2, 0.4);
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+            border-radius: 10px 10px 0 0;
         }
 
         .score {
             font-size: 16px;
             font-weight: bold;
+            text-align: center;
         }
 
-        /* Основной контент */
         .main-content {
-            padding: 25px;
+            padding: 30px 25px;
             text-align: center;
             min-height: 400px;
             display: flex;
@@ -91,21 +107,10 @@
             justify-content: center;
         }
 
-        .screen {
+        .help-screen, .loading-screen, .error-screen, .question-container, .results-screen {
             display: none;
         }
 
-        .active {
-            display: block;
-        }
-
-        .loading-screen {
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Главное меню */
         .menu-title {
             font-size: 2em;
             font-weight: bold;
@@ -115,9 +120,80 @@
 
         .menu-subtitle {
             font-size: 1em;
-            color: #667eea;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe, #667eea);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
             font-weight: 600;
             margin-bottom: 25px;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .total-progress {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 2px solid #e3e8ff;
+        }
+
+        .total-progress-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 12px;
+        }
+
+        .total-progress-bar-container {
+            background: #e3e8ff;
+            border-radius: 15px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .total-progress-bar {
+            height: 100%;
+            border-radius: 15px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: burning 2s linear infinite;
+            position: relative;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .total-progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes burning {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        .total-progress-text {
+            margin-top: 8px;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.95em;
         }
 
         .levels-grid {
@@ -130,16 +206,18 @@
         .level-card {
             border: none;
             border-radius: 15px;
-            padding: 25px 15px;
+            padding: 30px 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             color: white;
+            position: relative;
+            overflow: hidden;
         }
 
         .level-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         .level-card.a1 { background: linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%); }
@@ -150,24 +228,362 @@
         .level-card.c2 { background: linear-gradient(135deg, #9575cd 0%, #673ab7 100%); }
 
         .level-name {
-            font-size: 2em;
+            font-size: 2.5em;
             font-weight: bold;
             margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .level-description {
-            font-size: 1em;
+            font-size: 1.1em;
             opacity: 0.95;
+            font-weight: 500;
         }
 
-        /* Игра змейка */
+        .help-content {
+            text-align: left;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .help-content h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .level-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        .level-detail-badge {
+            font-size: 1.5em;
+            font-weight: bold;
+            min-width: 50px;
+            margin-right: 12px;
+        }
+
+        .level-detail-text {
+            flex: 1;
+        }
+
+        .level-detail-title {
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 4px;
+            font-size: 1em;
+        }
+
+        .level-detail-desc {
+            font-size: 0.9em;
+            color: #636e72;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e17055;
+            border-top: 5px solid #58cc02;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-screen {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .question-container {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-area {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(180deg, #e8f5e9 0%, #fff 100%);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 3px solid #e8e8e8;
+            display: none;
+        }
+
+        .question-container.game-mode .game-area {
+            display: block;
+        }
+
+        .falling-word {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 2em;
+            font-weight: bold;
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .falling-word.correct-hit {
+            animation: explode 0.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(2.5); opacity: 0; }
+        }
+
+        .question-container.game-mode .word-display {
+            display: none;
+        }
+
+        .word-display {
+            background: white;
+            color: #2d3436;
+            font-size: 2.2em;
+            font-weight: bold;
+            padding: 40px 30px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 3px solid #e8e8e8;
+            position: relative;
+        }
+
+        .speaker-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speaker-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .question-container.text-mode .word-display,
+        .question-container.voice-mode .word-display {
+            display: block;
+            border-color: #0984e3;
+        }
+
+        .options-grid {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid #dfe4ea;
+        }
+
+        .option-btn {
+            position: absolute;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid;
+            color: #2d3436;
+            padding: 20px 15px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            user-select: none;
+            z-index: 5;
+        }
+
+        .option-btn:nth-child(1) { border-color: #3498db; }
+        .option-btn:nth-child(2) { border-color: #e74c3c; }
+        .option-btn:nth-child(3) { border-color: #2ecc71; }
+        .option-btn:nth-child(4) { border-color: #f39c12; }
+
+        .option-btn.correct {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            border-color: #00a085;
+            color: white;
+            animation: correctGlow 0.8s ease;
+            z-index: 15;
+            box-shadow: 0 10px 35px rgba(0, 184, 148, 0.6), inset 0 2px 8px rgba(255,255,255,0.5);
+        }
+
+        .option-btn.incorrect {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-color: #a93226;
+            color: white;
+            animation: shake 0.5s ease;
+            z-index: 15;
+            box-shadow: 0 10px 35px rgba(231, 76, 60, 0.6);
+        }
+
+        @keyframes correctGlow {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 10px 35px rgba(0, 184, 148, 0.6), inset 0 2px 8px rgba(255,255,255,0.5);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 15px 45px rgba(0, 184, 148, 0.9), inset 0 2px 8px rgba(255,255,255,0.7);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .input-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.text-mode .input-container {
+            display: block;
+        }
+
+        .question-container.text-mode .options-grid,
+        .question-container.text-mode .game-area {
+            display: none;
+        }
+
+        .voice-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.voice-mode .voice-container {
+            display: block;
+        }
+
+        .question-container.voice-mode .options-grid,
+        .question-container.voice-mode .game-area,
+        .question-container.voice-mode .input-container {
+            display: none;
+        }
+
+        .puzzle-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.puzzle-mode .puzzle-container {
+            display: block;
+        }
+
+        .question-container.puzzle-mode .options-grid,
+        .question-container.puzzle-mode .game-area,
+        .question-container.puzzle-mode .input-container,
+        .question-container.puzzle-mode .voice-container {
+            display: none;
+        }
+
+        .puzzle-target-word {
+            display: none;
+        }
+
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            max-width: 360px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 15px;
+        }
+
+        .puzzle-cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #5568d3;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .puzzle-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .puzzle-cell.selected {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            border-color: #ff8c00;
+            transform: scale(1.1);
+        }
+
+        .puzzle-cell.correct {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            border-color: #00a085;
+            animation: correctPulse 0.6s ease;
+        }
+
+        .puzzle-hint {
+            text-align: center;
+            color: #636e72;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        /* Snake game */
+        .snake-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.snake-mode .snake-container {
+            display: block;
+        }
+
+        .question-container.snake-mode .options-grid,
+        .question-container.snake-mode .game-area,
+        .question-container.snake-mode .input-container,
+        .question-container.snake-mode .voice-container,
+        .question-container.snake-mode .puzzle-container {
+            display: none;
+        }
+
         .snake-game-area {
             position: relative;
             width: 100%;
             max-width: 400px;
             height: 400px;
-            margin: 0 auto 20px;
-            background: #f5f7fa;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
             border-radius: 15px;
             border: 3px solid #dfe4ea;
             overflow: hidden;
@@ -177,42 +593,34 @@
             position: absolute;
             width: 20px;
             height: 20px;
-            background: #00b894;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
             border-radius: 4px;
-            z-index: 2;
+            transition: all 0.1s linear;
         }
 
         .snake-head {
-            background: #0984e3;
+            background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
             box-shadow: 0 2px 8px rgba(9, 132, 227, 0.6);
-            z-index: 3;
         }
 
         .letter-food {
             position: absolute;
-            width: 25px;
-            height: 25px;
-            background: #667eea;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            z-index: 1;
-            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.4);
+            font-size: 1.2em;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
         }
 
         .letter-food.target {
-            background: #ffd700;
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
             animation: pulse 1s infinite;
-            transform: scale(1.2);
-            z-index: 4;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1.2); }
-            50% { transform: scale(1.4); }
         }
 
         .snake-word-display {
@@ -224,118 +632,229 @@
             padding: 10px;
             background: white;
             border-radius: 10px;
-            border: 2px solid #e8e8e8;
         }
 
         .snake-controls {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(3, 60px);
+            gap: 5px;
             margin: 20px auto;
-            width: 180px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 15px;
+            width: fit-content;
         }
 
         .snake-btn {
-            width: 50px;
-            height: 50px;
-            background: #667eea;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 10px;
             color: white;
-            font-size: 1.2em;
+            font-size: 1.5em;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            box-shadow: 0 3px 6px rgba(102, 126, 234, 0.3);
         }
 
         .snake-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
         }
 
-        .snake-btn.up { grid-column: 2; grid-row: 1; }
-        .snake-btn.left { grid-column: 1; grid-row: 2; }
-        .snake-btn.right { grid-column: 3; grid-row: 2; }
-        .snake-btn.down { grid-column: 2; grid-row: 3; }
+        .snake-btn:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .snake-btn:nth-child(3) { grid-column: 1; grid-row: 2; }
+        .snake-btn:nth-child(4) { grid-column: 3; grid-row: 2; }
+        .snake-btn:nth-child(5) { grid-column: 2; grid-row: 2; }
 
-        .snake-hint {
-            text-align: center;
-            color: #636e72;
-            font-size: 0.9em;
-            margin-top: 10px;
-        }
-
-        /* Кнопки действий */
-        .action-btn {
-            background: #58cc02;
-            color: white;
+        .microphone-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            padding: 15px 30px;
-            font-size: 1.1em;
-            font-weight: bold;
-            border-radius: 25px;
+            color: white;
+            font-size: 3em;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin: 10px;
-            box-shadow: 0 5px 15px rgba(88, 204, 2, 0.3);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            margin: 20px auto;
+            display: block;
         }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 7px 20px rgba(88, 204, 2, 0.4);
+        .microphone-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
         }
 
-        .action-btn.secondary {
-            background: transparent;
-            color: #74b9ff;
-            border: 2px solid #74b9ff;
-            box-shadow: none;
+        .microphone-btn.listening {
+            animation: pulse 1s infinite;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
-        .action-btn.secondary:hover {
-            background: #74b9ff;
-            color: white;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
         }
 
-        /* Сообщения */
-        .message {
-            padding: 15px;
-            margin: 15px 0;
+        .voice-status {
+            text-align: center;
+            font-size: 1.2em;
+            color: #2d3436;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5em;
+            border: 3px solid #74b9ff;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #0984e3;
+            box-shadow: 0 0 20px rgba(9, 132, 227, 0.3);
+        }
+
+        .answer-input.correct {
+            border-color: #00b894;
+            background: #d4edda;
+        }
+
+        .answer-input.incorrect {
+            border-color: #e74c3c;
+            background: #f8d7da;
+        }
+
+        .feedback {
+            padding: 20px;
+            margin: 20px 0;
             border-radius: 12px;
             font-weight: bold;
             text-align: center;
+            opacity: 0;
+            transition: all 0.3s ease;
         }
 
-        .message.success {
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .feedback.correct {
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
 
-        .message.error {
+        .feedback.incorrect {
             background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
 
-        /* Адаптивность */
+        .feedback.level-up {
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            color: #2d3436;
+            border: 2px solid #f39c12;
+            font-size: 1.2em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #58cc02, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(88, 204, 2, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(88, 204, 2, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #74b9ff;
+            border: 2px solid #74b9ff;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .results-screen {
+            animation: fadeIn 0.8s ease;
+        }
+
+        .results-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #58cc02;
+            margin-bottom: 20px;
+        }
+
+        .results-message {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            color: #2d3436;
+        }
+
+        .stats-box {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #e3e8ff;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .error-screen {
+            text-align: center;
+            color: #e74c3c;
+        }
+
         @media (max-width: 600px) {
-            .levels-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .snake-game-area {
+            .game-area {
                 height: 300px;
             }
-            
-            .level-card {
-                padding: 20px 10px;
+
+            .falling-word {
+                font-size: 1.5em;
+                padding: 15px 30px;
+            }
+
+            .options-grid {
+                height: 280px;
+            }
+
+            .option-btn {
+                font-size: 0.9em;
+                padding: 15px 10px;
             }
         }
     </style>
@@ -344,12 +863,12 @@
     <div class="quiz-container">
         <div class="header">
             <div class="header-top">
-                <button class="btn" id="backBtn" style="display: none;">✕</button>
+                <button class="back-btn" id="backBtn" style="display: none;" onclick="goToMainMenu()">✕</button>
                 <div class="score">
                     <span id="currentLevel"></span>
                     <span id="scoreDisplay" style="display: none;">💎 <span id="score">0</span></span>
                 </div>
-                <button class="btn" id="helpBtn">❓</button>
+                <button class="help-btn" id="helpBtn" onclick="showHelp()">❓</button>
             </div>
             <div class="progress-container" id="progressContainer" style="display: none;">
                 <div class="progress-bar" id="progressBar"></div>
@@ -357,158 +876,324 @@
         </div>
 
         <div class="main-content">
-            <!-- Главное меню -->
-            <div class="screen active" id="mainMenu">
+            <div class="main-menu" id="mainMenu">
                 <div class="menu-title">EnglishBoost</div>
-                <div class="menu-subtitle">Изучайте английский с помощью игр</div>
+                <div class="menu-subtitle">Адаптивті жаңа әдіспен ағылшын тілін үйреніңіз</div>
+                
+                <div class="total-progress">
+                    <div class="total-progress-title">📊 Жалпы прогресс</div>
+                    <div class="total-progress-bar-container">
+                        <div class="total-progress-bar" id="totalProgressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="total-progress-text" id="totalProgressText">0 / 0 сөз үйренілді</div>
+                </div>
                 
                 <div class="levels-grid" id="levelsGrid"></div>
-                
-                <button class="action-btn" onclick="showScreen('helpScreen')">Помощь</button>
             </div>
 
-            <!-- Помощь -->
-            <div class="screen" id="helpScreen">
-                <h3>Как играть</h3>
-                <p>Собирайте буквы в правильном порядке с помощью змейки.</p>
-                <p>Используйте кнопки управления или клавиши стрелок на клавиатуре.</p>
-                <p>Соберите все буквы слова, чтобы перейти к следующему.</p>
-                
-                <button class="action-btn" onclick="showScreen('mainMenu')">Назад</button>
-            </div>
-
-            <!-- Игра -->
-            <div class="screen" id="gameScreen">
-                <div class="snake-word-display" id="snakeWordDisplay">Собрано: </div>
-                <div class="snake-game-area" id="snakeGameArea"></div>
-                <div class="snake-controls">
-                    <button class="snake-btn up" onclick="changeSnakeDirection('up')">↑</button>
-                    <button class="snake-btn left" onclick="changeSnakeDirection('left')">←</button>
-                    <button class="snake-btn right" onclick="changeSnakeDirection('right')">→</button>
-                    <button class="snake-btn down" onclick="changeSnakeDirection('down')">↓</button>
+            <div class="help-screen" id="helpScreen">
+                <div class="help-content">
+                    <h3>📚 Этапы обучения</h3>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">1️⃣</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Змейка (1 раз)</div>
+                            <div class="level-detail-desc">Соберите буквы в правильном порядке змейкой</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">2️⃣</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Головоломка (1 раз)</div>
+                            <div class="level-detail-desc">Составьте слово из букв на поле 6×6</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">3️⃣</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Выбор варианта (10 раз)</div>
+                            <div class="level-detail-desc">Слово падает сверху, выберите правильный перевод</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">4️⃣</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Написание (2 раза)</div>
+                            <div class="level-detail-desc">Напишите английское слово по переводу</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">5️⃣</div>
+                        <div class="level-detail-text">
+                            <div class="level-detail-title">Произношение (2 раза)</div>
+                            <div class="level-detail-desc">Произнесите слово в микрофон</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="snake-hint">Соберите буквы в правильном порядке</div>
-                
-                <div class="message" id="gameMessage"></div>
-                
-                <button class="action-btn" onclick="endGame()">Завершить игру</button>
+                <button class="btn-primary" style="margin-top: 20px;" onclick="hideHelp()">Жабу</button>
             </div>
 
-            <!-- Результаты -->
-            <div class="screen" id="resultsScreen">
-                <div style="font-size: 4em;">🎉</div>
-                <div style="font-size: 2em; font-weight: bold; color: #58cc02; margin: 20px 0;" id="finalScore">0/0</div>
-                <div style="font-size: 1.2em; margin-bottom: 30px;" id="resultsMessage">Отлично!</div>
+            <div class="loading-screen" id="loadingScreen">
+                <div class="spinner"></div>
+                <p style="color: #2d3436; font-size: 1.2em;">Сұрақтар жүктелуде...</p>
+            </div>
+
+            <div class="error-screen" id="errorScreen">
+                <h2>⚠️ Жүктеу қатесі</h2>
+                <p id="errorMessage">Сұрақтарды жүктеу мүмкін болмады</p>
+                <button class="btn-primary" onclick="goToMainMenu()">Мәзірге оралу</button>
+            </div>
+
+            <div class="question-container" id="questionScreen">
+                <div class="word-display" id="wordDisplay">
+                    Жүктелуде...
+                    <span class="speaker-icon" id="speakerIcon" onclick="speakWord()" style="display:none">🔊</span>
+                </div>
                 
-                <button class="action-btn" onclick="restartGame()">Играть снова</button>
-                <button class="action-btn secondary" onclick="showScreen('mainMenu')">Главное меню</button>
+                <div class="game-area" id="gameArea"></div>
+                
+                <div class="options-grid" id="optionsGrid"></div>
+                
+                <div class="input-container">
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Аударманы енгізіңіз...">
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="checkTextAnswer()">Тексеру</button>
+                </div>
+
+                <div class="voice-container">
+                    <div class="voice-status" id="voiceStatus">Нажмите на микрофон и произнесите слово</div>
+                    <button class="microphone-btn" id="microphoneBtn" onclick="startVoiceRecognition()">🎤</button>
+                </div>
+
+                <div class="puzzle-container">
+                    <div class="puzzle-target-word" id="puzzleTargetWord">Загрузка...</div>
+                    <div class="puzzle-grid" id="puzzleGrid"></div>
+                    <div class="puzzle-hint">Передвигайте буквы, чтобы составить слово по вертикали или горизонтали</div>
+                </div>
+
+                <div class="snake-container">
+                    <div class="snake-word-display" id="snakeWordDisplay">Collected: </div>
+                    <div class="snake-game-area" id="snakeGameArea"></div>
+                    <div class="snake-controls">
+                        <button class="snake-btn" onclick="changeSnakeDirection('up')">↑</button>
+                        <button class="snake-btn" onclick="changeSnakeDirection('left')">←</button>
+                        <button class="snake-btn" onclick="changeSnakeDirection('down')">↓</button>
+                        <button class="snake-btn" onclick="changeSnakeDirection('right')">→</button>
+                    </div>
+                    <div class="puzzle-hint">Соберите буквы в правильном порядке. Неправильная буква = конец игры!</div>
+                </div>
+                
+                <div class="feedback" id="feedback"></div>
+            </div>
+
+            <div class="results-screen" id="resultsScreen">
+                <div style="font-size: 4em;">🎉</div>
+                <div class="results-score" id="finalScore">0/0</div>
+                <div class="results-message" id="resultsMessage">Тамаша!</div>
+                
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span>📊 Дұрыс жауаптар:</span>
+                        <span id="statsCorrect">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🐍 Змейка:</span>
+                        <span id="statsLevel1">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🧩 Головоломка:</span>
+                        <span id="statsLevel2">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎯 Выбор варианта:</span>
+                        <span id="statsLevel3">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>✍️ Написание:</span>
+                        <span id="statsLevel4">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎤 Произношение:</span>
+                        <span id="statsLevel5">0</span>
+                    </div>
+                </div>
+                
+                <button class="btn-primary" onclick="restartQuiz()">Тағы өту</button>
+                <button class="btn-secondary" onclick="resetProgress()">Прогрессті тастау</button>
+                <button class="btn-secondary" onclick="goToMainMenu()">Басты мәзір</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Конфигурация игры
-        const LEVELS = {
-            'A1': { name: 'Начальный', words: ['CAT', 'DOG', 'SUN', 'RED', 'CAR'] },
-            'A2': { name: 'Базовый', words: ['HOUSE', 'WATER', 'APPLE', 'TABLE', 'BOOK'] },
-            'B1': { name: 'Средний', words: ['COMPUTER', 'TEACHER', 'STUDENT', 'PENCIL', 'SCHOOL'] },
-            'B2': { name: 'Выше среднего', words: ['UNIVERSITY', 'ELEPHANT', 'RESTAURANT', 'TELEVISION', 'GOVERNMENT'] },
-            'C1': { name: 'Продвинутый', words: ['ENVIRONMENT', 'COMMUNICATION', 'INFORMATION', 'DEVELOPMENT', 'EXPERIENCE'] },
-            'C2': { name: 'Профессиональный', words: ['ENTREPRENEURSHIP', 'INTERNATIONALIZATION', 'INCONVENIENCE', 'RESPONSIBILITY', 'DETERMINATION'] }
-        };
-
-        // Переменные игры
-        let currentLevel = '';
-        let currentWordIndex = 0;
+        // Основные переменные игры
+        let questions = [];
+        let currentQuestion = 0;
         let score = 0;
-        let wordsCompleted = 0;
+        let answered = false;
+        let shuffledQuestions = [];
+        let wordProgress = {};
+        let currentLevel = '';
+        const PUZZLE_THRESHOLD = 1;
+        const GAME_THRESHOLD = 2;
+        const TEXT_THRESHOLD = 12;
+        const VOICE_THRESHOLD = 14;
         
-        // Переменные змейки
+        // Переменные для падающих слов
+        let fallingWordElement = null;
+        let wordTop = -100;
+        let gameInterval = null;
+        let fallSpeed = 2.5;
+        const GAME_HEIGHT = 400;
+
+        // Переменные для распознавания речи
+        let recognition = null;
+        let isListening = false;
+
+        // Переменные для головоломки
+        let puzzleGrid = [];
+        let selectedCell = null;
+        let targetWord = '';
+
+        // Переменные для змейки
         let snake = [];
         let snakeDirection = 'right';
+        let snakeSpeed = 200;
         let snakeInterval = null;
         let letterPositions = [];
         let collectedLetters = '';
-        let currentWord = '';
+        let snakeTargetWord = '';
 
-        // Инициализация при загрузке
+        const LEVEL_FILES = {
+            'A1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a1.txt',
+            'A2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a2.txt',
+            'B1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_b1.txt',
+            'B2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_b2.txt',
+            'C1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_c1.txt',
+            'C2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_c2.txt'
+        };
+
+        const LEVEL_DESCRIPTIONS = {
+            'A1': 'Бастауыш',
+            'A2': 'Элементарлық',
+            'B1': 'Орташа',
+            'B2': 'Орташадан жоғары',
+            'C1': 'Жетілдірілген',
+            'C2': 'Кәсіби'
+        };
+
+        let questionsCache = {};
+
+        // Инициализация при загрузке страницы
         window.addEventListener('DOMContentLoaded', () => {
-            initLevels();
-            document.getElementById('backBtn').addEventListener('click', goToMainMenu);
-            document.getElementById('helpBtn').addEventListener('click', () => showScreen('helpScreen'));
+            console.log("DOM загружен, инициализация приложения...");
+            initSpeechRecognition();
+            loadAllLevelProgress();
+            updateTotalProgress();
+            
+            // Показываем главное меню
+            showScreen('mainMenu');
         });
 
-        // Основные функции интерфейса
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function goToMainMenu() {
-            stopGame();
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('progressContainer').style.display = 'none';
-            document.getElementById('scoreDisplay').style.display = 'none';
-            showScreen('mainMenu');
-        }
-
-        function initLevels() {
-            const levelsGrid = document.getElementById('levelsGrid');
-            
-            for (const [level, data] of Object.entries(LEVELS)) {
-                const card = document.createElement('div');
-                card.className = `level-card ${level.toLowerCase()}`;
-                card.onclick = () => selectLevel(level);
-                
-                const levelName = document.createElement('div');
-                levelName.className = 'level-name';
-                levelName.textContent = level;
-                
-                const description = document.createElement('div');
-                description.className = 'level-description';
-                description.textContent = data.name;
-                
-                card.appendChild(levelName);
-                card.appendChild(description);
-                levelsGrid.appendChild(card);
-            }
-        }
-
-        function selectLevel(level) {
-            currentLevel = level;
-            document.getElementById('currentLevel').textContent = `${level} уровень | `;
-            document.getElementById('scoreDisplay').style.display = 'inline';
-            document.getElementById('backBtn').style.display = 'block';
-            document.getElementById('progressContainer').style.display = 'block';
-            
-            startGame();
-        }
-
-        // Функции игры
-        function startGame() {
-            currentWordIndex = 0;
-            score = 0;
-            wordsCompleted = 0;
-            updateUI();
-            showScreen('gameScreen');
-            nextWord();
-        }
-
-        function nextWord() {
-            if (currentWordIndex >= LEVELS[currentLevel].words.length) {
-                endGame();
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.warn('Speech Recognition API не поддерживается в этом браузере');
                 return;
             }
             
-            currentWord = LEVELS[currentLevel].words[currentWordIndex];
-            initSnakeGame(currentWord);
-            currentWordIndex++;
+            try {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                    checkVoiceAnswer(transcript);
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    stopListening();
+                    if (event.error === 'no-speech') {
+                        document.getElementById('voiceStatus').textContent = 'Не услышал. Попробуйте снова';
+                    } else if (event.error === 'not-allowed') {
+                        document.getElementById('voiceStatus').textContent = 'Разрешите доступ к микрофону';
+                    } else {
+                        document.getElementById('voiceStatus').textContent = 'Ошибка. Попробуйте снова';
+                    }
+                };
+
+                recognition.onend = () => {
+                    stopListening();
+                };
+            } catch (e) {
+                console.error('Ошибка инициализации Speech Recognition:', e);
+            }
         }
 
+        function speakWord() {
+            const question = shuffledQuestions[currentQuestion];
+            if (!question || !question.question) return;
+            
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(question.question);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function startVoiceRecognition() {
+            if (!recognition) {
+                alert('Ваш браузер не поддерживает распознавание речи');
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+
+            try {
+                recognition.start();
+                isListening = true;
+                document.getElementById('microphoneBtn').classList.add('listening');
+                document.getElementById('voiceStatus').textContent = 'Слушаю... Говорите сейчас!';
+            } catch (e) {
+                console.error('Error starting recognition:', e);
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('microphoneBtn').classList.remove('listening');
+        }
+
+        function checkVoiceAnswer(transcript) {
+            if (answered) return;
+            answered = true;
+
+            const question = shuffledQuestions[currentQuestion];
+            if (!question) return;
+            
+            const correctAnswer = question.question.toLowerCase().trim();
+            const similarity = calculateSimilarity(transcript, correctAnswer);
+            const isCorrect = similarity > 0.7;
+
+            const voiceStatus = document.getElementById('voiceStatus');
+            if (voiceStatus) {
+                voiceStatus.textContent = `Вы сказали: "${transcript}"`;
+            }
+
+            processAnswer(isCorrect);
+        }
+
+        // Функции для игры Змейка
         function initSnakeGame(word) {
-            currentWord = word;
+            console.log("Инициализация змейки для слова:", word);
+            snakeTargetWord = word.toUpperCase();
             collectedLetters = '';
             snakeDirection = 'right';
             
@@ -521,21 +1206,21 @@
                 { x: centerX - 40, y: centerY }
             ];
 
-            // Размещение букв с безопасным расстоянием
+            // Размещение букв случайным образом
             letterPositions = [];
-            const letters = currentWord.split('');
+            const letters = snakeTargetWord.split('');
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             
             // Добавляем буквы целевого слова
             letters.forEach((letter, index) => {
-                let pos = getRandomSafePosition();
+                let pos = getRandomPosition();
                 letterPositions.push({ letter, x: pos.x, y: pos.y, isTarget: true, index });
             });
 
-            // Добавляем случайные буквы (в 2 раза меньше)
-            for (let i = 0; i < 5; i++) {
+            // Добавляем случайные буквы
+            for (let i = 0; i < 10; i++) {
                 const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
-                let pos = getRandomSafePosition();
+                let pos = getRandomPosition();
                 letterPositions.push({ letter: randomLetter, x: pos.x, y: pos.y, isTarget: false });
             }
 
@@ -543,37 +1228,10 @@
             renderSnakeGame();
             
             clearSnakeInterval();
-            snakeInterval = setInterval(moveSnake, 150);
+            snakeInterval = setInterval(moveSnake, snakeSpeed);
         }
 
-        function getRandomSafePosition() {
-            const safeDistance = 80; // Минимальное расстояние от центра
-            let attempts = 0;
-            let pos;
-            
-            do {
-                pos = {
-                    x: Math.floor(Math.random() * 18) * 20 + 10,
-                    y: Math.floor(Math.random() * 18) * 20 + 10
-                };
-                attempts++;
-                
-                // Проверяем расстояние от центра (200,200)
-                const distanceFromCenter = Math.sqrt(
-                    Math.pow(pos.x - 200, 2) + Math.pow(pos.y - 200, 2)
-                );
-                
-                // Проверяем расстояние от змейки
-                let tooCloseToSnake = snake.some(segment => 
-                    Math.abs(segment.x - pos.x) < 40 && Math.abs(segment.y - pos.y) < 40
-                );
-                
-                if (distanceFromCenter >= safeDistance && !tooCloseToSnake) {
-                    return pos;
-                }
-            } while (attempts < 50);
-            
-            // Если не нашли безопасную позицию, возвращаем любую
+        function getRandomPosition() {
             return {
                 x: Math.floor(Math.random() * 18) * 20 + 10,
                 y: Math.floor(Math.random() * 18) * 20 + 10
@@ -582,6 +1240,10 @@
 
         function renderSnakeGame() {
             const gameArea = document.getElementById('snakeGameArea');
+            if (!gameArea) {
+                console.error("Snake game area not found!");
+                return;
+            }
             gameArea.innerHTML = '';
 
             // Отрисовка змейки
@@ -594,7 +1256,7 @@
             });
 
             // Отрисовка букв
-            letterPositions.forEach((letterPos) => {
+            letterPositions.forEach((letterPos, index) => {
                 const letterEl = document.createElement('div');
                 letterEl.className = 'letter-food';
                 
@@ -604,13 +1266,15 @@
                 }
                 
                 letterEl.textContent = letterPos.letter;
-                letterEl.style.left = (letterPos.x - 12.5) + 'px';
-                letterEl.style.top = (letterPos.y - 12.5) + 'px';
+                letterEl.style.left = letterPos.x - 15 + 'px';
+                letterEl.style.top = letterPos.y - 15 + 'px';
                 gameArea.appendChild(letterEl);
             });
         }
 
         function moveSnake() {
+            if (answered) return;
+
             const head = { ...snake[0] };
 
             switch (snakeDirection) {
@@ -627,7 +1291,7 @@
             }
 
             // Проверка столкновения с собой
-            if (snake.some((segment, index) => index > 0 && segment.x === head.x && segment.y === head.y)) {
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
                 gameOver();
                 return;
             }
@@ -649,8 +1313,8 @@
                     updateSnakeDisplay();
 
                     // Проверяем, собрано ли все слово
-                    if (collectedLetters === currentWord) {
-                        processWordComplete();
+                    if (collectedLetters === snakeTargetWord) {
+                        processSnakeWin();
                         return;
                     }
                 } else {
@@ -667,16 +1331,16 @@
 
         function changeSnakeDirection(newDirection) {
             const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
-            if (snakeDirection !== opposites[newDirection] && snake.length > 1) {
-                snakeDirection = newDirection;
-            } else if (snake.length === 1) {
+            if (snakeDirection !== opposites[newDirection]) {
                 snakeDirection = newDirection;
             }
         }
 
         function updateSnakeDisplay() {
-            document.getElementById('snakeWordDisplay').textContent = 
-                `Собрано: ${collectedLetters} / ${currentWord}`;
+            const display = document.getElementById('snakeWordDisplay');
+            if (display) {
+                display.textContent = `Collected: ${collectedLetters} / ${snakeTargetWord}`;
+            }
         }
 
         function clearSnakeInterval() {
@@ -688,64 +1352,39 @@
 
         function gameOver() {
             clearSnakeInterval();
-            const message = document.getElementById('gameMessage');
-            message.textContent = '❌ Игра окончена! Неправильная буква или столкновение.';
-            message.className = 'message error';
+            const feedback = document.getElementById('feedback');
+            if (feedback) {
+                feedback.textContent = '❌ Игра окончена! Неправильная буква или столкновение.';
+                feedback.classList.add('incorrect', 'show');
+            }
             
             setTimeout(() => {
-                initSnakeGame(currentWord);
-                message.textContent = '';
-                message.className = 'message';
+                initSnakeGame(snakeTargetWord);
+                if (feedback) feedback.classList.remove('show');
             }, 2000);
         }
 
-        function processWordComplete() {
+        function processSnakeWin() {
             clearSnakeInterval();
+            answered = true;
+            
+            const question = shuffledQuestions[currentQuestion];
             score += 10;
-            wordsCompleted++;
+            wordProgress[question.question]++;
             
-            const message = document.getElementById('gameMessage');
-            message.textContent = `🎉 Отлично! Слово "${currentWord}" собрано!`;
-            message.className = 'message success';
-            
-            updateUI();
-            
-            setTimeout(() => {
-                message.textContent = '';
-                message.className = 'message';
-                nextWord();
-            }, 1500);
-        }
-
-        function updateUI() {
-            document.getElementById('score').textContent = score;
-            const progress = (currentWordIndex / LEVELS[currentLevel].words.length) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-        }
-
-        function endGame() {
-            stopGame();
-            document.getElementById('finalScore').textContent = `${wordsCompleted}/${LEVELS[currentLevel].words.length}`;
-            
-            let message = '';
-            if (wordsCompleted === LEVELS[currentLevel].words.length) {
-                message = "Потрясающе! Вы завершили уровень!";
-            } else if (wordsCompleted >= LEVELS[currentLevel].words.length / 2) {
-                message = "Хорошая работа! Продолжайте в том же духе!";
-            } else {
-                message = "Неплохо! Попробуйте еще раз для лучшего результата!";
+            const feedback = document.getElementById('feedback');
+            if (feedback) {
+                feedback.textContent = `🎉 Отлично! Слово "${snakeTargetWord}" собрано!`;
+                feedback.classList.add('correct', 'show');
             }
             
-            document.getElementById('resultsMessage').textContent = message;
-            showScreen('resultsScreen');
-        }
-
-        function stopGame() {
-            clearSnakeInterval();
-        }
-
-        function restartGame() {
-            startGame();
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
         }
 
         // Управление змейкой с клавиатуры
@@ -753,23 +1392,802 @@
             if (!snakeInterval) return;
             
             switch(e.key) {
-                case 'ArrowUp': 
-                    e.preventDefault();
-                    changeSnakeDirection('up'); 
-                    break;
-                case 'ArrowDown': 
-                    e.preventDefault();
-                    changeSnakeDirection('down'); 
-                    break;
-                case 'ArrowLeft': 
-                    e.preventDefault();
-                    changeSnakeDirection('left'); 
-                    break;
-                case 'ArrowRight': 
-                    e.preventDefault();
-                    changeSnakeDirection('right'); 
-                    break;
+                case 'ArrowUp': changeSnakeDirection('up'); break;
+                case 'ArrowDown': changeSnakeDirection('down'); break;
+                case 'ArrowLeft': changeSnakeDirection('left'); break;
+                case 'ArrowRight': changeSnakeDirection('right'); break;
             }
+        });
+
+        // Функции для головоломки
+        function initPuzzleGame(word, translation) {
+            targetWord = word.toUpperCase();
+            puzzleGrid = [];
+            selectedCell = null;
+
+            const targetElement = document.getElementById('puzzleTargetWord');
+            if (targetElement) {
+                targetElement.textContent = translation;
+            }
+
+            const gridSize = 6;
+            const wordLetters = targetWord.split('');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            
+            // Заполняем сетку случайными буквами и буквами слова
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                if (i < wordLetters.length) {
+                    puzzleGrid.push(wordLetters[i]);
+                } else {
+                    puzzleGrid.push(alphabet[Math.floor(Math.random() * alphabet.length)]);
+                }
+            }
+
+            // Перемешиваем сетку
+            for (let i = puzzleGrid.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [puzzleGrid[i], puzzleGrid[j]] = [puzzleGrid[j], puzzleGrid[i]];
+            }
+
+            renderPuzzleGrid();
+        }
+
+        function renderPuzzleGrid() {
+            const gridElement = document.getElementById('puzzleGrid');
+            if (!gridElement) return;
+            
+            gridElement.innerHTML = '';
+
+            puzzleGrid.forEach((letter, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                cell.textContent = letter;
+                cell.dataset.index = index;
+                cell.onclick = () => selectPuzzleCell(index);
+                gridElement.appendChild(cell);
+            });
+        }
+
+        function selectPuzzleCell(index) {
+            if (answered) return;
+
+            const cells = document.querySelectorAll('.puzzle-cell');
+            
+            if (selectedCell === null) {
+                selectedCell = index;
+                cells[index].classList.add('selected');
+            } else {
+                if (isAdjacent(selectedCell, index)) {
+                    swapCells(selectedCell, index);
+                    cells[selectedCell].classList.remove('selected');
+                    selectedCell = null;
+                    checkPuzzleWord();
+                } else {
+                    cells[selectedCell].classList.remove('selected');
+                    selectedCell = index;
+                    cells[index].classList.add('selected');
+                }
+            }
+        }
+
+        function isAdjacent(index1, index2) {
+            const gridSize = 6;
+            const row1 = Math.floor(index1 / gridSize);
+            const col1 = index1 % gridSize;
+            const row2 = Math.floor(index2 / gridSize);
+            const col2 = index2 % gridSize;
+
+            return (Math.abs(row1 - row2) === 1 && col1 === col2) ||
+                   (Math.abs(col1 - col2) === 1 && row1 === row2);
+        }
+
+        function swapCells(index1, index2) {
+            [puzzleGrid[index1], puzzleGrid[index2]] = [puzzleGrid[index2], puzzleGrid[index1]];
+            renderPuzzleGrid();
+            
+            // Проверяем слово после каждого свапа
+            setTimeout(() => checkPuzzleWord(), 100);
+        }
+
+        function checkPuzzleWord() {
+            const gridSize = 6;
+            
+            // Упрощенная проверка - ищем слово по горизонтали или вертикали
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col <= gridSize - targetWord.length; col++) {
+                    // Проверка по горизонтали
+                    let horizontalWord = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        horizontalWord += puzzleGrid[row * gridSize + col + i];
+                    }
+                    if (horizontalWord === targetWord) {
+                        markPuzzleWord(row, col, 'horizontal');
+                        processPuzzleWin();
+                        return;
+                    }
+                }
+            }
+            
+            for (let col = 0; col < gridSize; col++) {
+                for (let row = 0; row <= gridSize - targetWord.length; row++) {
+                    // Проверка по вертикали
+                    let verticalWord = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        verticalWord += puzzleGrid[(row + i) * gridSize + col];
+                    }
+                    if (verticalWord === targetWord) {
+                        markPuzzleWord(row, col, 'vertical');
+                        processPuzzleWin();
+                        return;
+                    }
+                }
+            }
+        }
+
+        function markPuzzleWord(startRow, startCol, direction) {
+            const gridSize = 6;
+            const cells = document.querySelectorAll('.puzzle-cell');
+            
+            for (let i = 0; i < targetWord.length; i++) {
+                let index;
+                if (direction === 'horizontal') {
+                    index = startRow * gridSize + startCol + i;
+                } else {
+                    index = (startRow + i) * gridSize + startCol;
+                }
+                cells[index].classList.add('correct');
+            }
+        }
+
+        function processPuzzleWin() {
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            score += 10;
+            wordProgress[question.question]++;
+            
+            const feedback = document.getElementById('feedback');
+            if (feedback) {
+                feedback.textContent = `🎉 Отлично! Слово "${targetWord}" составлено правильно!`;
+                feedback.classList.add('correct', 'show');
+            }
+            
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+            for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+            for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+            for (let j = 1; j <= len2; j++) {
+                for (let i = 1; i <= len1; i++) {
+                    const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                    matrix[j][i] = Math.min(
+                        matrix[j][i - 1] + 1,
+                        matrix[j - 1][i] + 1,
+                        matrix[j - 1][i - 1] + indicator
+                    );
+                }
+            }
+
+            const distance = matrix[len2][len1];
+            const maxLen = Math.max(len1, len2);
+            return 1 - distance / maxLen;
+        }
+
+        function showScreen(screenId) {
+            const screens = ['mainMenu', 'loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen', 'helpScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (id === screenId) {
+                        el.style.display = (id === 'loadingScreen') ? 'flex' : 'block';
+                    } else {
+                        el.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function showHelp() {
+            document.getElementById('backBtn').style.display = 'block';
+            showScreen('helpScreen');
+        }
+
+        function hideHelp() {
+            document.getElementById('backBtn').style.display = 'none';
+            showScreen('mainMenu');
+        }
+
+        function goToMainMenu() {
+            clearGameInterval();
+            clearSnakeInterval();
+            if (recognition && isListening) recognition.stop();
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('scoreDisplay').style.display = 'none';
+            document.getElementById('currentLevel').textContent = '';
+            document.getElementById('helpBtn').style.display = 'block';
+            updateTotalProgress();
+            showScreen('mainMenu');
+        }
+
+        async function loadAllLevelProgress() {
+            const levelsGrid = document.getElementById('levelsGrid');
+            if (!levelsGrid) return;
+            
+            levelsGrid.innerHTML = '';
+
+            for (const level of Object.keys(LEVEL_FILES)) {
+                const card = createLevelCard(level);
+                levelsGrid.appendChild(card);
+            }
+        }
+
+        function createLevelCard(level) {
+            const button = document.createElement('button');
+            button.className = `level-card ${level.toLowerCase()}`;
+            button.onclick = () => selectLevel(level);
+
+            const levelName = document.createElement('div');
+            levelName.className = 'level-name';
+            levelName.textContent = level;
+
+            const description = document.createElement('div');
+            description.className = 'level-description';
+            description.textContent = LEVEL_DESCRIPTIONS[level];
+
+            button.appendChild(levelName);
+            button.appendChild(description);
+            return button;
+        }
+
+        async function updateTotalProgress() {
+            let totalWords = 0;
+            let learnedWords = 0;
+
+            for (const level of Object.keys(LEVEL_FILES)) {
+                try {
+                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+                    const progress = saved ? JSON.parse(saved) : {};
+
+                    if (!questionsCache[level]) {
+                        const response = await fetch(LEVEL_FILES[level]);
+                        if (response.ok) {
+                            const content = await response.text();
+                            questionsCache[level] = parseQuestionFile(content);
+                        }
+                    }
+
+                    if (questionsCache[level]) {
+                        totalWords += questionsCache[level].length;
+                        learnedWords += Object.values(progress).filter(p => p >= VOICE_THRESHOLD).length;
+                    }
+                } catch (e) {
+                    console.error('Error updating progress for level', level, e);
+                }
+            }
+
+            const percentage = totalWords > 0 ? Math.round((learnedWords / totalWords) * 100) : 0;
+            const progressBar = document.getElementById('totalProgressBar');
+            const progressText = document.getElementById('totalProgressText');
+            
+            if (progressBar) progressBar.style.width = percentage + '%';
+            if (progressText) progressText.textContent = `${learnedWords} / ${totalWords} сөз үйренілді (${percentage}%)`;
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            const currentLevelElement = document.getElementById('currentLevel');
+            if (currentLevelElement) currentLevelElement.textContent = `${level} деңгейі | `;
+            
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            if (scoreDisplay) scoreDisplay.style.display = 'inline';
+            
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('helpBtn').style.display = 'none';
+            loadQuestions(level);
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage) errorMessage.textContent = message;
+            showScreen('errorScreen');
+        }
+
+        async function loadQuestions(level) {
+            showScreen('loadingScreen');
+            
+            try {
+                if (questionsCache[level]) {
+                    questions = questionsCache[level];
+                } else {
+                    const fileUrl = LEVEL_FILES[level];
+                    const response = await fetch(fileUrl);
+                    
+                    if (!response.ok) throw new Error(`${level} деңгейі үшін файл табылмады`);
+                    
+                    const content = await response.text();
+                    questions = parseQuestionFile(content);
+                    questionsCache[level] = questions;
+                }
+                
+                if (questions.length === 0) {
+                    throw new Error('Файлда сұрақтар табылмады');
+                }
+                
+                loadProgress(level);
+                initializeProgress();
+                startQuiz();
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                showError(`Қате: ${error.message}`);
+            }
+        }
+
+        function parseQuestionFile(content) {
+            const parsedQuestions = [];
+            const blocks = content.split('---').filter(b => b.trim());
+            
+            for (const block of blocks) {
+                const lines = block.split('\n').filter(l => l.trim());
+                let question = '', options = [], correctAnswer = '';
+                
+                for (const line of lines) {
+                    if (line.startsWith('Q:')) question = line.substring(2).trim();
+                    else if (line.match(/^[A-D]:/)) options.push(line.substring(2).trim());
+                    else if (line.startsWith('CORRECT:')) correctAnswer = line.substring(8).trim().toUpperCase();
+                }
+                
+                if (question && options.length === 4 && correctAnswer) {
+                    const correctIndex = correctAnswer.charCodeAt(0) - 'A'.charCodeAt(0);
+                    if (correctIndex >= 0 && correctIndex < 4) {
+                        parsedQuestions.push({ question, options, correct: correctIndex });
+                    }
+                }
+            }
+            return parsedQuestions;
+        }
+
+        function loadProgress(level) {
+            const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+            wordProgress = saved ? JSON.parse(saved) : {};
+        }
+
+        function saveProgress() {
+            localStorage.setItem(`englishQuizProgress_${currentLevel}_v2`, JSON.stringify(wordProgress));
+        }
+
+        function initializeProgress() {
+            questions.forEach(q => {
+                if (!wordProgress[q.question]) wordProgress[q.question] = 0;
+            });
+        }
+
+        function startQuiz() {
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            
+            document.getElementById('progressContainer').style.display = 'block';
+            showScreen('questionScreen');
+            updateUI();
+            displayQuestion();
+        }
+
+        function updateUI() {
+            const scoreElement = document.getElementById('score');
+            if (scoreElement) scoreElement.textContent = score;
+            
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar) {
+                const progress = (currentQuestion / shuffledQuestions.length) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+
+        function displayQuestion() {
+            if (currentQuestion >= shuffledQuestions.length) {
+                showResults();
+                return;
+            }
+
+            const question = shuffledQuestions[currentQuestion];
+            const progress = wordProgress[question.question] || 0;
+            
+            answered = false;
+            
+            const feedback = document.getElementById('feedback');
+            if (feedback) {
+                feedback.classList.remove('show', 'correct', 'incorrect', 'level-up');
+            }
+            
+            const container = document.getElementById('questionScreen');
+            const answerInput = document.getElementById('answerInput');
+            const speakerIcon = document.getElementById('speakerIcon');
+            
+            if (container) {
+                container.classList.remove('game-mode', 'text-mode', 'voice-mode', 'puzzle-mode', 'snake-mode');
+            }
+            
+            if (speakerIcon) speakerIcon.style.display = 'none';
+            
+            if (progress < PUZZLE_THRESHOLD) {
+                // Этап 1: Змейка (0-1)
+                if (container) container.classList.add('snake-mode');
+                answered = false;
+                clearGameInterval();
+                clearSnakeInterval();
+                initSnakeGame(question.question);
+                
+            } else if (progress < GAME_THRESHOLD) {
+                // Этап 2: Головоломка (1-2)
+                if (container) container.classList.add('puzzle-mode');
+                answered = false;
+                clearGameInterval();
+                clearSnakeInterval();
+                initPuzzleGame(question.question, question.options[question.correct]);
+                
+            } else if (progress < TEXT_THRESHOLD) {
+                // Этап 3: Выбор варианта - 10 раз (2-12)
+                if (container) container.classList.add('game-mode');
+                clearSnakeInterval();
+                
+                const optionsGrid = document.getElementById('optionsGrid');
+                if (optionsGrid) {
+                    optionsGrid.innerHTML = '';
+                    
+                    const shuffledOptions = question.options.map((opt, idx) => ({ text: opt, originalIndex: idx }))
+                        .sort(() => Math.random() - 0.5);
+                    
+                    shuffledOptions.forEach((option, index) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn';
+                        btn.textContent = option.text;
+                        btn.dataset.originalIndex = option.originalIndex;
+                        btn.onclick = () => selectAnswerGame(option.originalIndex);
+                        
+                        const pos = generateRandomPosition(index);
+                        btn.style.top = pos.top + '%';
+                        btn.style.left = pos.left + '%';
+                        btn.style.width = pos.width + '%';
+                        btn.style.height = pos.height + '%';
+                        btn.style.clipPath = generateRandomShape();
+                        
+                        optionsGrid.appendChild(btn);
+                    });
+                }
+                
+                startFallingWord(question.question);
+                setTimeout(() => speakWord(), 500);
+                
+            } else if (progress < VOICE_THRESHOLD) {
+                // Этап 4: Написание (12-14)
+                if (container) container.classList.add('text-mode');
+                clearSnakeInterval();
+                
+                const wordDisplay = document.getElementById('wordDisplay');
+                if (wordDisplay) wordDisplay.textContent = question.options[question.correct];
+                
+                if (answerInput) {
+                    answerInput.value = '';
+                    answerInput.className = 'answer-input';
+                }
+                
+                if (speakerIcon) speakerIcon.style.display = 'inline';
+                
+                setTimeout(() => {
+                    if (answerInput) answerInput.focus();
+                    speakWord();
+                }, 100);
+                clearGameInterval();
+                
+            } else if (progress < VOICE_THRESHOLD + 2) {
+                // Этап 5: Произношение (14-16)
+                clearSnakeInterval();
+                if (!recognition) {
+                    if (container) container.classList.add('text-mode');
+                    
+                    const wordDisplay = document.getElementById('wordDisplay');
+                    if (wordDisplay) wordDisplay.textContent = question.options[question.correct];
+                    
+                    if (answerInput) {
+                        answerInput.value = '';
+                        answerInput.className = 'answer-input';
+                    }
+                    
+                    if (speakerIcon) speakerIcon.style.display = 'inline';
+                    
+                    setTimeout(() => {
+                        if (answerInput) answerInput.focus();
+                        speakWord();
+                    }, 100);
+                    clearGameInterval();
+                } else {
+                    if (container) container.classList.add('voice-mode');
+                    
+                    const wordDisplay = document.getElementById('wordDisplay');
+                    if (wordDisplay) wordDisplay.textContent = question.options[question.correct];
+                    
+                    const voiceStatus = document.getElementById('voiceStatus');
+                    if (voiceStatus) voiceStatus.textContent = 'Нажмите на микрофон и произнесите слово';
+                    
+                    if (speakerIcon) speakerIcon.style.display = 'inline';
+                    clearGameInterval();
+                    setTimeout(() => speakWord(), 500);
+                }
+            } else {
+                // Слово полностью выучено
+                clearSnakeInterval();
+                currentQuestion++;
+                displayQuestion();
+                return;
+            }
+        }
+
+        function generateRandomShape() {
+            const points = [];
+            const numPoints = 5 + Math.floor(Math.random() * 3);
+            
+            for (let i = 0; i < numPoints; i++) {
+                const angle = (i / numPoints) * 360 + (Math.random() - 0.5) * 40;
+                const radius = 40 + Math.random() * 15;
+                const x = 50 + radius * Math.cos(angle * Math.PI / 180);
+                const y = 50 + radius * Math.sin(angle * Math.PI / 180);
+                points.push(`${x}% ${y}%`);
+            }
+            
+            return `polygon(${points.join(', ')})`;
+        }
+
+        function generateRandomPosition(index) {
+            const positions = [
+                { top: 2, left: 2, width: 46, height: 46 },
+                { top: 2, left: 52, width: 46, height: 46 },
+                { top: 52, left: 2, width: 46, height: 46 },
+                { top: 52, left: 52, width: 46, height: 46 }
+            ];
+            
+            const pos = positions[index];
+            const variance = 3;
+            
+            return {
+                top: pos.top + (Math.random() - 0.5) * variance,
+                left: pos.left + (Math.random() - 0.5) * variance,
+                width: pos.width + (Math.random() - 0.5) * 4,
+                height: pos.height + (Math.random() - 0.5) * 4
+            };
+        }
+
+        function startFallingWord(word) {
+            const gameArea = document.getElementById('gameArea');
+            if (!gameArea) return;
+            
+            gameArea.innerHTML = '';
+            
+            fallingWordElement = document.createElement('div');
+            fallingWordElement.className = 'falling-word';
+            fallingWordElement.textContent = word;
+            wordTop = -100;
+            fallingWordElement.style.top = wordTop + 'px';
+            
+            gameArea.appendChild(fallingWordElement);
+            
+            clearGameInterval();
+            gameInterval = setInterval(updateFallingWord, 30);
+        }
+
+        function updateFallingWord() {
+            if (!fallingWordElement || answered) return;
+            
+            wordTop += fallSpeed;
+            fallingWordElement.style.top = wordTop + 'px';
+            
+            if (wordTop >= GAME_HEIGHT - 80) {
+                clearGameInterval();
+                if (!answered) {
+                    answered = true;
+                    const buttons = document.querySelectorAll('.option-btn');
+                    buttons.forEach((btn) => {
+                        btn.disabled = true;
+                        if (parseInt(btn.dataset.originalIndex) === shuffledQuestions[currentQuestion].correct) {
+                            btn.classList.add('correct');
+                        }
+                    });
+                    processAnswer(false);
+                }
+            }
+        }
+
+        function clearGameInterval() {
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+        }
+
+        function selectAnswerGame(selectedIndex) {
+            if (answered) return;
+            answered = true;
+            
+            clearGameInterval();
+            
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = selectedIndex === question.correct;
+            
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach((btn) => {
+                btn.disabled = true;
+                const btnIndex = parseInt(btn.dataset.originalIndex);
+                if (btnIndex === question.correct) btn.classList.add('correct');
+                else if (btnIndex === selectedIndex && !isCorrect) btn.classList.add('incorrect');
+            });
+            
+            if (isCorrect && fallingWordElement) {
+                fallingWordElement.classList.add('correct-hit');
+            }
+            
+            processAnswer(isCorrect);
+        }
+
+        function checkTextAnswer() {
+            if (answered) return;
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            const input = document.getElementById('answerInput');
+            if (!input) return;
+            
+            const userAnswer = input.value.trim().toLowerCase();
+            const correctAnswer = question.question.toLowerCase();
+            const isCorrect = userAnswer === correctAnswer;
+            
+            input.className = 'answer-input ' + (isCorrect ? 'correct' : 'incorrect');
+            processAnswer(isCorrect);
+        }
+
+        function processAnswer(isCorrect) {
+            const question = shuffledQuestions[currentQuestion];
+            const feedback = document.getElementById('feedback');
+            
+            if (isCorrect) {
+                score += 10;
+                wordProgress[question.question]++;
+                const newProgress = wordProgress[question.question];
+                
+                if (feedback) {
+                    if (newProgress === PUZZLE_THRESHOLD) {
+                        feedback.textContent = `🎊 ЭТАП ПРОЙДЕН! Теперь головоломка!`;
+                        feedback.classList.add('level-up');
+                    } else if (newProgress === GAME_THRESHOLD) {
+                        feedback.textContent = `🎮 ОТЛИЧНО! Теперь выбирайте варианты!`;
+                        feedback.classList.add('level-up');
+                    } else if (newProgress === TEXT_THRESHOLD) {
+                        feedback.textContent = `✍️ СУПЕР! Теперь пишите слово!`;
+                        feedback.classList.add('level-up');
+                    } else if (newProgress === VOICE_THRESHOLD) {
+                        feedback.textContent = `🎤 ПОЧТИ! Произнесите слово!`;
+                        feedback.classList.add('level-up');
+                    } else if (newProgress === VOICE_THRESHOLD + 2) {
+                        feedback.textContent = `🏆 СЛОВО ВЫУЧЕНО! "${question.question}" полностью освоено!`;
+                        feedback.classList.add('level-up');
+                    } else if (newProgress < PUZZLE_THRESHOLD) {
+                        feedback.textContent = `✅ Правильно! Соберите змейкой еще раз!`;
+                        feedback.classList.add('correct');
+                    } else if (newProgress < GAME_THRESHOLD) {
+                        feedback.textContent = `✅ Дұрыс! Составьте головоломку еще раз!`;
+                        feedback.classList.add('correct');
+                    } else if (newProgress < TEXT_THRESHOLD) {
+                        feedback.textContent = `✅ Правильно! До следующего этапа: ${TEXT_THRESHOLD - newProgress}`;
+                        feedback.classList.add('correct');
+                    } else {
+                        feedback.textContent = `✅ Отлично! Прогресс: ${newProgress}/${VOICE_THRESHOLD + 2}`;
+                        feedback.classList.add('correct');
+                    }
+                }
+            } else {
+                wordProgress[question.question] = Math.max(0, wordProgress[question.question] - 1);
+                if (feedback) {
+                    feedback.textContent = `❌ Ошибка. Правильно: ${question.question} = ${question.options[question.correct]}`;
+                    feedback.classList.add('incorrect');
+                }
+            }
+            
+            if (feedback) feedback.classList.add('show');
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                clearGameInterval();
+                if (recognition && isListening) recognition.stop();
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
+        }
+
+        function showResults() {
+            clearGameInterval();
+            if (recognition && isListening) recognition.stop();
+            
+            const totalQuestions = shuffledQuestions.length;
+            const correctAnswers = Math.floor(score / 10);
+            const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            const finalScore = document.getElementById('finalScore');
+            if (finalScore) finalScore.textContent = `${correctAnswers}/${totalQuestions}`;
+            
+            const statsCorrect = document.getElementById('statsCorrect');
+            if (statsCorrect) statsCorrect.textContent = `${percentage}%`;
+            
+            const level1 = questions.filter(q => (wordProgress[q.question] || 0) < PUZZLE_THRESHOLD).length;
+            const level2 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= PUZZLE_THRESHOLD && p < GAME_THRESHOLD;
+            }).length;
+            const level3 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= GAME_THRESHOLD && p < TEXT_THRESHOLD;
+            }).length;
+            const level4 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= TEXT_THRESHOLD && p < VOICE_THRESHOLD;
+            }).length;
+            const level5 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= VOICE_THRESHOLD && p < VOICE_THRESHOLD + 2;
+            }).length;
+            
+            const statsLevel1 = document.getElementById('statsLevel1');
+            if (statsLevel1) statsLevel1.textContent = level1;
+            
+            const statsLevel2 = document.getElementById('statsLevel2');
+            if (statsLevel2) statsLevel2.textContent = level2;
+            
+            const statsLevel3 = document.getElementById('statsLevel3');
+            if (statsLevel3) statsLevel3.textContent = level3;
+            
+            const statsLevel4 = document.getElementById('statsLevel4');
+            if (statsLevel4) statsLevel4.textContent = level4;
+            
+            const statsLevel5 = document.getElementById('statsLevel5');
+            if (statsLevel5) statsLevel5.textContent = level5;
+            
+            let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз!" :
+                         percentage >= 80 ? "Тамаша! Жалғастыра беріңіз!" :
+                         percentage >= 70 ? "Жақсы! Өсуге орын бар!" :
+                         percentage >= 60 ? "Жаман емес! Көбірек жаттығыңыз!" :
+                         "Көңіліңіз қалмасын! Тағы көріңіз!";
+            
+            const resultsMessage = document.getElementById('resultsMessage');
+            if (resultsMessage) resultsMessage.textContent = message;
+            showScreen('resultsScreen');
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        function resetProgress() {
+            if (confirm(`${currentLevel} деңгейі үшін барлық прогрессті тастау керек пе?`)) {
+                wordProgress = {};
+                initializeProgress();
+                saveProgress();
+                alert('Прогресс тасталды!');
+                startQuiz();
+            }
+        }
+
+        document.getElementById('answerInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !answered) checkTextAnswer();
         });
     </script>
 </body>
