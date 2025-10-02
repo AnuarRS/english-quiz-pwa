@@ -1272,6 +1272,11 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initSpeechRecognition();
+            
+            // ВРЕМЕННО для теста - раскомментируйте чтобы сбросить прогресс
+            // localStorage.clear();
+            // alert('Прогресс сброшен для теста головоломки');
+            
             loadAllLevelProgress();
             updateTotalProgress();
         });
