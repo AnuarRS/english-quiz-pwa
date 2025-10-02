@@ -107,7 +107,7 @@
             justify-content: center;
         }
 
-        .main-menu, .help-screen, .loading-screen, .error-screen, .question-container, .results-screen {
+        .help-screen, .loading-screen, .error-screen, .question-container, .results-screen {
             display: none;
         }
 
@@ -848,7 +848,12 @@
 
         function initSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (SpeechRecognition) {
+            if (!SpeechRecognition) {
+                console.warn('Speech Recognition API не поддерживается в этом браузере');
+                return;
+            }
+            
+            try {
                 recognition = new SpeechRecognition();
                 recognition.lang = 'en-US';
                 recognition.continuous = false;
@@ -862,23 +867,34 @@
                 recognition.onerror = (event) => {
                     console.error('Speech recognition error:', event.error);
                     stopListening();
-                    document.getElementById('voiceStatus').textContent = 'Ошибка. Попробуйте снова';
+                    if (event.error === 'no-speech') {
+                        document.getElementById('voiceStatus').textContent = 'Не услышал. Попробуйте снова';
+                    } else if (event.error === 'not-allowed') {
+                        document.getElementById('voiceStatus').textContent = 'Разрешите доступ к микрофону';
+                    } else {
+                        document.getElementById('voiceStatus').textContent = 'Ошибка. Попробуйте снова';
+                    }
                 };
 
                 recognition.onend = () => {
                     stopListening();
                 };
+            } catch (e) {
+                console.error('Ошибка инициализации Speech Recognition:', e);
             }
         }
 
         function speakWord() {
             const question = shuffledQuestions[currentQuestion];
-            if (!question) return;
+            if (!question || !question.question) return;
             
-            const utterance = new SpeechSynthesisUtterance(question.question);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.8;
-            speechSynthesis.speak(utterance);
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(question.question);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
         }
 
         function startVoiceRecognition() {
@@ -912,12 +928,16 @@
             answered = true;
 
             const question = shuffledQuestions[currentQuestion];
+            if (!question) return;
+            
             const correctAnswer = question.question.toLowerCase().trim();
             const similarity = calculateSimilarity(transcript, correctAnswer);
             const isCorrect = similarity > 0.7;
 
-            document.getElementById('voiceStatus').textContent = 
-                `Вы сказали: "${transcript}"`;
+            const voiceStatus = document.getElementById('voiceStatus');
+            if (voiceStatus) {
+                voiceStatus.textContent = `Вы сказали: "${transcript}"`;
+            }
 
             processAnswer(isCorrect);
         }
@@ -1050,7 +1070,7 @@
 
             for (const level of Object.keys(LEVEL_FILES)) {
                 try {
-                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v3`);
+                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
                     const progress = saved ? JSON.parse(saved) : {};
 
                     if (!questionsCache[level]) {
@@ -1142,12 +1162,12 @@
         }
 
         function loadProgress(level) {
-            const saved = localStorage.getItem(`englishQuizProgress_${level}_v3`);
+            const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
             wordProgress = saved ? JSON.parse(saved) : {};
         }
 
         function saveProgress() {
-            localStorage.setItem(`englishQuizProgress_${currentLevel}_v3`, JSON.stringify(wordProgress));
+            localStorage.setItem(`englishQuizProgress_${currentLevel}_v2`, JSON.stringify(wordProgress));
         }
 
         function initializeProgress() {
@@ -1236,13 +1256,30 @@
                 }, 100);
                 clearGameInterval();
                 
+            } else if (progress < VOICE_THRESHOLD) {
+                if (!recognition) {
+                    container.classList.add('text-mode');
+                    document.getElementById('wordDisplay').textContent = question.options[question.correct];
+                    answerInput.value = '';
+                    answerInput.className = 'answer-input';
+                    speakerIcon.style.display = 'inline';
+                    setTimeout(() => {
+                        answerInput.focus();
+                        speakWord();
+                    }, 100);
+                    clearGameInterval();
+                } else {
+                    container.classList.add('voice-mode');
+                    document.getElementById('wordDisplay').textContent = question.options[question.correct];
+                    document.getElementById('voiceStatus').textContent = 'Нажмите на микрофон и произнесите слово';
+                    speakerIcon.style.display = 'inline';
+                    clearGameInterval();
+                    setTimeout(() => speakWord(), 500);
+                }
             } else {
-                container.classList.add('voice-mode');
-                document.getElementById('wordDisplay').textContent = question.options[question.correct];
-                document.getElementById('voiceStatus').textContent = 'Нажмите на микрофон и произнесите слово';
-                speakerIcon.style.display = 'inline';
-                clearGameInterval();
-                setTimeout(() => speakWord(), 500);
+                currentQuestion++;
+                displayQuestion();
+                return;
             }
         }
 
