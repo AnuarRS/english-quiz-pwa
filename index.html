@@ -2,37 +2,172 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EnglishBoost - Полное обучение</title>
-    <meta name="theme-color" content="#58cc02">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnglishBoost - Обучение английскому</title>
     <style>
-        /* ... (предыдущие стили остаются без изменений) ... */
-
-        /* Обновленные стили для змейки */
-        .snake-container {
-            display: none;
-            margin-bottom: 30px;
+        /* Базовые стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .question-container.snake-mode .snake-container {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+        }
+
+        /* Стили заголовка */
+        .header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            color: white;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 16px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #58cc02;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .score {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Основной контент */
+        .main-content {
+            padding: 25px;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .active {
             display: block;
         }
 
-        .question-container.snake-mode .options-grid,
-        .question-container.snake-mode .game-area,
-        .question-container.snake-mode .input-container,
-        .question-container.snake-mode .voice-container,
-        .question-container.snake-mode .puzzle-container {
-            display: none;
+        .loading-screen {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
 
+        /* Главное меню */
+        .menu-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+
+        .menu-subtitle {
+            font-size: 1em;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .level-card {
+            border: none;
+            border-radius: 15px;
+            padding: 25px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .level-card.a1 { background: linear-gradient(135deg, #a8e6cf 0%, #56ab91 100%); }
+        .level-card.a2 { background: linear-gradient(135deg, #81c784 0%, #4caf50 100%); }
+        .level-card.b1 { background: linear-gradient(135deg, #ffd54f 0%, #ffa726 100%); }
+        .level-card.b2 { background: linear-gradient(135deg, #ff8a65 0%, #f4511e 100%); }
+        .level-card.c1 { background: linear-gradient(135deg, #e57373 0%, #d32f2f 100%); }
+        .level-card.c2 { background: linear-gradient(135deg, #9575cd 0%, #673ab7 100%); }
+
+        .level-name {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .level-description {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        /* Игра змейка */
         .snake-game-area {
             position: relative;
             width: 100%;
             max-width: 400px;
             height: 400px;
-            margin: 0 auto;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            margin: 0 auto 20px;
+            background: #f5f7fa;
             border-radius: 15px;
             border: 3px solid #dfe4ea;
             overflow: hidden;
@@ -42,14 +177,13 @@
             position: absolute;
             width: 20px;
             height: 20px;
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            background: #00b894;
             border-radius: 4px;
-            transition: all 0.1s linear;
             z-index: 2;
         }
 
         .snake-head {
-            background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+            background: #0984e3;
             box-shadow: 0 2px 8px rgba(9, 132, 227, 0.6);
             z-index: 3;
         }
@@ -58,24 +192,27 @@
             position: absolute;
             width: 25px;
             height: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1em;
-            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.4);
             z-index: 1;
-            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.4);
         }
 
         .letter-food.target {
-            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            background: #ffd700;
             animation: pulse 1s infinite;
             transform: scale(1.2);
             z-index: 4;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.2); }
+            50% { transform: scale(1.4); }
         }
 
         .snake-word-display {
@@ -99,13 +236,12 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .snake-btn {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             border: none;
             border-radius: 10px;
             color: white;
@@ -116,16 +252,11 @@
             justify-content: center;
             transition: all 0.2s ease;
             box-shadow: 0 3px 6px rgba(102, 126, 234, 0.3);
-            user-select: none;
         }
 
         .snake-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 8px rgba(102, 126, 234, 0.5);
-        }
-
-        .snake-btn:active {
-            transform: scale(0.95);
         }
 
         .snake-btn.up { grid-column: 2; grid-row: 1; }
@@ -138,57 +269,250 @@
             color: #636e72;
             font-size: 0.9em;
             margin-top: 10px;
-            padding: 0 20px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1.2); }
-            50% { transform: scale(1.4); }
+        /* Кнопки действий */
+        .action-btn {
+            background: #58cc02;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(88, 204, 2, 0.3);
         }
 
-        /* ... (остальные стили остаются без изменений) ... */
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(88, 204, 2, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: #74b9ff;
+            border: 2px solid #74b9ff;
+            box-shadow: none;
+        }
+
+        .action-btn.secondary:hover {
+            background: #74b9ff;
+            color: white;
+        }
+
+        /* Сообщения */
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .levels-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .snake-game-area {
+                height: 300px;
+            }
+            
+            .level-card {
+                padding: 20px 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="quiz-container">
-        <!-- ... (остальная разметка без изменений) ... -->
+        <div class="header">
+            <div class="header-top">
+                <button class="btn" id="backBtn" style="display: none;">✕</button>
+                <div class="score">
+                    <span id="currentLevel"></span>
+                    <span id="scoreDisplay" style="display: none;">💎 <span id="score">0</span></span>
+                </div>
+                <button class="btn" id="helpBtn">❓</button>
+            </div>
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
 
         <div class="main-content">
-            <!-- ... (остальная разметка без изменений) ... -->
-
-            <div class="question-container" id="questionScreen">
-                <!-- ... (остальная разметка без изменений) ... -->
-
-                <div class="snake-container">
-                    <div class="snake-word-display" id="snakeWordDisplay">Collected: </div>
-                    <div class="snake-game-area" id="snakeGameArea"></div>
-                    <div class="snake-controls">
-                        <button class="snake-btn up" onclick="changeSnakeDirection('up')">↑</button>
-                        <button class="snake-btn left" onclick="changeSnakeDirection('left')">←</button>
-                        <button class="snake-btn right" onclick="changeSnakeDirection('right')">→</button>
-                        <button class="snake-btn down" onclick="changeSnakeDirection('down')">↓</button>
-                    </div>
-                    <div class="snake-hint">Соберите буквы в правильном порядке. Используйте стрелки для управления змейкой</div>
-                </div>
+            <!-- Главное меню -->
+            <div class="screen active" id="mainMenu">
+                <div class="menu-title">EnglishBoost</div>
+                <div class="menu-subtitle">Изучайте английский с помощью игр</div>
                 
-                <div class="feedback" id="feedback"></div>
+                <div class="levels-grid" id="levelsGrid"></div>
+                
+                <button class="action-btn" onclick="showScreen('helpScreen')">Помощь</button>
             </div>
 
-            <!-- ... (остальная разметка без изменений) ... -->
+            <!-- Помощь -->
+            <div class="screen" id="helpScreen">
+                <h3>Как играть</h3>
+                <p>Собирайте буквы в правильном порядке с помощью змейки.</p>
+                <p>Используйте кнопки управления или клавиши стрелок на клавиатуре.</p>
+                <p>Соберите все буквы слова, чтобы перейти к следующему.</p>
+                
+                <button class="action-btn" onclick="showScreen('mainMenu')">Назад</button>
+            </div>
+
+            <!-- Игра -->
+            <div class="screen" id="gameScreen">
+                <div class="snake-word-display" id="snakeWordDisplay">Собрано: </div>
+                <div class="snake-game-area" id="snakeGameArea"></div>
+                <div class="snake-controls">
+                    <button class="snake-btn up" onclick="changeSnakeDirection('up')">↑</button>
+                    <button class="snake-btn left" onclick="changeSnakeDirection('left')">←</button>
+                    <button class="snake-btn right" onclick="changeSnakeDirection('right')">→</button>
+                    <button class="snake-btn down" onclick="changeSnakeDirection('down')">↓</button>
+                </div>
+                <div class="snake-hint">Соберите буквы в правильном порядке</div>
+                
+                <div class="message" id="gameMessage"></div>
+                
+                <button class="action-btn" onclick="endGame()">Завершить игру</button>
+            </div>
+
+            <!-- Результаты -->
+            <div class="screen" id="resultsScreen">
+                <div style="font-size: 4em;">🎉</div>
+                <div style="font-size: 2em; font-weight: bold; color: #58cc02; margin: 20px 0;" id="finalScore">0/0</div>
+                <div style="font-size: 1.2em; margin-bottom: 30px;" id="resultsMessage">Отлично!</div>
+                
+                <button class="action-btn" onclick="restartGame()">Играть снова</button>
+                <button class="action-btn secondary" onclick="showScreen('mainMenu')">Главное меню</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ... (предыдущие переменные и функции остаются без изменений) ...
+        // Конфигурация игры
+        const LEVELS = {
+            'A1': { name: 'Начальный', words: ['CAT', 'DOG', 'SUN', 'RED', 'CAR'] },
+            'A2': { name: 'Базовый', words: ['HOUSE', 'WATER', 'APPLE', 'TABLE', 'BOOK'] },
+            'B1': { name: 'Средний', words: ['COMPUTER', 'TEACHER', 'STUDENT', 'PENCIL', 'SCHOOL'] },
+            'B2': { name: 'Выше среднего', words: ['UNIVERSITY', 'ELEPHANT', 'RESTAURANT', 'TELEVISION', 'GOVERNMENT'] },
+            'C1': { name: 'Продвинутый', words: ['ENVIRONMENT', 'COMMUNICATION', 'INFORMATION', 'DEVELOPMENT', 'EXPERIENCE'] },
+            'C2': { name: 'Профессиональный', words: ['ENTREPRENEURSHIP', 'INTERNATIONALIZATION', 'INCONVENIENCE', 'RESPONSIBILITY', 'DETERMINATION'] }
+        };
 
-        // Обновленные функции для змейки
+        // Переменные игры
+        let currentLevel = '';
+        let currentWordIndex = 0;
+        let score = 0;
+        let wordsCompleted = 0;
+        
+        // Переменные змейки
+        let snake = [];
+        let snakeDirection = 'right';
+        let snakeInterval = null;
+        let letterPositions = [];
+        let collectedLetters = '';
+        let currentWord = '';
+
+        // Инициализация при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            initLevels();
+            document.getElementById('backBtn').addEventListener('click', goToMainMenu);
+            document.getElementById('helpBtn').addEventListener('click', () => showScreen('helpScreen'));
+        });
+
+        // Основные функции интерфейса
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goToMainMenu() {
+            stopGame();
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('scoreDisplay').style.display = 'none';
+            showScreen('mainMenu');
+        }
+
+        function initLevels() {
+            const levelsGrid = document.getElementById('levelsGrid');
+            
+            for (const [level, data] of Object.entries(LEVELS)) {
+                const card = document.createElement('div');
+                card.className = `level-card ${level.toLowerCase()}`;
+                card.onclick = () => selectLevel(level);
+                
+                const levelName = document.createElement('div');
+                levelName.className = 'level-name';
+                levelName.textContent = level;
+                
+                const description = document.createElement('div');
+                description.className = 'level-description';
+                description.textContent = data.name;
+                
+                card.appendChild(levelName);
+                card.appendChild(description);
+                levelsGrid.appendChild(card);
+            }
+        }
+
+        function selectLevel(level) {
+            currentLevel = level;
+            document.getElementById('currentLevel').textContent = `${level} уровень | `;
+            document.getElementById('scoreDisplay').style.display = 'inline';
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('progressContainer').style.display = 'block';
+            
+            startGame();
+        }
+
+        // Функции игры
+        function startGame() {
+            currentWordIndex = 0;
+            score = 0;
+            wordsCompleted = 0;
+            updateUI();
+            showScreen('gameScreen');
+            nextWord();
+        }
+
+        function nextWord() {
+            if (currentWordIndex >= LEVELS[currentLevel].words.length) {
+                endGame();
+                return;
+            }
+            
+            currentWord = LEVELS[currentLevel].words[currentWordIndex];
+            initSnakeGame(currentWord);
+            currentWordIndex++;
+        }
+
         function initSnakeGame(word) {
-            console.log("Инициализация змейки для слова:", word);
-            snakeTargetWord = word.toUpperCase();
+            currentWord = word;
             collectedLetters = '';
             snakeDirection = 'right';
             
-            // Инициализация змейки в центре с безопасным расстоянием
+            // Инициализация змейки в центре
             const centerX = 200;
             const centerY = 200;
             snake = [
@@ -197,9 +521,9 @@
                 { x: centerX - 40, y: centerY }
             ];
 
-            // Размещение букв случайным образом с безопасным расстоянием от змейки
+            // Размещение букв с безопасным расстоянием
             letterPositions = [];
-            const letters = snakeTargetWord.split('');
+            const letters = currentWord.split('');
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             
             // Добавляем буквы целевого слова
@@ -208,7 +532,7 @@
                 letterPositions.push({ letter, x: pos.x, y: pos.y, isTarget: true, index });
             });
 
-            // Уменьшаем количество случайных букв в 2 раза (было 10, стало 5)
+            // Добавляем случайные буквы (в 2 раза меньше)
             for (let i = 0; i < 5; i++) {
                 const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
                 let pos = getRandomSafePosition();
@@ -219,7 +543,7 @@
             renderSnakeGame();
             
             clearSnakeInterval();
-            snakeInterval = setInterval(moveSnake, snakeSpeed);
+            snakeInterval = setInterval(moveSnake, 150);
         }
 
         function getRandomSafePosition() {
@@ -247,8 +571,7 @@
                 if (distanceFromCenter >= safeDistance && !tooCloseToSnake) {
                     return pos;
                 }
-                
-            } while (attempts < 50); // Максимум 50 попыток
+            } while (attempts < 50);
             
             // Если не нашли безопасную позицию, возвращаем любую
             return {
@@ -259,10 +582,6 @@
 
         function renderSnakeGame() {
             const gameArea = document.getElementById('snakeGameArea');
-            if (!gameArea) {
-                console.error("Snake game area not found!");
-                return;
-            }
             gameArea.innerHTML = '';
 
             // Отрисовка змейки
@@ -275,7 +594,7 @@
             });
 
             // Отрисовка букв
-            letterPositions.forEach((letterPos, index) => {
+            letterPositions.forEach((letterPos) => {
                 const letterEl = document.createElement('div');
                 letterEl.className = 'letter-food';
                 
@@ -292,8 +611,6 @@
         }
 
         function moveSnake() {
-            if (answered) return;
-
             const head = { ...snake[0] };
 
             switch (snakeDirection) {
@@ -332,8 +649,8 @@
                     updateSnakeDisplay();
 
                     // Проверяем, собрано ли все слово
-                    if (collectedLetters === snakeTargetWord) {
-                        processSnakeWin();
+                    if (collectedLetters === currentWord) {
+                        processWordComplete();
                         return;
                     }
                 } else {
@@ -353,16 +670,13 @@
             if (snakeDirection !== opposites[newDirection] && snake.length > 1) {
                 snakeDirection = newDirection;
             } else if (snake.length === 1) {
-                // Разрешаем разворот если змейка состоит только из головы
                 snakeDirection = newDirection;
             }
         }
 
         function updateSnakeDisplay() {
-            const display = document.getElementById('snakeWordDisplay');
-            if (display) {
-                display.textContent = `Collected: ${collectedLetters} / ${snakeTargetWord}`;
-            }
+            document.getElementById('snakeWordDisplay').textContent = 
+                `Собрано: ${collectedLetters} / ${currentWord}`;
         }
 
         function clearSnakeInterval() {
@@ -374,39 +688,64 @@
 
         function gameOver() {
             clearSnakeInterval();
-            const feedback = document.getElementById('feedback');
-            if (feedback) {
-                feedback.textContent = '❌ Игра окончена! Неправильная буква или столкновение.';
-                feedback.classList.add('incorrect', 'show');
-            }
+            const message = document.getElementById('gameMessage');
+            message.textContent = '❌ Игра окончена! Неправильная буква или столкновение.';
+            message.className = 'message error';
             
             setTimeout(() => {
-                initSnakeGame(snakeTargetWord);
-                if (feedback) feedback.classList.remove('show');
+                initSnakeGame(currentWord);
+                message.textContent = '';
+                message.className = 'message';
             }, 2000);
         }
 
-        function processSnakeWin() {
+        function processWordComplete() {
             clearSnakeInterval();
-            answered = true;
-            
-            const question = shuffledQuestions[currentQuestion];
             score += 10;
-            wordProgress[question.question]++;
+            wordsCompleted++;
             
-            const feedback = document.getElementById('feedback');
-            if (feedback) {
-                feedback.textContent = `🎉 Отлично! Слово "${snakeTargetWord}" собрано!`;
-                feedback.classList.add('correct', 'show');
-            }
+            const message = document.getElementById('gameMessage');
+            message.textContent = `🎉 Отлично! Слово "${currentWord}" собрано!`;
+            message.className = 'message success';
             
             updateUI();
-            saveProgress();
             
             setTimeout(() => {
-                currentQuestion++;
-                displayQuestion();
-            }, 2500);
+                message.textContent = '';
+                message.className = 'message';
+                nextWord();
+            }, 1500);
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            const progress = (currentWordIndex / LEVELS[currentLevel].words.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function endGame() {
+            stopGame();
+            document.getElementById('finalScore').textContent = `${wordsCompleted}/${LEVELS[currentLevel].words.length}`;
+            
+            let message = '';
+            if (wordsCompleted === LEVELS[currentLevel].words.length) {
+                message = "Потрясающе! Вы завершили уровень!";
+            } else if (wordsCompleted >= LEVELS[currentLevel].words.length / 2) {
+                message = "Хорошая работа! Продолжайте в том же духе!";
+            } else {
+                message = "Неплохо! Попробуйте еще раз для лучшего результата!";
+            }
+            
+            document.getElementById('resultsMessage').textContent = message;
+            showScreen('resultsScreen');
+        }
+
+        function stopGame() {
+            clearSnakeInterval();
+        }
+
+        function restartGame() {
+            startGame();
         }
 
         // Управление змейкой с клавиатуры
@@ -432,8 +771,6 @@
                     break;
             }
         });
-
-        // ... (остальной код без изменений) ...
     </script>
 </body>
 </html>
