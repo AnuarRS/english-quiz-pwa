@@ -505,14 +505,7 @@
         }
 
         .puzzle-target-word {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-size: 2em;
-            font-weight: bold;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            display: none;
         }
 
         .puzzle-grid {
@@ -565,6 +558,114 @@
             font-size: 0.9em;
             margin-top: 15px;
         }
+
+        /* Snake game */
+        .snake-container {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.snake-mode .snake-container {
+            display: block;
+        }
+
+        .question-container.snake-mode .options-grid,
+        .question-container.snake-mode .game-area,
+        .question-container.snake-mode .input-container,
+        .question-container.snake-mode .voice-container,
+        .question-container.snake-mode .puzzle-container {
+            display: none;
+        }
+
+        .snake-game-area {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            border-radius: 15px;
+            border: 3px solid #dfe4ea;
+            overflow: hidden;
+        }
+
+        .snake-segment {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            border-radius: 4px;
+            transition: all 0.1s linear;
+        }
+
+        .snake-head {
+            background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+            box-shadow: 0 2px 8px rgba(9, 132, 227, 0.6);
+        }
+
+        .letter-food {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        .letter-food.target {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            animation: pulse 1s infinite;
+        }
+
+        .snake-word-display {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .snake-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 5px;
+            margin: 20px auto;
+            width: fit-content;
+        }
+
+        .snake-btn {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .snake-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .snake-btn:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .snake-btn:nth-child(3) { grid-column: 1; grid-row: 2; }
+        .snake-btn:nth-child(4) { grid-column: 3; grid-row: 2; }
+        .snake-btn:nth-child(5) { grid-column: 2; grid-row: 2; }
 
         .microphone-btn {
             width: 120px;
@@ -796,26 +897,33 @@
                     <div class="level-detail">
                         <div class="level-detail-badge">1️⃣</div>
                         <div class="level-detail-text">
+                            <div class="level-detail-title">Змейка (1 раз)</div>
+                            <div class="level-detail-desc">Соберите буквы в правильном порядке змейкой</div>
+                        </div>
+                    </div>
+                    <div class="level-detail">
+                        <div class="level-detail-badge">2️⃣</div>
+                        <div class="level-detail-text">
                             <div class="level-detail-title">Головоломка (1 раз)</div>
                             <div class="level-detail-desc">Составьте слово из букв на поле 6×6</div>
                         </div>
                     </div>
                     <div class="level-detail">
-                        <div class="level-detail-badge">2️⃣</div>
+                        <div class="level-detail-badge">3️⃣</div>
                         <div class="level-detail-text">
                             <div class="level-detail-title">Выбор варианта (10 раз)</div>
                             <div class="level-detail-desc">Слово падает сверху, выберите правильный перевод</div>
                         </div>
                     </div>
                     <div class="level-detail">
-                        <div class="level-detail-badge">3️⃣</div>
+                        <div class="level-detail-badge">4️⃣</div>
                         <div class="level-detail-text">
-                            <div class="level-detail-title">Написание (3 раза)</div>
+                            <div class="level-detail-title">Написание (2 раза)</div>
                             <div class="level-detail-desc">Напишите английское слово по переводу</div>
                         </div>
                     </div>
                     <div class="level-detail">
-                        <div class="level-detail-badge">4️⃣</div>
+                        <div class="level-detail-badge">5️⃣</div>
                         <div class="level-detail-text">
                             <div class="level-detail-title">Произношение (2 раза)</div>
                             <div class="level-detail-desc">Произнесите слово в микрофон</div>
@@ -861,6 +969,18 @@
                     <div class="puzzle-grid" id="puzzleGrid"></div>
                     <div class="puzzle-hint">Передвигайте буквы, чтобы составить слово по вертикали или горизонтали</div>
                 </div>
+
+                <div class="snake-container">
+                    <div class="snake-word-display" id="snakeWordDisplay">Collected: </div>
+                    <div class="snake-game-area" id="snakeGameArea"></div>
+                    <div class="snake-controls">
+                        <button class="snake-btn" onclick="changeSnakeDirection('up')">↑</button>
+                        <button class="snake-btn" onclick="changeSnakeDirection('left')">←</button>
+                        <button class="snake-btn" onclick="changeSnakeDirection('down')">↓</button>
+                        <button class="snake-btn" onclick="changeSnakeDirection('right')">→</button>
+                    </div>
+                    <div class="puzzle-hint">Соберите буквы в правильном порядке. Неправильная буква = конец игры!</div>
+                </div>
                 
                 <div class="feedback" id="feedback"></div>
             </div>
@@ -876,20 +996,24 @@
                         <span id="statsCorrect">0%</span>
                     </div>
                     <div class="stat-item">
-                        <span>🧩 Головоломка:</span>
+                        <span>🐍 Змейка:</span>
                         <span id="statsLevel1">0</span>
                     </div>
                     <div class="stat-item">
-                        <span>🎯 Выбор варианта:</span>
+                        <span>🧩 Головоломка:</span>
                         <span id="statsLevel2">0</span>
                     </div>
                     <div class="stat-item">
-                        <span>✍️ Написание:</span>
+                        <span>🎯 Выбор варианта:</span>
                         <span id="statsLevel3">0</span>
                     </div>
                     <div class="stat-item">
-                        <span>🎤 Произношение:</span>
+                        <span>✍️ Написание:</span>
                         <span id="statsLevel4">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎤 Произношение:</span>
+                        <span id="statsLevel5">0</span>
                     </div>
                 </div>
                 
@@ -909,9 +1033,9 @@
         let wordProgress = {};
         let currentLevel = '';
         const PUZZLE_THRESHOLD = 1;
-        const GAME_THRESHOLD = 11;
-        const TEXT_THRESHOLD = 14;
-        const VOICE_THRESHOLD = 16;
+        const GAME_THRESHOLD = 2;
+        const TEXT_THRESHOLD = 12;
+        const VOICE_THRESHOLD = 14;
         
         let fallingWordElement = null;
         let wordTop = -100;
@@ -1062,6 +1186,204 @@
             return 1 - distance / maxLen;
         }
 
+        // Snake game functions
+        function initSnakeGame(word) {
+            snakeTargetWord = word.toUpperCase();
+            collectedLetters = '';
+            snakeDirection = 'right';
+            
+            // Initialize snake in center
+            const centerX = 200;
+            const centerY = 200;
+            snake = [
+                { x: centerX, y: centerY },
+                { x: centerX - 20, y: centerY },
+                { x: centerX - 40, y: centerY }
+            ];
+
+            // Place letters randomly
+            letterPositions = [];
+            const letters = snakeTargetWord.split('');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            
+            // Add target word letters
+            letters.forEach((letter, index) => {
+                let pos = getRandomPosition();
+                letterPositions.push({ letter, x: pos.x, y: pos.y, isTarget: true, index });
+            });
+
+            // Add random letters
+            for (let i = 0; i < 10; i++) {
+                const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+                let pos = getRandomPosition();
+                letterPositions.push({ letter: randomLetter, x: pos.x, y: pos.y, isTarget: false });
+            }
+
+            updateSnakeDisplay();
+            renderSnakeGame();
+            
+            clearSnakeInterval();
+            snakeInterval = setInterval(moveSnake, snakeSpeed);
+        }
+
+        function getRandomPosition() {
+            return {
+                x: Math.floor(Math.random() * 18) * 20 + 10,
+                y: Math.floor(Math.random() * 18) * 20 + 10
+            };
+        }
+
+        function renderSnakeGame() {
+            const gameArea = document.getElementById('snakeGameArea');
+            gameArea.innerHTML = '';
+
+            // Render snake
+            snake.forEach((segment, index) => {
+                const segmentEl = document.createElement('div');
+                segmentEl.className = 'snake-segment' + (index === 0 ? ' snake-head' : '');
+                segmentEl.style.left = segment.x + 'px';
+                segmentEl.style.top = segment.y + 'px';
+                gameArea.appendChild(segmentEl);
+            });
+
+            // Render letters
+            letterPositions.forEach((letterPos, index) => {
+                const letterEl = document.createElement('div');
+                letterEl.className = 'letter-food';
+                
+                // Highlight next target letter
+                if (letterPos.isTarget && letterPos.index === collectedLetters.length) {
+                    letterEl.classList.add('target');
+                }
+                
+                letterEl.textContent = letterPos.letter;
+                letterEl.style.left = letterPos.x - 15 + 'px';
+                letterEl.style.top = letterPos.y - 15 + 'px';
+                gameArea.appendChild(letterEl);
+            });
+        }
+
+        function moveSnake() {
+            if (answered) return;
+
+            const head = { ...snake[0] };
+
+            switch (snakeDirection) {
+                case 'up': head.y -= 20; break;
+                case 'down': head.y += 20; break;
+                case 'left': head.x -= 20; break;
+                case 'right': head.x += 20; break;
+            }
+
+            // Check wall collision
+            if (head.x < 0 || head.x >= 400 || head.y < 0 || head.y >= 400) {
+                gameOver();
+                return;
+            }
+
+            // Check self collision
+            if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver();
+                return;
+            }
+
+            snake.unshift(head);
+
+            // Check letter collision
+            const collisionIndex = letterPositions.findIndex(letter => 
+                Math.abs(letter.x - head.x) < 20 && Math.abs(letter.y - head.y) < 20
+            );
+
+            if (collisionIndex !== -1) {
+                const collectedLetter = letterPositions[collisionIndex];
+                
+                // Check if it's the correct next letter
+                if (collectedLetter.isTarget && collectedLetter.index === collectedLetters.length) {
+                    collectedLetters += collectedLetter.letter;
+                    letterPositions.splice(collisionIndex, 1);
+                    updateSnakeDisplay();
+
+                    // Check if word complete
+                    if (collectedLetters === snakeTargetWord) {
+                        processSnakeWin();
+                        return;
+                    }
+                } else {
+                    // Wrong letter - game over
+                    gameOver();
+                    return;
+                }
+            } else {
+                snake.pop();
+            }
+
+            renderSnakeGame();
+        }
+
+        function changeSnakeDirection(newDirection) {
+            const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
+            if (snakeDirection !== opposites[newDirection]) {
+                snakeDirection = newDirection;
+            }
+        }
+
+        function updateSnakeDisplay() {
+            document.getElementById('snakeWordDisplay').textContent = 
+                `Collected: ${collectedLetters} / ${snakeTargetWord}`;
+        }
+
+        function clearSnakeInterval() {
+            if (snakeInterval) {
+                clearInterval(snakeInterval);
+                snakeInterval = null;
+            }
+        }
+
+        function gameOver() {
+            clearSnakeInterval();
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = '❌ Игра окончена! Неправильная буква или столкновение.';
+            feedback.classList.add('incorrect', 'show');
+            
+            setTimeout(() => {
+                initSnakeGame(snakeTargetWord);
+                feedback.classList.remove('show');
+            }, 2000);
+        }
+
+        function processSnakeWin() {
+            clearSnakeInterval();
+            answered = true;
+            
+            const question = shuffledQuestions[currentQuestion];
+            score += 10;
+            wordProgress[question.question]++;
+            
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = `🎉 Отлично! Слово "${snakeTargetWord}" собрано!`;
+            feedback.classList.add('correct', 'show');
+            
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
+        }
+
+        // Keyboard controls for snake
+        document.addEventListener('keydown', (e) => {
+            if (!snakeInterval) return;
+            
+            switch(e.key) {
+                case 'ArrowUp': changeSnakeDirection('up'); break;
+                case 'ArrowDown': changeSnakeDirection('down'); break;
+                case 'ArrowLeft': changeSnakeDirection('left'); break;
+                case 'ArrowRight': changeSnakeDirection('right'); break;
+            }
+        });
+
         // Puzzle game functions
         function initPuzzleGame(word, translation) {
             targetWord = word.toUpperCase();
@@ -1142,55 +1464,91 @@
         function swapCells(index1, index2) {
             [puzzleGrid[index1], puzzleGrid[index2]] = [puzzleGrid[index2], puzzleGrid[index1]];
             renderPuzzleGrid();
+            
+            // Проверяем слово после каждого свапа
+            setTimeout(() => checkPuzzleWord(), 100);
         }
 
         function checkPuzzleWord() {
             const gridSize = 6;
             
-            // Check horizontal
-            for (let row = 0; row < gridSize; row++) {
-                for (let col = 0; col <= gridSize - targetWord.length; col++) {
-                    let word = '';
-                    for (let i = 0; i < targetWord.length; i++) {
-                        word += puzzleGrid[row * gridSize + col + i];
-                    }
-                    if (word === targetWord) {
-                        markCorrectCells(row, col, 'horizontal');
-                        processPuzzleWin();
-                        return;
-                    }
-                }
-            }
-
-            // Check vertical
-            for (let col = 0; col < gridSize; col++) {
-                for (let row = 0; row <= gridSize - targetWord.length; row++) {
-                    let word = '';
-                    for (let i = 0; i < targetWord.length; i++) {
-                        word += puzzleGrid[(row + i) * gridSize + col];
-                    }
-                    if (word === targetWord) {
-                        markCorrectCells(row, col, 'vertical');
-                        processPuzzleWin();
-                        return;
+            console.log('Ищем слово:', targetWord);
+            console.log('Текущая сетка:', puzzleGrid);
+            
+            // Поиск слова по цепочке соседних клеток
+            for (let startRow = 0; startRow < gridSize; startRow++) {
+                for (let startCol = 0; startCol < gridSize; startCol++) {
+                    const startIndex = startRow * gridSize + startCol;
+                    
+                    if (puzzleGrid[startIndex] === targetWord[0]) {
+                        console.log('Нашли первую букву', targetWord[0], 'в позиции', startIndex);
+                        const path = findWordPath(startIndex, 0, [], gridSize);
+                        if (path) {
+                            console.log('НАШЛИ СЛОВО! Путь:', path);
+                            markCorrectPath(path);
+                            processPuzzleWin();
+                            return;
+                        }
                     }
                 }
             }
+            console.log('Слово не найдено');
         }
 
-        function markCorrectCells(row, col, direction) {
-            const gridSize = 6;
-            const cells = document.querySelectorAll('.puzzle-cell');
-            
-            for (let i = 0; i < targetWord.length; i++) {
-                let index;
-                if (direction === 'horizontal') {
-                    index = row * gridSize + col + i;
-                } else {
-                    index = (row + i) * gridSize + col;
-                }
-                cells[index].classList.add('correct');
+        function findWordPath(currentIndex, letterIndex, visited, gridSize) {
+            // Если нашли все буквы - успех
+            if (letterIndex === targetWord.length) {
+                return visited;
             }
+
+            // Проверяем текущую букву
+            if (puzzleGrid[currentIndex] !== targetWord[letterIndex]) {
+                return null;
+            }
+
+            // Добавляем в путь
+            const newVisited = [...visited, currentIndex];
+
+            // Если это последняя буква - возвращаем путь
+            if (letterIndex === targetWord.length - 1) {
+                return newVisited;
+            }
+
+            // Ищем соседние клетки
+            const row = Math.floor(currentIndex / gridSize);
+            const col = currentIndex % gridSize;
+            
+            const neighbors = [
+                { row: row - 1, col: col },     // вверх
+                { row: row + 1, col: col },     // вниз
+                { row: row, col: col - 1 },     // влево
+                { row: row, col: col + 1 }      // вправо
+            ];
+
+            for (const neighbor of neighbors) {
+                if (neighbor.row >= 0 && neighbor.row < gridSize &&
+                    neighbor.col >= 0 && neighbor.col < gridSize) {
+                    
+                    const neighborIndex = neighbor.row * gridSize + neighbor.col;
+                    
+                    // Не посещаем уже использованные клетки
+                    if (!newVisited.includes(neighborIndex)) {
+                        const path = findWordPath(neighborIndex, letterIndex + 1, newVisited, gridSize);
+                        if (path) {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        function markCorrectPath(path) {
+            const cells = document.querySelectorAll('.puzzle-cell');
+            path.forEach(index => {
+                cells[index].classList.add('correct');
+            });
         }
 
         function processPuzzleWin() {
@@ -1301,6 +1659,7 @@
 
         function goToMainMenu() {
             clearGameInterval();
+            clearSnakeInterval();
             if (recognition && isListening) recognition.stop();
             document.getElementById('backBtn').style.display = 'none';
             document.getElementById('progressContainer').style.display = 'none';
@@ -1487,19 +1846,29 @@
             const answerInput = document.getElementById('answerInput');
             const speakerIcon = document.getElementById('speakerIcon');
             
-            container.classList.remove('game-mode', 'text-mode', 'voice-mode', 'puzzle-mode');
+            container.classList.remove('game-mode', 'text-mode', 'voice-mode', 'puzzle-mode', 'snake-mode');
             speakerIcon.style.display = 'none';
             
             if (progress < PUZZLE_THRESHOLD) {
-                // Этап 1: Головоломка (0-1)
-                container.classList.add('puzzle-mode');
+                // Этап 1: Змейка (0-1)
+                container.classList.add('snake-mode');
                 answered = false;
-                initPuzzleGame(question.question, question.options[question.correct]);
                 clearGameInterval();
+                clearSnakeInterval();
+                initSnakeGame(question.question);
                 
             } else if (progress < GAME_THRESHOLD) {
-                // Этап 2: Выбор варианта - 10 раз (1-11)
+                // Этап 2: Головоломка (1-2)
+                container.classList.add('puzzle-mode');
+                answered = false;
+                clearGameInterval();
+                clearSnakeInterval();
+                initPuzzleGame(question.question, question.options[question.correct]);
+                
+            } else if (progress < TEXT_THRESHOLD) {
+                // Этап 3: Выбор варианта - 10 раз (2-12)
                 container.classList.add('game-mode');
+                clearSnakeInterval();
                 
                 const optionsGrid = document.getElementById('optionsGrid');
                 optionsGrid.innerHTML = '';
@@ -1527,9 +1896,10 @@
                 startFallingWord(question.question);
                 setTimeout(() => speakWord(), 500);
                 
-            } else if (progress < TEXT_THRESHOLD) {
-                // Этап 3: Написание (11-14)
+            } else if (progress < VOICE_THRESHOLD) {
+                // Этап 4: Написание (12-14)
                 container.classList.add('text-mode');
+                clearSnakeInterval();
                 document.getElementById('wordDisplay').textContent = question.options[question.correct];
                 answerInput.value = '';
                 answerInput.className = 'answer-input';
@@ -1540,8 +1910,9 @@
                 }, 100);
                 clearGameInterval();
                 
-            } else if (progress < VOICE_THRESHOLD) {
-                // Этап 4: Произношение (14-16)
+            } else if (progress < VOICE_THRESHOLD + 2) {
+                // Этап 5: Произношение (14-16)
+                clearSnakeInterval();
                 if (!recognition) {
                     container.classList.add('text-mode');
                     document.getElementById('wordDisplay').textContent = question.options[question.correct];
@@ -1563,6 +1934,7 @@
                 }
             } else {
                 // Слово полностью выучено
+                clearSnakeInterval();
                 currentQuestion++;
                 displayQuestion();
                 return;
@@ -1661,28 +2033,31 @@
                 const newProgress = wordProgress[question.question];
                 
                 if (newProgress === PUZZLE_THRESHOLD) {
-                    feedback.textContent = `🎊 ЭТАП ПРОЙДЕН! Теперь выбирайте варианты!`;
+                    feedback.textContent = `🎊 ЭТАП ПРОЙДЕН! Теперь головоломка!`;
                     feedback.classList.add('level-up');
                 } else if (newProgress === GAME_THRESHOLD) {
-                    feedback.textContent = `✍️ ОТЛИЧНО! Теперь пишите слово!`;
+                    feedback.textContent = `🎮 ОТЛИЧНО! Теперь выбирайте варианты!`;
                     feedback.classList.add('level-up');
                 } else if (newProgress === TEXT_THRESHOLD) {
-                    feedback.textContent = `🎤 СУПЕР! Теперь произнесите слово!`;
+                    feedback.textContent = `✍️ СУПЕР! Теперь пишите слово!`;
                     feedback.classList.add('level-up');
                 } else if (newProgress === VOICE_THRESHOLD) {
+                    feedback.textContent = `🎤 ПОЧТИ! Произнесите слово!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress === VOICE_THRESHOLD + 2) {
                     feedback.textContent = `🏆 СЛОВО ВЫУЧЕНО! "${question.question}" полностью освоено!`;
                     feedback.classList.add('level-up');
                 } else if (newProgress < PUZZLE_THRESHOLD) {
-                    feedback.textContent = `✅ Правильно! Составьте слово еще раз!`;
+                    feedback.textContent = `✅ Правильно! Соберите змейкой еще раз!`;
                     feedback.classList.add('correct');
                 } else if (newProgress < GAME_THRESHOLD) {
-                    feedback.textContent = `✅ Дұрыс! До следующего этапа: ${GAME_THRESHOLD - newProgress}`;
+                    feedback.textContent = `✅ Дұрыс! Составьте головоломку еще раз!`;
                     feedback.classList.add('correct');
                 } else if (newProgress < TEXT_THRESHOLD) {
-                    feedback.textContent = `✅ Отлично! Прогресс: ${newProgress}/${TEXT_THRESHOLD}`;
+                    feedback.textContent = `✅ Правильно! До следующего этапа: ${TEXT_THRESHOLD - newProgress}`;
                     feedback.classList.add('correct');
                 } else {
-                    feedback.textContent = `✅ Великолепно! Прогресс: ${newProgress}/${VOICE_THRESHOLD}`;
+                    feedback.textContent = `✅ Отлично! Прогресс: ${newProgress}/${VOICE_THRESHOLD + 2}`;
                     feedback.classList.add('correct');
                 }
             } else {
@@ -1727,12 +2102,19 @@
                 const p = wordProgress[q.question] || 0;
                 return p >= TEXT_THRESHOLD && p < VOICE_THRESHOLD;
             }).length;
+            const level5 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= VOICE_THRESHOLD && p < VOICE_THRESHOLD + 2;
+            }).length;
             
             document.getElementById('statsLevel1').textContent = level1;
             document.getElementById('statsLevel2').textContent = level2;
             document.getElementById('statsLevel3').textContent = level3;
             if (document.getElementById('statsLevel4')) {
                 document.getElementById('statsLevel4').textContent = level4;
+            }
+            if (document.getElementById('statsLevel5')) {
+                document.getElementById('statsLevel5').textContent = level5;
             }
             
             let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз!" :
