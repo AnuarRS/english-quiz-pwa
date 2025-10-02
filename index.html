@@ -1046,6 +1046,27 @@
         let recognition = null;
         let isListening = false;
 
+        // Puzzle game variables
+        let puzzleGrid = [];
+        let selectedCell = null;
+        let targetWord = '';
+
+        // Snake game variables
+        let snake = [];
+        let snakeDirection = 'right';
+        let snakeSpeed = 200;
+        let snakeInterval = null;
+        let letterPositions = [];
+        let collectedLetters = '';
+        let snakeTargetWord = '';
+        let wordTop = -100;
+        let gameInterval = null;
+        let fallSpeed = 2.5;
+        const GAME_HEIGHT = 400;
+
+        let recognition = null;
+        let isListening = false;
+
         const LEVEL_FILES = {
             'A1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a1.txt',
             'A2': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a2.txt',
