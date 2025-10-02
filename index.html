@@ -394,7 +394,7 @@
         .option-btn {
             position: absolute;
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 1px solid rgba(149, 165, 166, 0.3);
+            border: 2px solid;
             color: #2d3436;
             padding: 20px 15px;
             font-size: 1em;
@@ -407,7 +407,13 @@
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             user-select: none;
+            z-index: 5;
         }
+
+        .option-btn:nth-child(1) { border-color: #3498db; }
+        .option-btn:nth-child(2) { border-color: #e74c3c; }
+        .option-btn:nth-child(3) { border-color: #2ecc71; }
+        .option-btn:nth-child(4) { border-color: #f39c12; }
 
         .option-btn.correct {
             background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
@@ -804,13 +810,21 @@
 
         function generateRandomPosition(index) {
             const positions = [
-                { top: 5 + Math.random() * 10, left: 5 + Math.random() * 10, width: 45 + Math.random() * 8, height: 45 + Math.random() * 8 },
-                { top: 5 + Math.random() * 10, right: 5 + Math.random() * 10, width: 45 + Math.random() * 8, height: 45 + Math.random() * 8 },
-                { bottom: 5 + Math.random() * 10, left: 5 + Math.random() * 10, width: 45 + Math.random() * 8, height: 45 + Math.random() * 8 },
-                { bottom: 5 + Math.random() * 10, right: 5 + Math.random() * 10, width: 45 + Math.random() * 8, height: 45 + Math.random() * 8 }
+                { top: 2, left: 2, width: 46, height: 46 },
+                { top: 2, left: 52, width: 46, height: 46 },
+                { top: 52, left: 2, width: 46, height: 46 },
+                { top: 52, left: 52, width: 46, height: 46 }
             ];
             
-            return positions[index];
+            const pos = positions[index];
+            const variance = 3;
+            
+            return {
+                top: pos.top + (Math.random() - 0.5) * variance,
+                left: pos.left + (Math.random() - 0.5) * variance,
+                width: pos.width + (Math.random() - 0.5) * 4,
+                height: pos.height + (Math.random() - 0.5) * 4
+            };
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1049,10 +1063,8 @@
                     btn.onclick = () => selectAnswerGame(option.originalIndex);
                     
                     const pos = generateRandomPosition(index);
-                    btn.style.top = pos.top !== undefined ? pos.top + '%' : 'auto';
-                    btn.style.bottom = pos.bottom !== undefined ? pos.bottom + '%' : 'auto';
-                    btn.style.left = pos.left !== undefined ? pos.left + '%' : 'auto';
-                    btn.style.right = pos.right !== undefined ? pos.right + '%' : 'auto';
+                    btn.style.top = pos.top + '%';
+                    btn.style.left = pos.left + '%';
                     btn.style.width = pos.width + '%';
                     btn.style.height = pos.height + '%';
                     btn.style.clipPath = generateRandomShape();
