@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EnglishBoost - Рандомная карта</title>
+    <title>EnglishBoost - Полное обучение</title>
     <meta name="theme-color" content="#58cc02">
     <style>
         * {
@@ -107,8 +107,8 @@
             justify-content: center;
         }
 
-        .main-menu {
-            display: block;
+        .main-menu, .help-screen, .loading-screen, .error-screen, .question-container, .results-screen {
+            display: none;
         }
 
         .menu-title {
@@ -240,10 +240,6 @@
             font-weight: 500;
         }
 
-        .help-screen {
-            display: none;
-        }
-
         .help-content {
             text-align: left;
             max-height: 500px;
@@ -289,13 +285,6 @@
             color: #636e72;
         }
 
-        .loading-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
         .spinner {
             width: 50px;
             height: 50px;
@@ -310,8 +299,13 @@
             100% { transform: rotate(360deg); }
         }
 
+        .loading-screen {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
         .question-container {
-            display: none;
             animation: fadeIn 0.5s ease;
         }
 
@@ -373,9 +367,24 @@
             margin-bottom: 35px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border: 3px solid #e8e8e8;
+            position: relative;
         }
 
-        .question-container.input-mode .word-display {
+        .speaker-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speaker-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .question-container.text-mode .word-display,
+        .question-container.voice-mode .word-display {
             display: block;
             border-color: #0984e3;
         }
@@ -455,16 +464,66 @@
             margin-bottom: 30px;
         }
 
-        .question-container.input-mode .input-container {
+        .question-container.text-mode .input-container {
             display: block;
         }
 
-        .question-container.input-mode .options-grid {
+        .question-container.text-mode .options-grid,
+        .question-container.text-mode .game-area {
             display: none;
         }
 
-        .question-container.input-mode .game-area {
+        .voice-container {
             display: none;
+            margin-bottom: 30px;
+        }
+
+        .question-container.voice-mode .voice-container {
+            display: block;
+        }
+
+        .question-container.voice-mode .options-grid,
+        .question-container.voice-mode .game-area,
+        .question-container.voice-mode .input-container {
+            display: none;
+        }
+
+        .microphone-btn {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 3em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            margin: 20px auto;
+            display: block;
+        }
+
+        .microphone-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
+        }
+
+        .microphone-btn.listening {
+            animation: pulse 1s infinite;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .voice-status {
+            text-align: center;
+            font-size: 1.2em;
+            color: #2d3436;
+            margin: 20px 0;
+            font-weight: 600;
         }
 
         .answer-input {
@@ -564,7 +623,6 @@
         }
 
         .results-screen {
-            display: none;
             animation: fadeIn 0.8s ease;
         }
 
@@ -597,7 +655,6 @@
         }
 
         .error-screen {
-            display: none;
             text-align: center;
             color: #e74c3c;
         }
@@ -657,47 +714,26 @@
 
             <div class="help-screen" id="helpScreen">
                 <div class="help-content">
-                    <h3>📚 Деңгейлердің сипаттамасы</h3>
+                    <h3>📚 Этапы обучения</h3>
                     <div class="level-detail">
-                        <div class="level-detail-badge" style="color: #56ab91;">A1</div>
+                        <div class="level-detail-badge">1️⃣</div>
                         <div class="level-detail-text">
-                            <div class="level-detail-title">Бастауыш (Beginner)</div>
-                            <div class="level-detail-desc">Күнделікті қарым-қатынас үшін базалық сөздер мен сөз тіркестері</div>
+                            <div class="level-detail-title">Выбор варианта (5 раз)</div>
+                            <div class="level-detail-desc">Слово падает сверху, выберите правильный перевод</div>
                         </div>
                     </div>
                     <div class="level-detail">
-                        <div class="level-detail-badge" style="color: #4caf50;">A2</div>
+                        <div class="level-detail-badge">2️⃣</div>
                         <div class="level-detail-text">
-                            <div class="level-detail-title">Элементарлық (Elementary)</div>
-                            <div class="level-detail-desc">Отбасы, жұмыс және хобби туралы қарапайым әңгімелер</div>
+                            <div class="level-detail-title">Написание (3 раза)</div>
+                            <div class="level-detail-desc">Напишите английское слово по переводу</div>
                         </div>
                     </div>
                     <div class="level-detail">
-                        <div class="level-detail-badge" style="color: #ffa726;">B1</div>
+                        <div class="level-detail-badge">3️⃣</div>
                         <div class="level-detail-text">
-                            <div class="level-detail-title">Орташа (Intermediate)</div>
-                            <div class="level-detail-desc">Оқиғаларды, арман мен болашақ жоспарларды талқылау</div>
-                        </div>
-                    </div>
-                    <div class="level-detail">
-                        <div class="level-detail-badge" style="color: #f4511e;">B2</div>
-                        <div class="level-detail-text">
-                            <div class="level-detail-title">Орташадан жоғары (Upper-Intermediate)</div>
-                            <div class="level-detail-desc">Күрделі тақырыптар, абстрактілі ұғымдар және пікірталастар</div>
-                        </div>
-                    </div>
-                    <div class="level-detail">
-                        <div class="level-detail-badge" style="color: #d32f2f;">C1</div>
-                        <div class="level-detail-text">
-                            <div class="level-detail-title">Жетілдірілген (Advanced)</div>
-                            <div class="level-detail-desc">Кез келген жағдайда тілді еркін меңгеру</div>
-                        </div>
-                    </div>
-                    <div class="level-detail">
-                        <div class="level-detail-badge" style="color: #673ab7;">C2</div>
-                        <div class="level-detail-text">
-                            <div class="level-detail-title">Кәсіби (Proficiency)</div>
-                            <div class="level-detail-desc">Ана тілі деңгейі, академиялық ағылшын тілі</div>
+                            <div class="level-detail-title">Произношение (2 раза)</div>
+                            <div class="level-detail-desc">Произнесите слово в микрофон</div>
                         </div>
                     </div>
                 </div>
@@ -716,7 +752,10 @@
             </div>
 
             <div class="question-container" id="questionScreen">
-                <div class="word-display" id="wordDisplay">Жүктелуде...</div>
+                <div class="word-display" id="wordDisplay">
+                    Жүктелуде...
+                    <span class="speaker-icon" id="speakerIcon" onclick="speakWord()" style="display:none">🔊</span>
+                </div>
                 
                 <div class="game-area" id="gameArea"></div>
                 
@@ -725,6 +764,11 @@
                 <div class="input-container">
                     <input type="text" class="answer-input" id="answerInput" placeholder="Аударманы енгізіңіз...">
                     <button class="btn-primary" style="margin-top: 20px;" onclick="checkTextAnswer()">Тексеру</button>
+                </div>
+
+                <div class="voice-container">
+                    <div class="voice-status" id="voiceStatus">Нажмите на микрофон и произнесите слово</div>
+                    <button class="microphone-btn" id="microphoneBtn" onclick="startVoiceRecognition()">🎤</button>
                 </div>
                 
                 <div class="feedback" id="feedback"></div>
@@ -741,12 +785,16 @@
                         <span id="statsCorrect">0%</span>
                     </div>
                     <div class="stat-item">
-                        <span>🎯 Жаңадан бастаушылар:</span>
+                        <span>🎯 Начальные:</span>
                         <span id="statsLevel1">0</span>
                     </div>
                     <div class="stat-item">
-                        <span>⭐ Жетілдірілгендер:</span>
+                        <span>✍️ Написание:</span>
                         <span id="statsLevel2">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎤 Произношение:</span>
+                        <span id="statsLevel3">0</span>
                     </div>
                 </div>
                 
@@ -765,13 +813,18 @@
         let shuffledQuestions = [];
         let wordProgress = {};
         let currentLevel = '';
-        const LEVEL_THRESHOLD = 5;
+        const GAME_THRESHOLD = 5;
+        const TEXT_THRESHOLD = 8;
+        const VOICE_THRESHOLD = 10;
         
         let fallingWordElement = null;
         let wordTop = -100;
         let gameInterval = null;
         let fallSpeed = 2.5;
         const GAME_HEIGHT = 400;
+
+        let recognition = null;
+        let isListening = false;
 
         const LEVEL_FILES = {
             'A1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a1.txt',
@@ -792,6 +845,106 @@
         };
 
         let questionsCache = {};
+
+        function initSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                    checkVoiceAnswer(transcript);
+                };
+
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    stopListening();
+                    document.getElementById('voiceStatus').textContent = 'Ошибка. Попробуйте снова';
+                };
+
+                recognition.onend = () => {
+                    stopListening();
+                };
+            }
+        }
+
+        function speakWord() {
+            const question = shuffledQuestions[currentQuestion];
+            if (!question) return;
+            
+            const utterance = new SpeechSynthesisUtterance(question.question);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.8;
+            speechSynthesis.speak(utterance);
+        }
+
+        function startVoiceRecognition() {
+            if (!recognition) {
+                alert('Ваш браузер не поддерживает распознавание речи');
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+
+            try {
+                recognition.start();
+                isListening = true;
+                document.getElementById('microphoneBtn').classList.add('listening');
+                document.getElementById('voiceStatus').textContent = 'Слушаю... Говорите сейчас!';
+            } catch (e) {
+                console.error('Error starting recognition:', e);
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('microphoneBtn').classList.remove('listening');
+        }
+
+        function checkVoiceAnswer(transcript) {
+            if (answered) return;
+            answered = true;
+
+            const question = shuffledQuestions[currentQuestion];
+            const correctAnswer = question.question.toLowerCase().trim();
+            const similarity = calculateSimilarity(transcript, correctAnswer);
+            const isCorrect = similarity > 0.7;
+
+            document.getElementById('voiceStatus').textContent = 
+                `Вы сказали: "${transcript}"`;
+
+            processAnswer(isCorrect);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+            for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+            for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+            for (let j = 1; j <= len2; j++) {
+                for (let i = 1; i <= len1; i++) {
+                    const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                    matrix[j][i] = Math.min(
+                        matrix[j][i - 1] + 1,
+                        matrix[j - 1][i] + 1,
+                        matrix[j - 1][i - 1] + indicator
+                    );
+                }
+            }
+
+            const distance = matrix[len2][len1];
+            const maxLen = Math.max(len1, len2);
+            return 1 - distance / maxLen;
+        }
 
         function generateRandomShape() {
             const points = [];
@@ -828,6 +981,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            initSpeechRecognition();
             loadAllLevelProgress();
             updateTotalProgress();
         });
@@ -836,7 +990,7 @@
             const screens = ['mainMenu', 'loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen', 'helpScreen'];
             screens.forEach(id => {
                 const el = document.getElementById(id);
-                if (el) el.style.display = id === screenId ? 'block' : 'none';
+                if (el) el.style.display = id === screenId ? (id === 'loadingScreen' ? 'flex' : 'block') : 'none';
             });
         }
 
@@ -852,6 +1006,7 @@
 
         function goToMainMenu() {
             clearGameInterval();
+            if (recognition && isListening) recognition.stop();
             document.getElementById('backBtn').style.display = 'none';
             document.getElementById('progressContainer').style.display = 'none';
             document.getElementById('scoreDisplay').style.display = 'none';
@@ -895,7 +1050,7 @@
 
             for (const level of Object.keys(LEVEL_FILES)) {
                 try {
-                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+                    const saved = localStorage.getItem(`englishQuizProgress_${level}_v3`);
                     const progress = saved ? JSON.parse(saved) : {};
 
                     if (!questionsCache[level]) {
@@ -908,7 +1063,7 @@
 
                     if (questionsCache[level]) {
                         totalWords += questionsCache[level].length;
-                        learnedWords += Object.values(progress).filter(p => p >= 10).length;
+                        learnedWords += Object.values(progress).filter(p => p >= VOICE_THRESHOLD).length;
                     }
                 } catch (e) {}
             }
@@ -987,12 +1142,12 @@
         }
 
         function loadProgress(level) {
-            const saved = localStorage.getItem(`englishQuizProgress_${level}_v2`);
+            const saved = localStorage.getItem(`englishQuizProgress_${level}_v3`);
             wordProgress = saved ? JSON.parse(saved) : {};
         }
 
         function saveProgress() {
-            localStorage.setItem(`englishQuizProgress_${currentLevel}_v2`, JSON.stringify(wordProgress));
+            localStorage.setItem(`englishQuizProgress_${currentLevel}_v3`, JSON.stringify(wordProgress));
         }
 
         function initializeProgress() {
@@ -1027,7 +1182,6 @@
 
             const question = shuffledQuestions[currentQuestion];
             const progress = wordProgress[question.question] || 0;
-            const isAdvanced = progress >= LEVEL_THRESHOLD;
             
             answered = false;
             
@@ -1036,17 +1190,12 @@
             
             const container = document.getElementById('questionScreen');
             const answerInput = document.getElementById('answerInput');
+            const speakerIcon = document.getElementById('speakerIcon');
             
-            container.classList.remove('game-mode', 'input-mode');
+            container.classList.remove('game-mode', 'text-mode', 'voice-mode');
+            speakerIcon.style.display = 'none';
             
-            if (isAdvanced) {
-                container.classList.add('input-mode');
-                document.getElementById('wordDisplay').textContent = question.options[question.correct];
-                answerInput.value = '';
-                answerInput.className = 'answer-input';
-                setTimeout(() => answerInput.focus(), 100);
-                clearGameInterval();
-            } else {
+            if (progress < GAME_THRESHOLD) {
                 container.classList.add('game-mode');
                 
                 const optionsGrid = document.getElementById('optionsGrid');
@@ -1073,6 +1222,27 @@
                 });
                 
                 startFallingWord(question.question);
+                setTimeout(() => speakWord(), 500);
+                
+            } else if (progress < TEXT_THRESHOLD) {
+                container.classList.add('text-mode');
+                document.getElementById('wordDisplay').textContent = question.options[question.correct];
+                answerInput.value = '';
+                answerInput.className = 'answer-input';
+                speakerIcon.style.display = 'inline';
+                setTimeout(() => {
+                    answerInput.focus();
+                    speakWord();
+                }, 100);
+                clearGameInterval();
+                
+            } else {
+                container.classList.add('voice-mode');
+                document.getElementById('wordDisplay').textContent = question.options[question.correct];
+                document.getElementById('voiceStatus').textContent = 'Нажмите на микрофон и произнесите слово';
+                speakerIcon.style.display = 'inline';
+                clearGameInterval();
+                setTimeout(() => speakWord(), 500);
             }
         }
 
@@ -1167,22 +1337,28 @@
                 wordProgress[question.question]++;
                 const newProgress = wordProgress[question.question];
                 
-                if (newProgress === LEVEL_THRESHOLD) {
-                    feedback.textContent = `🎊 ДЕҢГЕЙ КӨТЕРІЛДІ! Енді аударманы өзіңіз енгізіңіз!`;
+                if (newProgress === GAME_THRESHOLD) {
+                    feedback.textContent = `🎊 УРОВЕНЬ ПОДНЯТ! Теперь пишите слово!`;
                     feedback.classList.add('level-up');
-                } else if (newProgress === 10) {
-                    feedback.textContent = `🏆 СӨЗ ҮЙРЕНІЛДІ! "${question.question}" толық меңгерілді!`;
+                } else if (newProgress === TEXT_THRESHOLD) {
+                    feedback.textContent = `✍️ ОТЛИЧНО! Теперь произнесите слово!`;
                     feedback.classList.add('level-up');
-                } else if (newProgress < LEVEL_THRESHOLD) {
-                    feedback.textContent = `✅ Дұрыс! Деңгей көтерілуге дейін ${LEVEL_THRESHOLD - newProgress} қалды!`;
+                } else if (newProgress === VOICE_THRESHOLD) {
+                    feedback.textContent = `🏆 СЛОВО ВЫУЧЕНО! "${question.question}" полностью освоено!`;
+                    feedback.classList.add('level-up');
+                } else if (newProgress < GAME_THRESHOLD) {
+                    feedback.textContent = `✅ Правильно! До следующего уровня: ${GAME_THRESHOLD - newProgress}`;
+                    feedback.classList.add('correct');
+                } else if (newProgress < TEXT_THRESHOLD) {
+                    feedback.textContent = `✅ Отлично! Прогресс: ${newProgress}/${TEXT_THRESHOLD}`;
                     feedback.classList.add('correct');
                 } else {
-                    feedback.textContent = `✅ Тамаша! Прогресс: ${newProgress}/10`;
+                    feedback.textContent = `✅ Великолепно! Прогресс: ${newProgress}/${VOICE_THRESHOLD}`;
                     feedback.classList.add('correct');
                 }
             } else {
                 wordProgress[question.question] = Math.max(0, wordProgress[question.question] - 1);
-                feedback.textContent = `❌ Қате. Дұрыс жауап: ${question.question} = ${question.options[question.correct]}`;
+                feedback.textContent = `❌ Ошибка. Правильно: ${question.question} = ${question.options[question.correct]}`;
                 feedback.classList.add('incorrect');
             }
             
@@ -1192,6 +1368,7 @@
             
             setTimeout(() => {
                 clearGameInterval();
+                if (recognition && isListening) recognition.stop();
                 currentQuestion++;
                 displayQuestion();
             }, 2500);
@@ -1199,6 +1376,8 @@
 
         function showResults() {
             clearGameInterval();
+            if (recognition && isListening) recognition.stop();
+            
             const totalQuestions = shuffledQuestions.length;
             const correctAnswers = Math.floor(score / 10);
             const percentage = Math.round((correctAnswers / totalQuestions) * 100);
@@ -1206,17 +1385,25 @@
             document.getElementById('finalScore').textContent = `${correctAnswers}/${totalQuestions}`;
             document.getElementById('statsCorrect').textContent = `${percentage}%`;
             
-            const level1 = questions.filter(q => (wordProgress[q.question] || 0) < LEVEL_THRESHOLD).length;
-            const level2 = questions.filter(q => (wordProgress[q.question] || 0) >= LEVEL_THRESHOLD).length;
+            const level1 = questions.filter(q => (wordProgress[q.question] || 0) < GAME_THRESHOLD).length;
+            const level2 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= GAME_THRESHOLD && p < TEXT_THRESHOLD;
+            }).length;
+            const level3 = questions.filter(q => {
+                const p = wordProgress[q.question] || 0;
+                return p >= TEXT_THRESHOLD && p < VOICE_THRESHOLD;
+            }).length;
             
             document.getElementById('statsLevel1').textContent = level1;
             document.getElementById('statsLevel2').textContent = level2;
+            document.getElementById('statsLevel3').textContent = level3;
             
-            let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз! 🌟" :
-                         percentage >= 80 ? "Тамаша! Жалғастыра беріңіз! 👏" :
-                         percentage >= 70 ? "Жақсы! Өсуге орын бар! 💪" :
-                         percentage >= 60 ? "Жаман емес! Көбірек жаттығыңыз! 📖" :
-                         "Көңіліңіз қалмасын! Тағы көріңіз! 💪";
+            let message = percentage >= 90 ? "Керемет! Сіз шебер боп шықтыңыз!" :
+                         percentage >= 80 ? "Тамаша! Жалғастыра беріңіз!" :
+                         percentage >= 70 ? "Жақсы! Өсуге орын бар!" :
+                         percentage >= 60 ? "Жаман емес! Көбірек жаттығыңыз!" :
+                         "Көңіліңіз қалмасын! Тағы көріңіз!";
             
             document.getElementById('resultsMessage').textContent = message;
             showScreen('resultsScreen');
