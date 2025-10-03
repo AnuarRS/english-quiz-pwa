@@ -584,7 +584,7 @@
             height: 500px;
             margin: 0 auto;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 0px;
+            border-radius: 10px;
             border: 3px solid #0f3460;
             overflow: hidden;
         }
@@ -596,8 +596,8 @@
             width: 100%;
             height: 100%;
             display: grid;
-            grid-template-columns: repeat(20, 1fr);
-            grid-template-rows: repeat(20, 1fr);
+            grid-template-columns: repeat(25, 1fr);
+            grid-template-rows: repeat(25, 1fr);
             pointer-events: none;
         }
 
@@ -612,8 +612,8 @@
 
         .snake-segment {
             position: absolute;
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
             background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
             border-radius: 3px;
             transition: all 0.1s linear;
@@ -631,36 +631,48 @@
 
         .letter-food {
             position: absolute;
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             color: white;
-            border-radius: 3px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 1em;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             z-index: 4;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: letterGlow 2s infinite alternate;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            animation: letterPulse 1.5s infinite;
         }
 
-        @keyframes letterGlow {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
+        @keyframes letterPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 10px currentColor;
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 20px currentColor;
+            }
         }
 
-        .snake-word-display {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+        .snake-collision {
+            animation: collisionEffect 0.5s ease-out;
+        }
+
+        @keyframes collisionEffect {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.5) rotate(180deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
         }
 
         /* Virtual Joystick Styles */
@@ -693,11 +705,11 @@
             transform: translate(-50%, -50%);
             transition: all 0.1s ease;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            pointer-events: none;
         }
 
         .joystick-handle.active {
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-            transform: translate(-50%, -50%) scale(1.1);
         }
 
         .mobile-controls-hint {
@@ -898,8 +910,9 @@
             }
 
             .snake-game-area {
-                height: 400px;
-                max-width: 400px;
+                width: 100%;
+                height: 350px;
+                max-width: 350px;
             }
         }
     </style>
@@ -991,6 +1004,7 @@
 
             <div class="question-container" id="questionScreen">
                 <div class="word-display" id="wordDisplay">
+                    
                     <span class="speaker-icon" id="speakerIcon" onclick="speakWord()" style="display:none">🔊</span>
                 </div>
                 
@@ -1021,7 +1035,7 @@
                     <!-- Virtual Joystick for Mobile -->
                     <div class="joystick-container" id="joystickContainer">
                         <div class="joystick-base">
-                            <div class="joystick-handle"></div>
+                            <div class="joystick-handle" id="joystickHandle"></div>
                         </div>
                     </div>
                     <div class="mobile-controls-hint">Используйте джойстик для управления змейкой</div>
@@ -1107,8 +1121,9 @@
         let letterPositions = [];
         let collectedLetters = '';
         let snakeTargetWord = '';
-        let snakeWords = [];
-        const CELL_SIZE = 25; // Увеличили размер клетки
+        let snakeWords = []; // [английское слово, русский перевод]
+        const CELL_SIZE = 20; // Размер клетки
+        const GRID_SIZE = 25; // Размер сетки увеличен
 
         // Переменные для виртуального джойстика
         let joystickActive = false;
@@ -1146,36 +1161,37 @@
             showScreen('mainMenu');
         });
 
-        // Инициализация виртуального джойстика
+        // Инициализация виртуального джойстика - ИСПРАВЛЕННАЯ ВЕРСИЯ
         function initJoystick() {
             const joystickBase = document.querySelector('.joystick-base');
-            const joystickHandle = document.querySelector('.joystick-handle');
+            const joystickHandle = document.getElementById('joystickHandle');
             
             if (!joystickBase || !joystickHandle) return;
 
-            let startX, startY, currentX, currentY;
-            const baseRect = joystickBase.getBoundingClientRect();
-            const baseCenterX = baseRect.left + baseRect.width / 2;
-            const baseCenterY = baseRect.top + baseRect.height / 2;
-            const maxDistance = baseRect.width / 3;
+            let baseRect;
+            let baseCenterX, baseCenterY;
+            const maxDistance = 40;
 
-            const handleTouchStart = (e) => {
+            const updateBasePosition = () => {
+                baseRect = joystickBase.getBoundingClientRect();
+                baseCenterX = baseRect.width / 2;
+                baseCenterY = baseRect.height / 2;
+            };
+
+            const handleStart = (e) => {
                 e.preventDefault();
                 joystickActive = true;
                 joystickHandle.classList.add('active');
-                
-                const touch = e.touches ? e.touches[0] : e;
-                startX = touch.clientX;
-                startY = touch.clientY;
+                updateBasePosition();
             };
 
-            const handleTouchMove = (e) => {
+            const handleMove = (e) => {
                 if (!joystickActive) return;
                 e.preventDefault();
                 
                 const touch = e.touches ? e.touches[0] : e;
-                currentX = touch.clientX;
-                currentY = touch.clientY;
+                const currentX = touch.clientX - baseRect.left;
+                const currentY = touch.clientY - baseRect.top;
                 
                 const deltaX = currentX - baseCenterX;
                 const deltaY = currentY - baseCenterY;
@@ -1189,43 +1205,47 @@
                 joystickHandle.style.transform = `translate(-50%, -50%) translate(${moveX}px, ${moveY}px)`;
                 
                 // Определение направления
-                const deadZone = 20;
-                if (limitedDistance < deadZone) {
-                    joystickDirection = null;
-                    return;
-                }
-                
-                const degrees = angle * 180 / Math.PI;
-                
-                if (degrees >= -45 && degrees < 45) {
-                    joystickDirection = 'right';
-                } else if (degrees >= 45 && degrees < 135) {
-                    joystickDirection = 'down';
-                } else if (degrees >= -135 && degrees < -45) {
-                    joystickDirection = 'up';
+                if (limitedDistance > 10) {
+                    const degrees = angle * 180 / Math.PI;
+                    
+                    if (degrees >= -45 && degrees < 45) {
+                        joystickDirection = 'right';
+                    } else if (degrees >= 45 && degrees < 135) {
+                        joystickDirection = 'down';
+                    } else if (degrees >= -135 && degrees < -45) {
+                        joystickDirection = 'up';
+                    } else {
+                        joystickDirection = 'left';
+                    }
+                    
+                    // Непосредственно меняем направление змейки
+                    if (snakeInterval && joystickDirection) {
+                        changeSnakeDirection(joystickDirection);
+                    }
                 } else {
-                    joystickDirection = 'left';
+                    joystickDirection = null;
                 }
-                
-                // Немедленно меняем направление змейки
-                changeSnakeDirection(joystickDirection);
             };
 
-            const handleTouchEnd = (e) => {
+            const handleEnd = (e) => {
+                e.preventDefault();
                 joystickActive = false;
                 joystickDirection = null;
                 joystickHandle.classList.remove('active');
                 joystickHandle.style.transform = 'translate(-50%, -50%)';
             };
 
-            // Добавление обработчиков событий
-            joystickBase.addEventListener('mousedown', handleTouchStart);
-            document.addEventListener('mousemove', handleTouchMove);
-            document.addEventListener('mouseup', handleTouchEnd);
+            // Touch события
+            joystickBase.addEventListener('touchstart', handleStart, { passive: false });
+            joystickBase.addEventListener('touchmove', handleMove, { passive: false });
+            joystickBase.addEventListener('touchend', handleEnd, { passive: false });
             
-            joystickBase.addEventListener('touchstart', handleTouchStart);
-            document.addEventListener('touchmove', handleTouchMove);
-            document.addEventListener('touchend', handleTouchEnd);
+            // Mouse события для десктопа
+            joystickBase.addEventListener('mousedown', handleStart);
+            window.addEventListener('mousemove', (e) => {
+                if (joystickActive) handleMove(e);
+            });
+            window.addEventListener('mouseup', handleEnd);
         }
 
         function initSpeechRecognition() {
@@ -1266,7 +1286,65 @@
             }
         }
 
-        // Функции для игры Змейка
+        function speakWord() {
+            const question = shuffledQuestions[currentQuestion];
+            if (!question || !question.question) return;
+            
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(question.question);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        function startVoiceRecognition() {
+            if (!recognition) {
+                alert('Ваш браузер не поддерживает распознавание речи');
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+
+            try {
+                recognition.start();
+                isListening = true;
+                document.getElementById('microphoneBtn').classList.add('listening');
+                document.getElementById('voiceStatus').textContent = 'Слушаю... Говорите сейчас!';
+            } catch (e) {
+                console.error('Error starting recognition:', e);
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('microphoneBtn').classList.remove('listening');
+        }
+
+        function checkVoiceAnswer(transcript) {
+            if (answered) return;
+            answered = true;
+
+            const question = shuffledQuestions[currentQuestion];
+            if (!question) return;
+            
+            const correctAnswer = question.question.toLowerCase().trim();
+            const similarity = calculateSimilarity(transcript, correctAnswer);
+            const isCorrect = similarity > 0.7;
+
+            const voiceStatus = document.getElementById('voiceStatus');
+            if (voiceStatus) {
+                voiceStatus.textContent = `Вы сказали: "${transcript}"`;
+            }
+
+            processAnswer(isCorrect);
+        }
+
+        // Функции для игры Змейка - ИСПРАВЛЕННАЯ ВЕРСИЯ
         function initSnakeGame(englishWord, russianWord) {
             console.log("Инициализация змейки для слова:", englishWord, "и перевода:", russianWord);
             snakeWords = [englishWord.toUpperCase(), russianWord.toUpperCase()];
@@ -1298,14 +1376,22 @@
             
             grid.innerHTML = '';
             
-            // Создаем 20x20 сетку
-            for (let i = 0; i < 20; i++) {
-                for (let j = 0; j < 20; j++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'grid-cell';
-                    grid.appendChild(cell);
-                }
+            // Создаем 25x25 сетку для большей игровой области
+            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                grid.appendChild(cell);
             }
+        }
+
+        function getRandomColor() {
+            const colors = [
+                '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', 
+                '#FFEAA7', '#DDA0DD', '#98D8C8', '#FFB6C1',
+                '#87CEEB', '#F0E68C', '#FF69B4', '#00CED1',
+                '#FF1493', '#00FA9A', '#FFD700', '#FF4500'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
         }
 
         function resetLettersForCurrentWord() {
@@ -1327,7 +1413,7 @@
                     // Первая буква - рядом с центром
                     pos = getPositionNearCenter();
                 } else {
-                    // Остальные буквы - дальше от центра с учетом предыдущих позиций
+                    // Остальные буквы - дальше от центра
                     pos = getPositionAwayFromCenter(index);
                 }
                 letterPositions.push({ 
@@ -1336,18 +1422,19 @@
                     y: pos.y, 
                     isTarget: true, 
                     index,
-                    wordIndex: 0
+                    wordIndex: 0,
+                    color: getRandomColor() // Добавляем случайный цвет
                 });
             });
 
             // Добавляем случайные буквы (не из целевого слова)
-            const wrongLettersCount = Math.min(8, 20 - letters.length);
+            const wrongLettersCount = Math.min(10, 25 - letters.length);
             for (let i = 0; i < wrongLettersCount; i++) {
                 if (availableLetters.length === 0) break;
                 
                 const randomIndex = Math.floor(Math.random() * availableLetters.length);
                 const randomLetter = availableLetters[randomIndex];
-                availableLetters.splice(randomIndex, 1); // Удаляем использованную букву
+                availableLetters.splice(randomIndex, 1);
                 
                 let pos = getRandomPosition();
                 let attempts = 0;
@@ -1361,7 +1448,8 @@
                         x: pos.x, 
                         y: pos.y, 
                         isTarget: false,
-                        wordIndex: 0
+                        wordIndex: 0,
+                        color: getRandomColor() // Добавляем случайный цвет
                     });
                 }
             }
@@ -1370,34 +1458,36 @@
         function isPositionOccupied(pos) {
             return letterPositions.some(letter => 
                 letter.x === pos.x && letter.y === pos.y
+            ) || snake.some(segment => 
+                segment.x === pos.x && segment.y === pos.y
             );
         }
 
         function getPositionNearCenter() {
             return {
-                x: Math.floor(Math.random() * 5 + 8) * CELL_SIZE,
-                y: Math.floor(Math.random() * 5 + 8) * CELL_SIZE
+                x: Math.floor(Math.random() * 7 + 9) * CELL_SIZE,
+                y: Math.floor(Math.random() * 7 + 9) * CELL_SIZE
             };
         }
 
         function getPositionAwayFromCenter(index) {
-            const distance = 60 + index * 40;
+            const distance = 100 + index * 50;
             const angle = Math.random() * Math.PI * 2;
             
             let x = 250 + Math.cos(angle) * distance;
             let y = 250 + Math.sin(angle) * distance;
             
             // Выравниваем по сетке
-            x = Math.max(0, Math.min(475, Math.round(x / CELL_SIZE) * CELL_SIZE));
-            y = Math.max(0, Math.min(475, Math.round(y / CELL_SIZE) * CELL_SIZE));
+            x = Math.max(0, Math.min(480, Math.round(x / CELL_SIZE) * CELL_SIZE));
+            y = Math.max(0, Math.min(480, Math.round(y / CELL_SIZE) * CELL_SIZE));
             
             return { x, y };
         }
 
         function getRandomPosition() {
             return {
-                x: Math.floor(Math.random() * 20) * CELL_SIZE,
-                y: Math.floor(Math.random() * 20) * CELL_SIZE
+                x: Math.floor(Math.random() * GRID_SIZE) * CELL_SIZE,
+                y: Math.floor(Math.random() * GRID_SIZE) * CELL_SIZE
             };
         }
 
@@ -1421,18 +1511,14 @@
                 gameArea.appendChild(segmentEl);
             });
 
-            // Отрисовка букв с разноцветными фонами
-            letterPositions.forEach((letterPos, index) => {
+            // Отрисовка букв с рандомными цветами
+            letterPositions.forEach((letterPos) => {
                 const letterEl = document.createElement('div');
                 letterEl.className = 'letter-food';
                 
-                // Случайный цвет для каждой буквы
-                const hue = Math.floor(Math.random() * 360);
-                const saturation = 70 + Math.floor(Math.random() * 30);
-                const lightness = 40 + Math.floor(Math.random() * 30);
-                
-                // ВСЕ буквы имеют одинаковый стиль - случайные цвета
-                letterEl.style.background = `linear-gradient(135deg, hsl(${hue}, ${saturation}%, ${lightness}%), hsl(${(hue + 30) % 360}, ${saturation}%, ${lightness}%))`;
+                // Используем сохраненный цвет для каждой буквы
+                letterEl.style.background = letterPos.color;
+                letterEl.style.color = letterPos.color;
                 
                 letterEl.textContent = letterPos.letter;
                 letterEl.style.left = letterPos.x + 'px';
@@ -1458,13 +1544,13 @@
 
             // Проверка столкновения со стенами
             if (head.x < 0 || head.x >= 500 || head.y < 0 || head.y >= 500) {
-                gameOver();
+                gameOverWithEffect(head.x, head.y);
                 return;
             }
 
             // Проверка столкновения с собой
             if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                gameOver();
+                gameOverWithEffect(head.x, head.y);
                 return;
             }
 
@@ -1491,6 +1577,10 @@
                     collectedLetter.wordIndex === currentWordIndex) {
                     
                     collectedLetters += collectedLetter.letter;
+                    
+                    // Добавляем эффект исчезновения буквы
+                    createCollisionEffect(collectedLetter.x, collectedLetter.y, collectedLetter.color);
+                    
                     letterPositions.splice(collisionIndex, 1);
 
                     // Проверяем, собрано ли текущее слово полностью
@@ -1503,8 +1593,9 @@
                         return;
                     }
                 } else {
-                    // Неправильная буква - конец игры
-                    gameOver();
+                    // Неправильная буква - конец игры с эффектом
+                    createCollisionEffect(collectedLetter.x, collectedLetter.y, '#FF0000');
+                    gameOverWithEffect(head.x, head.y);
                     return;
                 }
             } else {
@@ -1512,6 +1603,32 @@
             }
 
             renderSnakeGame();
+        }
+
+        function createCollisionEffect(x, y, color) {
+            const gameArea = document.getElementById('snakeGameArea');
+            const effect = document.createElement('div');
+            effect.style.position = 'absolute';
+            effect.style.left = x + 'px';
+            effect.style.top = y + 'px';
+            effect.style.width = '24px';
+            effect.style.height = '24px';
+            effect.style.background = color;
+            effect.style.borderRadius = '50%';
+            effect.style.zIndex = '20';
+            effect.className = 'snake-collision';
+            gameArea.appendChild(effect);
+            
+            setTimeout(() => {
+                if (effect.parentNode) {
+                    effect.remove();
+                }
+            }, 500);
+        }
+
+        function gameOverWithEffect(x, y) {
+            createCollisionEffect(x, y, '#FF0000');
+            gameOver();
         }
 
         function setupRussianWord() {
@@ -1539,18 +1656,19 @@
                     y: pos.y, 
                     isTarget: true, 
                     index,
-                    wordIndex: 1
+                    wordIndex: 1,
+                    color: getRandomColor()
                 });
             });
 
-            // Добавляем случайные буквы для русского слова (не из целевого слова)
-            const wrongLettersCount = Math.min(6, 15 - letters.length);
+            // Добавляем случайные буквы для русского слова
+            const wrongLettersCount = Math.min(8, 20 - letters.length);
             for (let i = 0; i < wrongLettersCount; i++) {
                 if (availableLetters.length === 0) break;
                 
                 const randomIndex = Math.floor(Math.random() * availableLetters.length);
                 const randomLetter = availableLetters[randomIndex];
-                availableLetters.splice(randomIndex, 1); // Удаляем использованную букву
+                availableLetters.splice(randomIndex, 1);
                 
                 let pos = getRandomPosition();
                 let attempts = 0;
@@ -1564,7 +1682,8 @@
                         x: pos.x, 
                         y: pos.y, 
                         isTarget: false,
-                        wordIndex: 1
+                        wordIndex: 1,
+                        color: getRandomColor()
                     });
                 }
             }
@@ -1574,9 +1693,10 @@
 
         function changeSnakeDirection(newDirection) {
             const opposites = { up: 'down', down: 'up', left: 'right', right: 'left' };
-            if (snakeDirection !== opposites[newDirection]) {
-                snakeDirection = newDirection;
+            if (snake.length > 1 && snakeDirection === opposites[newDirection]) {
+                return; // Не позволяем змейке идти в обратном направлении
             }
+            snakeDirection = newDirection;
         }
 
         function clearSnakeInterval() {
@@ -1588,16 +1708,6 @@
 
         function gameOver() {
             clearSnakeInterval();
-            
-            // Эффект столкновения - мигание красным
-            const gameArea = document.getElementById('snakeGameArea');
-            if (gameArea) {
-                gameArea.style.background = 'linear-gradient(135deg, #ff0000 0%, #8b0000 100%)';
-                setTimeout(() => {
-                    gameArea.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
-                }, 300);
-            }
-            
             const feedback = document.getElementById('feedback');
             if (feedback) {
                 feedback.textContent = '❌ Игра окончена! Неправильная буква или столкновение.';
@@ -1639,14 +1749,230 @@
             if (!snakeInterval) return;
             
             switch(e.key) {
-                case 'ArrowUp': changeSnakeDirection('up'); break;
-                case 'ArrowDown': changeSnakeDirection('down'); break;
-                case 'ArrowLeft': changeSnakeDirection('left'); break;
-                case 'ArrowRight': changeSnakeDirection('right'); break;
+                case 'ArrowUp': 
+                case 'w':
+                case 'W':
+                    changeSnakeDirection('up'); 
+                    break;
+                case 'ArrowDown': 
+                case 's':
+                case 'S':
+                    changeSnakeDirection('down'); 
+                    break;
+                case 'ArrowLeft': 
+                case 'a':
+                case 'A':
+                    changeSnakeDirection('left'); 
+                    break;
+                case 'ArrowRight': 
+                case 'd':
+                case 'D':
+                    changeSnakeDirection('right'); 
+                    break;
             }
         });
 
-        // Остальной код остается без изменений...
+        // Функции для головоломки с улучшенной логикой
+        function initPuzzleGame(word, translation) {
+            targetWord = word.toUpperCase();
+            puzzleGrid = [];
+            selectedCell = null;
+
+            const targetElement = document.getElementById('puzzleTargetWord');
+            if (targetElement) {
+                targetElement.textContent = translation;
+            }
+
+            const gridSize = 6;
+            const wordLetters = targetWord.split('');
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            
+            // Создаем пустую сетку
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                puzzleGrid.push('');
+            }
+
+            // Размещаем слово в сетке (вертикально или горизонтально)
+            const direction = Math.random() > 0.5 ? 'horizontal' : 'vertical';
+            const maxStart = gridSize - (direction === 'horizontal' ? wordLetters.length : 0);
+            const startRow = Math.floor(Math.random() * (direction === 'vertical' ? maxStart : gridSize));
+            const startCol = Math.floor(Math.random() * (direction === 'horizontal' ? maxStart : gridSize));
+
+            // Заполняем слово
+            for (let i = 0; i < wordLetters.length; i++) {
+                if (direction === 'horizontal') {
+                    puzzleGrid[startRow * gridSize + startCol + i] = wordLetters[i];
+                } else {
+                    puzzleGrid[(startRow + i) * gridSize + startCol] = wordLetters[i];
+                }
+            }
+
+            // Заполняем оставшиеся ячейки случайными буквами
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                if (!puzzleGrid[i]) {
+                    puzzleGrid[i] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                }
+            }
+
+            renderPuzzleGrid();
+        }
+
+        function renderPuzzleGrid() {
+            const gridElement = document.getElementById('puzzleGrid');
+            if (!gridElement) return;
+            
+            gridElement.innerHTML = '';
+
+            puzzleGrid.forEach((letter, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'puzzle-cell';
+                
+                // Случайный цвет для каждой ячейки
+                const hue = Math.floor(Math.random() * 360);
+                cell.style.background = `linear-gradient(135deg, hsl(${hue}, 70%, 50%), hsl(${(hue + 30) % 360}, 70%, 50%))`;
+                
+                cell.textContent = letter;
+                cell.dataset.index = index;
+                cell.onclick = () => selectPuzzleCell(index);
+                gridElement.appendChild(cell);
+            });
+        }
+
+        function selectPuzzleCell(index) {
+            if (answered) return;
+
+            const cells = document.querySelectorAll('.puzzle-cell');
+            
+            if (selectedCell === null) {
+                selectedCell = index;
+                cells[index].classList.add('selected');
+            } else {
+                if (isAdjacent(selectedCell, index)) {
+                    swapCells(selectedCell, index);
+                    cells[selectedCell].classList.remove('selected');
+                    selectedCell = null;
+                    checkPuzzleWord();
+                } else {
+                    cells[selectedCell].classList.remove('selected');
+                    selectedCell = index;
+                    cells[index].classList.add('selected');
+                }
+            }
+        }
+
+        function isAdjacent(index1, index2) {
+            const gridSize = 6;
+            const row1 = Math.floor(index1 / gridSize);
+            const col1 = index1 % gridSize;
+            const row2 = Math.floor(index2 / gridSize);
+            const col2 = index2 % gridSize;
+
+            return (Math.abs(row1 - row2) === 1 && col1 === col2) ||
+                   (Math.abs(col1 - col2) === 1 && row1 === row2);
+        }
+
+        function swapCells(index1, index2) {
+            [puzzleGrid[index1], puzzleGrid[index2]] = [puzzleGrid[index2], puzzleGrid[index1]];
+            renderPuzzleGrid();
+            
+            // Проверяем слово после каждого свапа
+            setTimeout(() => checkPuzzleWord(), 100);
+        }
+
+        function checkPuzzleWord() {
+            const gridSize = 6;
+            
+            // Проверяем все возможные позиции и направления
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col <= gridSize - targetWord.length; col++) {
+                    // Проверка по горизонтали
+                    let horizontalWord = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        horizontalWord += puzzleGrid[row * gridSize + col + i];
+                    }
+                    if (horizontalWord === targetWord) {
+                        markPuzzleWord(row, col, 'horizontal');
+                        processPuzzleWin();
+                        return;
+                    }
+                }
+            }
+            
+            for (let col = 0; col < gridSize; col++) {
+                for (let row = 0; row <= gridSize - targetWord.length; row++) {
+                    // Проверка по вертикали
+                    let verticalWord = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        verticalWord += puzzleGrid[(row + i) * gridSize + col];
+                    }
+                    if (verticalWord === targetWord) {
+                        markPuzzleWord(row, col, 'vertical');
+                        processPuzzleWin();
+                        return;
+                    }
+                }
+            }
+        }
+
+        function markPuzzleWord(startRow, startCol, direction) {
+            const gridSize = 6;
+            const cells = document.querySelectorAll('.puzzle-cell');
+            
+            for (let i = 0; i < targetWord.length; i++) {
+                let index;
+                if (direction === 'horizontal') {
+                    index = startRow * gridSize + startCol + i;
+                } else {
+                    index = (startRow + i) * gridSize + startCol;
+                }
+                cells[index].classList.add('correct');
+            }
+        }
+
+        function processPuzzleWin() {
+            answered = true;
+            const question = shuffledQuestions[currentQuestion];
+            score += 10;
+            wordProgress[question.question]++;
+            
+            const feedback = document.getElementById('feedback');
+            if (feedback) {
+                feedback.textContent = `🎉 Отлично! Слово "${targetWord}" составлено правильно!`;
+                feedback.classList.add('correct', 'show');
+            }
+            
+            updateUI();
+            saveProgress();
+            
+            setTimeout(() => {
+                currentQuestion++;
+                displayQuestion();
+            }, 2500);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
+
+            for (let i = 0; i <= len1; i++) matrix[0][i] = i;
+            for (let j = 0; j <= len2; j++) matrix[j][0] = j;
+
+            for (let j = 1; j <= len2; j++) {
+                for (let i = 1; i <= len1; i++) {
+                    const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                    matrix[j][i] = Math.min(
+                        matrix[j][i - 1] + 1,
+                        matrix[j - 1][i] + 1,
+                        matrix[j - 1][i - 1] + indicator
+                    );
+                }
+            }
+
+            const distance = matrix[len2][len1];
+            const maxLen = Math.max(len1, len2);
+            return 1 - distance / maxLen;
+        }
 
         function showScreen(screenId) {
             const screens = ['mainMenu', 'loadingScreen', 'errorScreen', 'questionScreen', 'resultsScreen', 'helpScreen'];
@@ -1900,7 +2226,7 @@
                 answered = false;
                 clearGameInterval();
                 clearSnakeInterval();
-                // Функция initPuzzleGame должна быть определена
+                initPuzzleGame(question.question, question.options[question.correct]);
                 
             } else if (progress < TEXT_THRESHOLD) {
                 // Этап 3: Выбор варианта - 10 раз (2-12)
@@ -2253,89 +2579,6 @@
         document.getElementById('answerInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !answered) checkTextAnswer();
         });
-
-        // Функции для голосового ввода
-        function speakWord() {
-            const question = shuffledQuestions[currentQuestion];
-            if (!question || !question.question) return;
-            
-            if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(question.question);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.8;
-                speechSynthesis.speak(utterance);
-            }
-        }
-
-        function startVoiceRecognition() {
-            if (!recognition) {
-                alert('Ваш браузер не поддерживает распознавание речи');
-                return;
-            }
-
-            if (isListening) {
-                recognition.stop();
-                return;
-            }
-
-            try {
-                recognition.start();
-                isListening = true;
-                document.getElementById('microphoneBtn').classList.add('listening');
-                document.getElementById('voiceStatus').textContent = 'Слушаю... Говорите сейчас!';
-            } catch (e) {
-                console.error('Error starting recognition:', e);
-            }
-        }
-
-        function stopListening() {
-            isListening = false;
-            document.getElementById('microphoneBtn').classList.remove('listening');
-        }
-
-        function checkVoiceAnswer(transcript) {
-            if (answered) return;
-            answered = true;
-
-            const question = shuffledQuestions[currentQuestion];
-            if (!question) return;
-            
-            const correctAnswer = question.question.toLowerCase().trim();
-            const similarity = calculateSimilarity(transcript, correctAnswer);
-            const isCorrect = similarity > 0.7;
-
-            const voiceStatus = document.getElementById('voiceStatus');
-            if (voiceStatus) {
-                voiceStatus.textContent = `Вы сказали: "${transcript}"`;
-            }
-
-            processAnswer(isCorrect);
-        }
-
-        function calculateSimilarity(str1, str2) {
-            const len1 = str1.length;
-            const len2 = str2.length;
-            const matrix = Array(len2 + 1).fill(null).map(() => Array(len1 + 1).fill(null));
-
-            for (let i = 0; i <= len1; i++) matrix[0][i] = i;
-            for (let j = 0; j <= len2; j++) matrix[j][0] = j;
-
-            for (let j = 1; j <= len2; j++) {
-                for (let i = 1; i <= len1; i++) {
-                    const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
-                    matrix[j][i] = Math.min(
-                        matrix[j][i - 1] + 1,
-                        matrix[j - 1][i] + 1,
-                        matrix[j - 1][i - 1] + indicator
-                    );
-                }
-            }
-
-            const distance = matrix[len2][len1];
-            const maxLen = Math.max(len1, len2);
-            return 1 - distance / maxLen;
-        }
     </script>
 </body>
 </html>
