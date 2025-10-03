@@ -240,6 +240,46 @@
             font-weight: 500;
         }
 
+        /* БЛОК ДЛЯ ВВОДА СЛОВА ДЛЯ ЗМЕЙКИ */
+        .snake-word-input-container {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e3e8ff;
+            text-align: center;
+        }
+
+        .snake-word-input-title {
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .snake-word-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
+            border: 2px solid #74b9ff;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .snake-word-input:focus {
+            outline: none;
+            border-color: #0984e3;
+            box-shadow: 0 0 10px rgba(9, 132, 227, 0.3);
+        }
+
+        .snake-word-hint {
+            color: #636e72;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
         .help-content {
             text-align: left;
             max-height: 500px;
@@ -936,6 +976,14 @@
         </div>
 
         <div class="main-content">
+            <!-- БЛОК ДЛЯ ВВОДА СЛОВА ДЛЯ ЗМЕЙКИ -->
+            <div class="snake-word-input-container" id="snakeWordInputContainer" style="display: none;">
+                <div class="snake-word-input-title">Введите слово для игры в змейку:</div>
+                <input type="text" class="snake-word-input" id="snakeWordInput" placeholder="Например: APPLE">
+                <div class="snake-word-hint">Слово будет разбито на буквы, которые нужно собрать в змейке</div>
+                <button class="btn-primary" style="margin-top: 10px;" onclick="startCustomSnakeGame()">Начать игру</button>
+            </div>
+
             <div class="main-menu" id="mainMenu">
                 <div class="menu-title">EnglishBoost</div>
                 <div class="menu-subtitle">Адаптивті жаңа әдіспен ағылшын тілін үйреніңіз</div>
@@ -949,6 +997,11 @@
                 </div>
                 
                 <div class="levels-grid" id="levelsGrid"></div>
+                
+                <!-- КНОПКА ДЛЯ ЗАПУСКА ЗМЕЙКИ С КАСТОМНЫМ СЛОВОМ -->
+                <button class="btn-secondary" onclick="showSnakeWordInput()" style="margin-top: 15px;">
+                    🐍 Играть в змейку со своим словом
+                </button>
             </div>
 
             <div class="help-screen" id="helpScreen">
@@ -1162,6 +1215,56 @@
             // Показываем главное меню
             showScreen('mainMenu');
         });
+
+        // Функция для показа блока ввода слова для змейки
+        function showSnakeWordInput() {
+            document.getElementById('snakeWordInputContainer').style.display = 'block';
+            document.getElementById('mainMenu').style.display = 'none';
+        }
+
+        // Функция для запуска змейки с кастомным словом
+        function startCustomSnakeGame() {
+            const input = document.getElementById('snakeWordInput');
+            const customWord = input.value.trim().toUpperCase();
+            
+            if (!customWord) {
+                alert('Пожалуйста, введите слово!');
+                return;
+            }
+            
+            if (!/^[A-Z]+$/.test(customWord)) {
+                alert('Пожалуйста, введите слово только из английских букв!');
+                return;
+            }
+            
+            // Скрываем блок ввода и показываем игровой экран
+            document.getElementById('snakeWordInputContainer').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'block';
+            document.getElementById('helpBtn').style.display = 'none';
+            
+            // Устанавливаем кастомное слово
+            currentLevel = 'CUSTOM';
+            document.getElementById('currentLevel').textContent = 'CUSTOM деңгейі | ';
+            document.getElementById('scoreDisplay').style.display = 'inline';
+            document.getElementById('progressContainer').style.display = 'block';
+            
+            // Создаем фиктивный вопрос для змейки
+            const fakeQuestion = {
+                question: customWord,
+                options: ['Кастомное слово', 'Custom word', 'Собственное слово', 'Пользовательское слово'],
+                correct: 1
+            };
+            
+            // Инициализируем змейку с кастомным словом
+            showScreen('questionScreen');
+            const container = document.getElementById('questionScreen');
+            if (container) container.classList.add('snake-mode');
+            
+            answered = false;
+            clearGameInterval();
+            clearSnakeInterval();
+            initSnakeGame(customWord, 'Ваше слово');
+        }
 
         // Инициализация виртуального джойстика - ИСПРАВЛЕННАЯ ВЕРСИЯ
         function initJoystick() {
@@ -2013,6 +2116,7 @@
             document.getElementById('scoreDisplay').style.display = 'none';
             document.getElementById('currentLevel').textContent = '';
             document.getElementById('helpBtn').style.display = 'block';
+            document.getElementById('snakeWordInputContainer').style.display = 'none';
             updateTotalProgress();
             showScreen('mainMenu');
         }
