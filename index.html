@@ -602,14 +602,19 @@
         }
 
         .grid-cell {
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .grid-cell:nth-child(2n) {
+            background: rgba(245, 247, 250, 0.5);
         }
 
         .path-marker {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background: rgba(255, 215, 0, 0.3);
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 215, 0, 0.6);
             border-radius: 50%;
             z-index: 1;
         }
@@ -617,10 +622,13 @@
         .distance-indicator {
             position: absolute;
             color: #e74c3c;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
             z-index: 2;
             text-shadow: 0 0 2px white;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 3px;
+            padding: 1px 3px;
         }
 
         .snake-segment {
@@ -631,38 +639,44 @@
             border-radius: 4px;
             transition: all 0.1s linear;
             z-index: 5;
+            border: 1px solid #00a085;
         }
 
         .snake-head {
             background: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
             box-shadow: 0 2px 8px rgba(9, 132, 227, 0.6);
             z-index: 6;
+            border: 1px solid #0984e3;
         }
 
         .letter-food {
             position: absolute;
-            width: 28px;
-            height: 28px;
+            width: 18px;
+            height: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 8px;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2em;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+            font-size: 0.9em;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
             z-index: 4;
+            border: 1px solid #5568d3;
         }
 
         .letter-food.target {
             background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
             animation: pulse 1s infinite;
             z-index: 7;
+            border: 1px solid #ff8c00;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
         }
 
         .letter-food.wrong {
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border: 1px solid #a93226;
         }
 
         .snake-word-display {
@@ -1110,6 +1124,7 @@
         let snakeWords = []; // [английское слово, русский перевод]
         let pathMarkers = [];
         let distanceIndicators = [];
+        const CELL_SIZE = 20; // Размер клетки
 
         const LEVEL_FILES = {
             'A1': 'https://raw.githubusercontent.com/AnuarRS/english-quiz-pwa/refs/heads/main/questions_a1.txt',
@@ -1246,8 +1261,8 @@
             snakeDirection = 'right';
             
             // Инициализация змейки в центре
-            const centerX = 200;
-            const centerY = 200;
+            const centerX = Math.floor(200 / CELL_SIZE) * CELL_SIZE;
+            const centerY = Math.floor(200 / CELL_SIZE) * CELL_SIZE;
             snake = [
                 { x: centerX, y: centerY }
             ];
@@ -1289,6 +1304,12 @@
             const currentWord = snakeWords[0];
             const letters = currentWord.split('');
             
+            // Создаем алфавит без букв из целевого слова
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const availableLetters = alphabet.split('').filter(letter => 
+                !currentWord.includes(letter)
+            );
+            
             // Размещаем все буквы английского слова
             letters.forEach((letter, index) => {
                 let pos;
@@ -1312,13 +1333,16 @@
             // Добавляем маршруты и расстояния
             updatePathMarkers();
 
-            // Добавляем немного случайных букв (уменьшенное количество)
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const wrongLettersCount = Math.min(8, 20 - letters.length); // Максимум 8 неправильных букв
+            // Добавляем случайные буквы (не из целевого слова)
+            const wrongLettersCount = Math.min(8, 20 - letters.length);
             for (let i = 0; i < wrongLettersCount; i++) {
-                const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+                if (availableLetters.length === 0) break;
+                
+                const randomIndex = Math.floor(Math.random() * availableLetters.length);
+                const randomLetter = availableLetters[randomIndex];
+                availableLetters.splice(randomIndex, 1); // Удаляем использованную букву
+                
                 let pos = getRandomPosition();
-                // Убедимся, что позиция не совпадает с целевыми буквами
                 let attempts = 0;
                 while (isPositionOccupied(pos) && attempts < 50) {
                     pos = getRandomPosition();
@@ -1338,7 +1362,7 @@
 
         function isPositionOccupied(pos) {
             return letterPositions.some(letter => 
-                Math.abs(letter.x - pos.x) < 30 && Math.abs(letter.y - pos.y) < 30
+                letter.x === pos.x && letter.y === pos.y
             );
         }
 
@@ -1365,8 +1389,8 @@
             const steps = 5;
             for (let i = 1; i <= steps; i++) {
                 const t = i / (steps + 1);
-                const x = from.x + (to.x - from.x) * t;
-                const y = from.y + (to.y - from.y) * t;
+                const x = Math.round(from.x + (to.x - from.x) * t);
+                const y = Math.round(from.y + (to.y - from.y) * t);
                 
                 markers.push({ x, y });
                 
@@ -1375,7 +1399,7 @@
                     const distance = Math.sqrt(Math.pow(to.x - x, 2) + Math.pow(to.y - y, 2));
                     distances.push({
                         x, y,
-                        distance: Math.round(distance / 20) // в клетках
+                        distance: Math.round(distance / CELL_SIZE) // в клетках
                     });
                 }
             }
@@ -1385,8 +1409,8 @@
 
         function getPositionNearCenter() {
             return {
-                x: Math.floor(Math.random() * 5 + 8) * 20, // 160-240
-                y: Math.floor(Math.random() * 5 + 8) * 20  // 160-240
+                x: Math.floor(Math.random() * 5 + 8) * CELL_SIZE,
+                y: Math.floor(Math.random() * 5 + 8) * CELL_SIZE
             };
         }
 
@@ -1398,16 +1422,16 @@
             let y = 200 + Math.sin(angle) * distance;
             
             // Выравниваем по сетке
-            x = Math.max(10, Math.min(390, Math.round(x / 20) * 20));
-            y = Math.max(10, Math.min(390, Math.round(y / 20) * 20));
+            x = Math.max(0, Math.min(380, Math.round(x / CELL_SIZE) * CELL_SIZE));
+            y = Math.max(0, Math.min(380, Math.round(y / CELL_SIZE) * CELL_SIZE));
             
             return { x, y };
         }
 
         function getRandomPosition() {
             return {
-                x: Math.floor(Math.random() * 19) * 20 + 10,
-                y: Math.floor(Math.random() * 19) * 20 + 10
+                x: Math.floor(Math.random() * 20) * CELL_SIZE,
+                y: Math.floor(Math.random() * 20) * CELL_SIZE
             };
         }
 
@@ -1426,8 +1450,8 @@
             pathMarkers.forEach(marker => {
                 const markerEl = document.createElement('div');
                 markerEl.className = 'path-marker';
-                markerEl.style.left = marker.x - 5 + 'px';
-                markerEl.style.top = marker.y - 5 + 'px';
+                markerEl.style.left = marker.x - 3 + 'px';
+                markerEl.style.top = marker.y - 3 + 'px';
                 gameArea.appendChild(markerEl);
             });
 
@@ -1445,8 +1469,8 @@
             snake.forEach((segment, index) => {
                 const segmentEl = document.createElement('div');
                 segmentEl.className = 'snake-segment' + (index === 0 ? ' snake-head' : '');
-                segmentEl.style.left = segment.x - 9 + 'px';
-                segmentEl.style.top = segment.y - 9 + 'px';
+                segmentEl.style.left = segment.x + 'px';
+                segmentEl.style.top = segment.y + 'px';
                 gameArea.appendChild(segmentEl);
             });
 
@@ -1463,8 +1487,8 @@
                 }
                 
                 letterEl.textContent = letterPos.letter;
-                letterEl.style.left = letterPos.x - 14 + 'px';
-                letterEl.style.top = letterPos.y - 14 + 'px';
+                letterEl.style.left = letterPos.x + 'px';
+                letterEl.style.top = letterPos.y + 'px';
                 gameArea.appendChild(letterEl);
             });
         }
@@ -1475,10 +1499,10 @@
             const head = { ...snake[0] };
 
             switch (snakeDirection) {
-                case 'up': head.y -= 20; break;
-                case 'down': head.y += 20; break;
-                case 'left': head.x -= 20; break;
-                case 'right': head.x += 20; break;
+                case 'up': head.y -= CELL_SIZE; break;
+                case 'down': head.y += CELL_SIZE; break;
+                case 'left': head.x -= CELL_SIZE; break;
+                case 'right': head.x += CELL_SIZE; break;
             }
 
             // Проверка столкновения со стенами
@@ -1497,7 +1521,7 @@
 
             // Проверка столкновения с буквой
             const collisionIndex = letterPositions.findIndex(letter => 
-                Math.abs(letter.x - head.x) < 20 && Math.abs(letter.y - head.y) < 20
+                letter.x === head.x && letter.y === head.y
             );
 
             if (collisionIndex !== -1) {
@@ -1547,6 +1571,12 @@
             pathMarkers = [];
             distanceIndicators = [];
             
+            // Создаем русский алфавит без букв из целевого слова
+            const russianAlphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+            const availableLetters = russianAlphabet.split('').filter(letter => 
+                !russianWord.includes(letter)
+            );
+            
             // Размещаем буквы русского перевода
             const letters = russianWord.split('');
             letters.forEach((letter, index) => {
@@ -1569,11 +1599,15 @@
             // Добавляем маршруты
             updatePathMarkers();
 
-            // Добавляем случайные буквы для русского слова
-            const russianAlphabet = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+            // Добавляем случайные буквы для русского слова (не из целевого слова)
             const wrongLettersCount = Math.min(6, 15 - letters.length);
             for (let i = 0; i < wrongLettersCount; i++) {
-                const randomLetter = russianAlphabet[Math.floor(Math.random() * russianAlphabet.length)];
+                if (availableLetters.length === 0) break;
+                
+                const randomIndex = Math.floor(Math.random() * availableLetters.length);
+                const randomLetter = availableLetters[randomIndex];
+                availableLetters.splice(randomIndex, 1); // Удаляем использованную букву
+                
                 let pos = getRandomPosition();
                 let attempts = 0;
                 while (isPositionOccupied(pos) && attempts < 50) {
