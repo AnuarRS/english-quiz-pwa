@@ -897,6 +897,10 @@
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 15px;
+            border: 2px solid #e3e8ff;
         }
 
         .translation-ball {
@@ -926,28 +930,14 @@
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
         }
 
-        /* NEW: Word display block styles */
-        .word-display-block {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 2px solid #e8e8e8;
-        }
-
-        .word-display-title {
-            font-size: 1.2em;
+        .translation-separator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
             color: #667eea;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .word-display-content {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #2d3436;
+            font-size: 1.5em;
+            margin: 0 10px;
         }
 
         @media (max-width: 600px) {
@@ -979,10 +969,6 @@
                 width: 40px;
                 height: 40px;
                 font-size: 1em;
-            }
-
-            .word-display-content {
-                font-size: 1.5em;
             }
         }
     </style>
@@ -1073,14 +1059,6 @@
             </div>
 
             <div class="question-container" id="questionScreen">
-                <!-- NEW: Word display block for English and Russian -->
-                <div class="word-display-block" id="wordDisplayBlock" style="display: none;">
-                    <div class="word-display-title">English Word</div>
-                    <div class="word-display-content" id="englishWordDisplay"></div>
-                    <div class="word-display-title" style="margin-top: 15px;">Russian Translation</div>
-                    <div class="word-display-content" id="russianWordDisplay"></div>
-                </div>
-
                 <!-- NEW: Translation balls -->
                 <div class="translation-balls" id="translationBalls" style="display: none;"></div>
                 
@@ -1250,49 +1228,33 @@
             ballsContainer.style.display = 'flex';
             
             // Create English letters balls
-            const englishLetters = englishWord.split('');
+            const englishLetters = englishWord.toUpperCase().split('');
             englishLetters.forEach(letter => {
                 const ball = document.createElement('div');
                 ball.className = 'translation-ball english';
-                ball.textContent = letter.toUpperCase();
+                ball.textContent = letter;
                 ballsContainer.appendChild(ball);
             });
             
             // Add separator
             const separator = document.createElement('div');
-            separator.style.cssText = 'width: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #667eea;';
+            separator.className = 'translation-separator';
             separator.textContent = '→';
             ballsContainer.appendChild(separator);
             
             // Create Russian letters balls
-            const russianLetters = russianWord.split('');
+            const russianLetters = russianWord.toUpperCase().split('');
             russianLetters.forEach(letter => {
                 const ball = document.createElement('div');
                 ball.className = 'translation-ball russian';
-                ball.textContent = letter.toUpperCase();
+                ball.textContent = letter;
                 ballsContainer.appendChild(ball);
             });
         }
 
-        // NEW: Function to show word display block
-        function showWordDisplayBlock(englishWord, russianWord) {
-            const wordDisplayBlock = document.getElementById('wordDisplayBlock');
-            const englishWordDisplay = document.getElementById('englishWordDisplay');
-            const russianWordDisplay = document.getElementById('russianWordDisplay');
-            
-            if (wordDisplayBlock && englishWordDisplay && russianWordDisplay) {
-                englishWordDisplay.textContent = englishWord;
-                russianWordDisplay.textContent = russianWord;
-                wordDisplayBlock.style.display = 'block';
-            }
-        }
-
-        // NEW: Function to hide word display block and balls
-        function hideWordDisplay() {
-            const wordDisplayBlock = document.getElementById('wordDisplayBlock');
+        // NEW: Function to hide translation balls
+        function hideTranslationBalls() {
             const ballsContainer = document.getElementById('translationBalls');
-            
-            if (wordDisplayBlock) wordDisplayBlock.style.display = 'none';
             if (ballsContainer) ballsContainer.style.display = 'none';
         }
 
@@ -1486,8 +1448,7 @@
             collectedLetters = '';
             snakeDirection = 'right';
             
-            // NEW: Show word display and translation balls
-            showWordDisplayBlock(englishWord, russianWord);
+            // NEW: Show translation balls with letters
             createTranslationBalls(englishWord, russianWord);
             
             // Инициализация змейки в центре
@@ -1922,8 +1883,7 @@
                 targetElement.textContent = translation;
             }
 
-            // NEW: Show word display and translation balls for puzzle mode
-            showWordDisplayBlock(word, translation);
+            // NEW: Show translation balls for puzzle mode
             createTranslationBalls(word, translation);
 
             const gridSize = 6;
@@ -2330,8 +2290,8 @@
         }
 
         function displayQuestion() {
-            // NEW: Hide word display and balls by default
-            hideWordDisplay();
+            // NEW: Hide translation balls by default
+            hideTranslationBalls();
 
             if (currentQuestion >= shuffledQuestions.length) {
                 showResults();
@@ -2379,8 +2339,7 @@
                 if (container) container.classList.add('game-mode');
                 clearSnakeInterval();
                 
-                // NEW: Show word display and balls for game mode
-                showWordDisplayBlock(question.question, question.options[question.correct]);
+                // NEW: Show translation balls for game mode
                 createTranslationBalls(question.question, question.options[question.correct]);
                 
                 const optionsGrid = document.getElementById('optionsGrid');
@@ -2416,8 +2375,7 @@
                 if (container) container.classList.add('text-mode');
                 clearSnakeInterval();
                 
-                // NEW: Show word display and balls for text mode
-                showWordDisplayBlock(question.question, question.options[question.correct]);
+                // NEW: Show translation balls for text mode
                 createTranslationBalls(question.question, question.options[question.correct]);
                 
                 const wordDisplay = document.getElementById('wordDisplay');
@@ -2442,8 +2400,7 @@
                 if (!recognition) {
                     if (container) container.classList.add('text-mode');
                     
-                    // NEW: Show word display and balls for voice mode fallback
-                    showWordDisplayBlock(question.question, question.options[question.correct]);
+                    // NEW: Show translation balls for voice mode fallback
                     createTranslationBalls(question.question, question.options[question.correct]);
                     
                     const wordDisplay = document.getElementById('wordDisplay');
@@ -2464,8 +2421,7 @@
                 } else {
                     if (container) container.classList.add('voice-mode');
                     
-                    // NEW: Show word display and balls for voice mode
-                    showWordDisplayBlock(question.question, question.options[question.correct]);
+                    // NEW: Show translation balls for voice mode
                     createTranslationBalls(question.question, question.options[question.correct]);
                     
                     const wordDisplay = document.getElementById('wordDisplay');
