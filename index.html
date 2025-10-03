@@ -629,21 +629,23 @@
             border-radius: 4px;
         }
 
+        /* ИСПРАВЛЕННЫЕ СТИЛИ ДЛЯ БУКВ В ШАРИКАХ */
         .letter-food {
             position: absolute;
-            width: 24px;
-            height: 24px;
-            color: white;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1em;
+            font-size: 14px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             z-index: 4;
             border: 2px solid rgba(255, 255, 255, 0.8);
             animation: letterPulse 1.5s infinite;
+            color: white !important;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
         }
 
         @keyframes letterPulse {
@@ -890,56 +892,6 @@
             color: #e74c3c;
         }
 
-        /* NEW: Translation balls styles */
-        .translation-balls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            padding: 15px;
-            background: #f8f9ff;
-            border-radius: 15px;
-            border: 2px solid #e3e8ff;
-        }
-
-        .translation-ball {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            color: white;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-
-        .translation-ball:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-
-        .translation-ball.english {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .translation-ball.russian {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-        }
-
-        .translation-separator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #667eea;
-            font-size: 1.5em;
-            margin: 0 10px;
-        }
-
         @media (max-width: 600px) {
             .game-area {
                 height: 300px;
@@ -963,12 +915,6 @@
                 width: 100%;
                 height: 350px;
                 max-width: 350px;
-            }
-
-            .translation-ball {
-                width: 40px;
-                height: 40px;
-                font-size: 1em;
             }
         }
     </style>
@@ -1059,10 +1005,8 @@
             </div>
 
             <div class="question-container" id="questionScreen">
-                <!-- NEW: Translation balls -->
-                <div class="translation-balls" id="translationBalls" style="display: none;"></div>
-                
                 <div class="word-display" id="wordDisplay">
+                    
                     <span class="speaker-icon" id="speakerIcon" onclick="speakWord()" style="display:none">🔊</span>
                 </div>
                 
@@ -1218,45 +1162,6 @@
             // Показываем главное меню
             showScreen('mainMenu');
         });
-
-        // NEW: Function to create translation balls
-        function createTranslationBalls(englishWord, russianWord) {
-            const ballsContainer = document.getElementById('translationBalls');
-            if (!ballsContainer) return;
-            
-            ballsContainer.innerHTML = '';
-            ballsContainer.style.display = 'flex';
-            
-            // Create English letters balls
-            const englishLetters = englishWord.toUpperCase().split('');
-            englishLetters.forEach(letter => {
-                const ball = document.createElement('div');
-                ball.className = 'translation-ball english';
-                ball.textContent = letter;
-                ballsContainer.appendChild(ball);
-            });
-            
-            // Add separator
-            const separator = document.createElement('div');
-            separator.className = 'translation-separator';
-            separator.textContent = '→';
-            ballsContainer.appendChild(separator);
-            
-            // Create Russian letters balls
-            const russianLetters = russianWord.toUpperCase().split('');
-            russianLetters.forEach(letter => {
-                const ball = document.createElement('div');
-                ball.className = 'translation-ball russian';
-                ball.textContent = letter;
-                ballsContainer.appendChild(ball);
-            });
-        }
-
-        // NEW: Function to hide translation balls
-        function hideTranslationBalls() {
-            const ballsContainer = document.getElementById('translationBalls');
-            if (ballsContainer) ballsContainer.style.display = 'none';
-        }
 
         // Инициализация виртуального джойстика - ИСПРАВЛЕННАЯ ВЕРСИЯ
         function initJoystick() {
@@ -1448,9 +1353,6 @@
             collectedLetters = '';
             snakeDirection = 'right';
             
-            // NEW: Show translation balls with letters
-            createTranslationBalls(englishWord, russianWord);
-            
             // Инициализация змейки в центре
             const centerX = Math.floor(250 / CELL_SIZE) * CELL_SIZE;
             const centerY = Math.floor(250 / CELL_SIZE) * CELL_SIZE;
@@ -1611,15 +1513,19 @@
                 gameArea.appendChild(segmentEl);
             });
 
-            // Отрисовка букв с рандомными цветами
+            // Отрисовка букв с рандомными цветами - ИСПРАВЛЕННАЯ ВЕРСИЯ
             letterPositions.forEach((letterPos) => {
                 const letterEl = document.createElement('div');
                 letterEl.className = 'letter-food';
                 
-                // Используем сохраненный цвет для каждой буквы
+                // Используем сохраненный цвет для фона каждой буквы
                 letterEl.style.background = letterPos.color;
-                letterEl.style.color = letterPos.color;
                 
+                // Текст всегда белый с черной тенью для лучшей видимости
+                letterEl.style.color = 'white';
+                letterEl.style.textShadow = '0 0 3px rgba(0, 0, 0, 0.8)';
+                
+                // Устанавливаем текст буквы
                 letterEl.textContent = letterPos.letter;
                 letterEl.style.left = letterPos.x + 'px';
                 letterEl.style.top = letterPos.y + 'px';
@@ -1882,9 +1788,6 @@
             if (targetElement) {
                 targetElement.textContent = translation;
             }
-
-            // NEW: Show translation balls for puzzle mode
-            createTranslationBalls(word, translation);
 
             const gridSize = 6;
             const wordLetters = targetWord.split('');
@@ -2290,9 +2193,6 @@
         }
 
         function displayQuestion() {
-            // NEW: Hide translation balls by default
-            hideTranslationBalls();
-
             if (currentQuestion >= shuffledQuestions.length) {
                 showResults();
                 return;
@@ -2339,9 +2239,6 @@
                 if (container) container.classList.add('game-mode');
                 clearSnakeInterval();
                 
-                // NEW: Show translation balls for game mode
-                createTranslationBalls(question.question, question.options[question.correct]);
-                
                 const optionsGrid = document.getElementById('optionsGrid');
                 if (optionsGrid) {
                     optionsGrid.innerHTML = '';
@@ -2375,9 +2272,6 @@
                 if (container) container.classList.add('text-mode');
                 clearSnakeInterval();
                 
-                // NEW: Show translation balls for text mode
-                createTranslationBalls(question.question, question.options[question.correct]);
-                
                 const wordDisplay = document.getElementById('wordDisplay');
                 if (wordDisplay) wordDisplay.textContent = question.options[question.correct];
                 
@@ -2400,9 +2294,6 @@
                 if (!recognition) {
                     if (container) container.classList.add('text-mode');
                     
-                    // NEW: Show translation balls for voice mode fallback
-                    createTranslationBalls(question.question, question.options[question.correct]);
-                    
                     const wordDisplay = document.getElementById('wordDisplay');
                     if (wordDisplay) wordDisplay.textContent = question.options[question.correct];
                     
@@ -2420,9 +2311,6 @@
                     clearGameInterval();
                 } else {
                     if (container) container.classList.add('voice-mode');
-                    
-                    // NEW: Show translation balls for voice mode
-                    createTranslationBalls(question.question, question.options[question.correct]);
                     
                     const wordDisplay = document.getElementById('wordDisplay');
                     if (wordDisplay) wordDisplay.textContent = question.options[question.correct];
